@@ -102,6 +102,17 @@ html,body
   margin: 2px;
  }
 
+  .cardfa 
+  {
+  padding: 10px;
+  font-size: 10px;
+  width: 20px;
+  text-align: center;
+  text-decoration: none;
+  margin: 2px;
+  border-radius: 50%;
+ }
+
  .fa:hover {
     opacity: 0.7;    
 }
@@ -135,3 +146,19 @@ html,body
   background: #125688;
   color: white;
 }
+
+.fa-github {
+  background:slateblue;
+  color: white;
+}
+
+.footer {
+  position: relative;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+

@@ -1,0 +1,190 @@
+html,body
+   {
+   	margin: 0;
+   	padding :0;
+   }
+   
+   div.header
+   {
+    display: block;
+   	width: 100%;
+    height: auto;
+   	margin : 0;
+   	padding: 0;
+   
+   	box-sizing: border-box;
+   }
+
+   ul.sidenav 
+   {
+   	list-style-type: none;
+   	margin: 0;
+   	padding : 0;
+   	width: 12%;
+   	background-color :lightgray;
+   	position : relative;
+   	height : 100%;
+   	overflow : auto;
+   }
+
+   ul.sidenav li a
+   {
+   	display : block;
+   	color : black;
+   	padding : 8px 16px;
+   	font-size: 20px;
+   	text-decoration : none;
+   }
+
+   ul.sidenav li a.active
+   {
+   	background-color : mediumseagreen;
+   	color: white;
+   }
+
+   ul.sidenav li a:hover:not(.active)
+   {
+   	background-color :red;
+   	color: white;
+   }
+   
+   div.content
+   {
+   	margin-left :12%;
+   	padding : 1px 16px;
+   	height: 100%;
+   }	 
+
+  @media screen and (max-width: 3000px)
+  {
+  	ul.sidenav
+  	{ width: 100%;
+  	  height : auto;
+  	  position : relative; 
+  	}
+    ul.sidenav li a 
+    {
+     float : left;
+     padding :15px;	
+    }
+    div.content
+    {
+    	margin-left:0;
+    }
+  } 
+  @media screen and (max-width: 420px)
+  {
+    ul.sidenav li a
+    {
+     float : none;
+     text-align: center;
+    } 
+  } 
+
+
+
+  ul.socialnav 
+   {
+    overflow :hidden;
+    list-style-type: none;
+    top: 50%;
+    right :0;
+    position:fixed;
+   }
+
+  .fa 
+  {
+  padding: 10px;
+  font-size: 10px;
+  width: 18px;
+  text-align: center;
+  text-decoration: none;
+  margin: 2px;
+  border-radius: 50%;
+ }
+
+
+ .fa:hover {
+    opacity: 0.7;    
+}
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-google {
+  background: #dd4b39;
+  color: white;
+}
+
+.fa-linkedin {
+  background: #007bb5;
+  color: white;
+}
+
+.fa-youtube {
+  background: #bb0000;
+  color: white;
+}
+
+.fa-instagram {
+  background: #125688;
+  color: white;
+}
+
+.fa-github {
+  background:slateblue;
+  color: white;
+}
+
+.footer {
+  position: relative;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background-color: #efefef;
+  text-align: center;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 30%;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
+.cardtitle {
+  color: grey;
+  font-size: 18px;
+}
+
+.cardbutton {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+.carda {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+}
+
+.cardbutton:hover, a:hover {
+  opacity: 0.7;
+}
