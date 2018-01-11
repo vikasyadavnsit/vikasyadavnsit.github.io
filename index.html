@@ -29,32 +29,39 @@
    	margin: 0;
    	padding : 0;
    	width : 12% ;
-   	background-color :#f1f1f1;
+   	background-color :#f1f1;
    	position : fixed;
    	height : 100%;
    	overflow : auto;
    }
 
-   ul.sidenav li a
+   ul.sidenav li b a
    {
    	display : block;
-   	color : #000;
+   	color : black;
    	padding : 8px 16px;
    	text-decoration : none;
    }
 
-   ul.sidenav li a.active
+   ul.sidenav li b a.active
    {
-   	background-color : #555;
+   	background-color : #229911;
    	color: white;
    }
 
-   ul.sidenav li a:hover:not(.active)
+   ul.sidenav li b a:hover:not(.active)
    {
-   	bacground-color :#555;
+   	background-color :#555;
    	color: white;
    }
-
+   
+   div.content
+   {
+   	margin-left :12%;
+   	padding : 1px 16px;
+   	height: 100%;
+   }	 
+   
   @media screen and (max-width: 700px)
   {
   	ul.sidenav
@@ -62,32 +69,26 @@
   	  height : auto;
   	  position : relative; 
   	}
-    ul.sidenav li a
+    ul.sidenav li b a 
     {
      float : left;
      padding :15px;	
     }
+    div.content
+    {
+    	margin-left:0%;
+    }
   } 
-  @media screen and (max-width: 400px)
+  @media screen and (max-width: 420px)
   {
-    ul.sidenav li a
+    ul.sidenav li b a
     {
      float : none;
      text-align: center;
-    }
-
-    div.content
-    {
-    	margin-left:0;
-    }
+    } 
   } 
 
-   div.content
-   {
-   	margin-left :12%;
-   	padding : 1px 16px;
-   	height: 100%;
-   }		
+   	
  
  </style>
  
@@ -102,15 +103,15 @@
 <body>
  
  <ul class="sidenav">
- 	<li><a class="active" href="#">Home</a></li>
-    <li><a href="#">Software</a></li>
-    <li><a href="#">Hardware</a></li>
-    <li><a href="#">Python</a></li>
-    <li><a href="#">About</a></li>
+ 	<li><b><a class="active" href="#">Home</a></b></li>
+    <li><b><a href="#">Software</a></b></li>
+    <li><b><a href="#">Hardware</a></b></li>
+    <li><b><a href="#">Python</a></b></li>
+    <li><b><a href="#">About</a></b></li>
  </ul>
  
  <div class="content">
-  <h1> sfsfsdfsfs
+  <h5> sfsfsdfsfs
   g
 
  fg
