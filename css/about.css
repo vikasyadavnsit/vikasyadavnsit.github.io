@@ -26,7 +26,7 @@ html,body
     height : 100%;
     overflow : auto;
    }
-   
+
    ul.sidenav li a
    {
    display : block;
@@ -164,10 +164,23 @@ html,body
 
 .card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 30%;
+  max-width: 40%;
   margin: auto;
   text-align: center;
   font-family: arial;
+}
+
+@media screen and (max-width :800px)
+{
+ 
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 70%;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+}
+
 }
 
 .cardtitle {
