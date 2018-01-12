@@ -1,14 +1,77 @@
-* {
-    box-sizing: border-box;
-}
 
-
+ 
 body
    {
    	font-family: Arial;
-    padding: 20px;
     background: #f1f1f1;
+    padding: 0;
+    margin: 0;
+    
    }
+
+div.blogheader {
+  box-sizing: border-box;
+  margin-top :10px;
+    padding: 30px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+div.blogleftcolumn { 
+   box-sizing: border-box;  
+    float: left;
+    width: 75%;
+    padding: 10px;
+}
+
+/* Right column */
+div.blogrightcolumn {
+  box-sizing: border-box;
+    float: left;
+    width: 25%;
+    padding-top:10px;
+    padding-left: 20px;
+}
+
+/* Fake image */
+div.blogfakeimg {
+  box-sizing: border-box;
+    background-color: #aaa;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Add a card effect for articles */
+div.blogcard {
+  box-sizing: border-box;
+     background-color: white;
+     padding: 20px;
+     margin-top: 20px;
+}
+
+/* Clear floats after the columns */
+div.blogrow:after {
+  box-sizing: border-box;
+    content: "";
+    display: table;
+    padding :20px;
+    clear: both;
+}
+
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+@media (max-width: 800px) {
+    div.blogleftcolumn, div.blogrightcolumn {   
+        box-sizing: border-box;
+        width: 100%;
+        padding: 0;
+    }
+}
+
+
    
    div.header
    {
@@ -26,17 +89,17 @@ ul.sidenav
     list-style-type: none;
     margin: 0;
     padding : 0;
-    width: 12%;
+    width: 100;
     background-color :darkgray;
     position : relative;
     height : 100%;
     overflow : auto;
    }
-   
+
    ul.sidenav li a
    {
     margin: 0;
-    display : block;
+    box-sizing: none;
     color : black;
     width: 80px;
     padding : 8px 16px;
@@ -68,13 +131,14 @@ ul.sidenav
   {
     ul.sidenav
     { width: 100%;
+      box-sizing: none;
       height : auto;
       position : relative; 
     }
     ul.sidenav li a 
     {
      float : left;
-
+     box-sizing: none;
      text-align: center;
      padding :15px; 
     }
@@ -108,56 +172,6 @@ ul.sidenav
 
 
 
-div.blogheader {
-    padding: 30px;
-    font-size: 40px;
-    text-align: center;
-    background: white;
-}
-
-/* Create two unequal columns that floats next to each other */
-/* Left column */
-div.blogleftcolumn {   
-    float: left;
-    width: 75%;
-}
-
-/* Right column */
-div.blogrightcolumn {
-    float: left;
-    width: 25%;
-    padding-left: 20px;
-}
-
-/* Fake image */
-div.blogfakeimg {
-    background-color: #aaa;
-    width: 100%;
-    padding: 20px;
-}
-
-/* Add a card effect for articles */
-div.blogcard {
-     background-color: white;
-     padding: 20px;
-     margin-top: 20px;
-}
-
-/* Clear floats after the columns */
-div.blogrow:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-
-/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media (max-width: 800px) {
-    div.blogleftcolumn, div.blogrightcolumn {   
-        width: 100%;
-        padding: 0;
-    }
-}
 
 
   .fa 
