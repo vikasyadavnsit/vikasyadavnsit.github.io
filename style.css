@@ -11,7 +11,6 @@ html,body
     height: auto;
    	margin : 0;
    	padding: 0;
-   
    	box-sizing: border-box;
    }
 
@@ -20,8 +19,7 @@ html,body
    	list-style-type: none;
    	margin: 0;
    	padding : 0;
-   	width: 12%;
-   	background-color :darkgray;
+   	background-color: lightgray;
    	position : relative;
    	height : 100%;
    	overflow : auto;
@@ -31,10 +29,8 @@ html,body
    {
    	display : block;
    	color : black;
-    width: 8%;
    	padding : 8px 16px;
    	font-size: 20px;
-    border-right: 1px solid red;
    	text-decoration : none;
    }
 
@@ -62,7 +58,7 @@ html,body
   	ul.sidenav
   	{ width: 100%;
   	  height : auto;
-  	  position : relative; 
+  	  position : relative;
   	}
     ul.sidenav li a 
     {
