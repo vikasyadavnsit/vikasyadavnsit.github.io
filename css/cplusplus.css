@@ -50,6 +50,16 @@ div.blogfakeimg {
     border : 5px solid #ebebe0; 
 }
 
+a.bloglink
+{ margin-top: 10px;
+  display: block;
+  padding: 10px;
+  color : white; 
+  background-color: tomato;
+  text-align: center;
+  text-decoration: none;
+}
+
 div.blogimg {
   box-sizing: border-box;
     background-color: white;
