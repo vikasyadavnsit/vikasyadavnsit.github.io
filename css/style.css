@@ -29,12 +29,13 @@ html,body
 
    ul.sidenav li a
    {
+    margin: 0;
    	display : block;
    	color : black;
-    width: 8%;
+    width: 80px;
    	padding : 8px 16px;
    	font-size: 20px;
-    border-right: 1px solid red;
+    border: 1px solid lightgray;
    	text-decoration : none;
    }
 
@@ -67,6 +68,8 @@ html,body
     ul.sidenav li a 
     {
      float : left;
+
+     text-align: center;
      padding :15px;	
     }
     div.content
@@ -74,12 +77,16 @@ html,body
     	margin-left:0;
     }
   } 
-  @media screen and (max-width: 420px)
+  @media screen and (max-width: 500px)
   {
     ul.sidenav li a
     {
+     border: none;
      float : none;
+     border :1px solid lightgray;
      text-align: center;
+     width: 100%;
+
     } 
   } 
 

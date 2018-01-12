@@ -1,7 +1,13 @@
-html,body
+* {
+    box-sizing: border-box;
+}
+
+
+body
    {
-   	margin: 0;
-   	padding :0;
+   	font-family: Arial;
+    padding: 20px;
+    background: #f1f1f1;
    }
    
    div.header
@@ -15,7 +21,7 @@ html,body
    	box-sizing: border-box;
    }
 
-   ul.sidenav 
+ul.sidenav 
    {
     list-style-type: none;
     margin: 0;
@@ -29,7 +35,8 @@ html,body
    
    ul.sidenav li a
    {
-   display : block;
+    margin: 0;
+    display : block;
     color : black;
     width: 80px;
     padding : 8px 16px;
@@ -90,8 +97,6 @@ html,body
   } 
 
 
-
-
   ul.socialnav 
    {
     overflow :hidden;
@@ -101,17 +106,80 @@ html,body
     position:fixed;
    }
 
+
+
+div.blogheader {
+    padding: 30px;
+    font-size: 40px;
+    text-align: center;
+    background: white;
+}
+
+/* Create two unequal columns that floats next to each other */
+/* Left column */
+div.blogleftcolumn {   
+    float: left;
+    width: 75%;
+}
+
+/* Right column */
+div.blogrightcolumn {
+    float: left;
+    width: 25%;
+    padding-left: 20px;
+}
+
+/* Fake image */
+div.blogfakeimg {
+    background-color: #aaa;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Add a card effect for articles */
+div.blogcard {
+     background-color: white;
+     padding: 20px;
+     margin-top: 20px;
+}
+
+/* Clear floats after the columns */
+div.blogrow:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+@media (max-width: 800px) {
+    div.blogleftcolumn, div.blogrightcolumn {   
+        width: 100%;
+        padding: 0;
+    }
+}
+
+
   .fa 
   {
   padding: 10px;
   font-size: 10px;
-  width: 18px;
+  width: 20px;
+  text-align: center;
+  text-decoration: none;
+  margin: 2px;
+ }
+
+  .cardfa 
+  {
+  padding: 10px;
+  font-size: 10px;
+  width: 20px;
   text-align: center;
   text-decoration: none;
   margin: 2px;
   border-radius: 50%;
  }
-
 
  .fa:hover {
     opacity: 0.7;    
@@ -162,38 +230,3 @@ html,body
   text-align: center;
 }
 
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 30%;
-  margin: auto;
-  text-align: center;
-  font-family: arial;
-}
-
-.cardtitle {
-  color: grey;
-  font-size: 18px;
-}
-
-.cardbutton {
-  border: none;
-  outline: 0;
-  display: inline-block;
-  padding: 8px;
-  color: white;
-  background-color: #000;
-  text-align: center;
-  cursor: pointer;
-  width: 100%;
-  font-size: 18px;
-}
-
-.carda {
-  text-decoration: none;
-  font-size: 22px;
-  color: black;
-}
-
-.cardbutton:hover, a:hover {
-  opacity: 0.7;
-}
