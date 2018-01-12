@@ -50,6 +50,15 @@ div.blogfakeimg {
     border : 5px solid #ebebe0; 
 }
 
+div.blogimg {
+  box-sizing: border-box;
+    background-color: white;
+    width: 100%;
+    height: 18vw;
+    margin: 0;
+    border : 5px solid #ebebe0; 
+}
+
 .blogiframe
 { margin: 0;
   height: 100% ;
@@ -93,11 +102,15 @@ div.blogrow:after {
 
 
 /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-@media (max-width: 800px) {
+@media (max-width: 700px) {
     div.blogleftcolumn, div.blogrightcolumn {   
         box-sizing: border-box;
         width: 100%;
         padding: 0;
+    }
+    div.blogimg
+    {
+      height: 40%;
     }
 }
 
@@ -132,7 +145,7 @@ div.blogrow:after {
     {   
         box-sizing: border-box;
         margin-top: -5px; 
-        border-bottom: 8px solid #0086b3;
+        border-bottom: 8px solid #ebebe0;
         float:none;
         text-align: justify;
         overflow: auto;
