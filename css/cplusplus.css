@@ -89,17 +89,16 @@ ul.sidenav
     list-style-type: none;
     margin: 0;
     padding : 0;
-    width: 100;
+    width: 12%;
     background-color :darkgray;
     position : relative;
     height : 100%;
     overflow : auto;
    }
-
+   
    ul.sidenav li a
    {
-    margin: 0;
-    box-sizing: none;
+   display : block;
     color : black;
     width: 80px;
     padding : 8px 16px;
@@ -131,14 +130,12 @@ ul.sidenav
   {
     ul.sidenav
     { width: 100%;
-      box-sizing: none;
       height : auto;
       position : relative; 
     }
     ul.sidenav li a 
     {
      float : left;
-     box-sizing: none;
      text-align: center;
      padding :15px; 
     }
