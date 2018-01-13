@@ -51,12 +51,6 @@ html,body
    	color: white;
    }
    
-   div.content
-   {
-   	margin-left :12%;
-   	padding : 1px 16px;
-   	height: 100%;
-   }	 
 
   @media screen and (max-width: 3000px)
   {
@@ -72,10 +66,7 @@ html,body
      text-align: center;
      padding :15px;	
     }
-    div.content
-    {
-    	margin-left:0;
-    }
+   
   } 
   @media screen and (max-width: 500px)
   {

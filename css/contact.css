@@ -106,9 +106,15 @@ input[type=submit] {
     background-color: #4CAF50;
     color: white;
     padding: 12px 20px;
+    float: center;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+input[type=text]:hover,input[type=number]:hover,input[type=email]:hover , #country:hover , textarea:hover
+{
+  background-color: lightgray;
 }
 
 input[type=submit]:hover {
