@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+
+<head> 
+<title> Vikas Yadav </title>    
+<link rel="stylesheet" type="text/css" href="css/contact.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='https://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet'>
+
+<style>
+ 
+</style>
+ 
+ <div  class="header" > 
+  <a href="index.html" style="text-decoration: none;">  
+   <p style=" color: black; background-color: lightgray; font-family: Audiowide; text-align: center ;font-size: 6vw; margin:0;" ><b><span style="color: red;">B</span>ATTLE &nbsp;<span style="color: red;">R</span>AMP</b></p>
+  </a>    
+ </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+ 
+ <ul class="sidenav">
+    <li><a class="active" href="index.html">Home</a></b></li>
+    <li><a href="#">Software</a></li>
+    <li><a href="#">Hardware</a></li>
+    <li><a href="python.html">Python</a></li>
+    <li><a href="cplusplus.html">C++</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+ </ul>
+ 
+
+<h3>Contact Form</h3>
+
+ <div class="container">
+ 
+  <form id="contactForm1" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
+    <label for="fname">First Name</label>
+    <input type="text" id="fname" name="firstname" placeholder="Your name..">
+
+    <label for="lname">Last Name</label>
+    <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+
+    <label for="country">Country</label>
+    <select id="country" name="country">
+      <option value="australia">Australia</option>
+      <option value="canada">Canada</option>
+      <option value="usa">USA</option>
+    </select>
+
+    <label for="subject">Subject</label>
+    <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
+
+    <input type="submit" value="Submit">
+  </form> 
+
+</div>
+
+ <script type="text/javascript">
+    var frm = $('#contactForm1');
+
+    frm.submit(function (e) {
+
+        e.preventDefault();
+
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                alert("Thankyou ! Your Submission Has Been Accepted");
+            },
+            error: function (data) {
+                console.log('An error occurred.');
+                console.log(data);
+            },
+        });
+    });
+</script>
+
+</body>
+<div class="footer"> Copyright &copy; since 2018 , Made by - <strong>Vikas Yadav</strong> 
+</div>
+</html>
