@@ -40,21 +40,27 @@
  <div class="container">
  
   <form id="contactForm1" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
-    <label for="fname">First Name</label>
-    <input type="text" id="fname" name="firstname" placeholder="Your name..">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" placeholder="Your name.." required>
 
-    <label for="lname">Last Name</label>
-    <input type="text" id="lname" name="lastname" placeholder="Your last name..">
+    <label for="email">E-Mail</label>
+    <input type="email" id="email" name="E-mail " placeholder="Your E-mail Address" required>
+
+    <label for="contactno">Contact No</label>
+    <input type="number" id="contactno" name="number" placeholder="Your Contact No (optional)" optional>
 
     <label for="country">Country</label>
     <select id="country" name="country">
+      <option value="India">India</option>
+      <option value="Russia">Russia</option>
+      <option value="Japan">Japan</option>  
       <option value="australia">Australia</option>
       <option value="canada">Canada</option>
       <option value="usa">USA</option>
     </select>
 
     <label for="subject">Subject</label>
-    <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px"></textarea>
+    <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px" required></textarea>
 
     <input type="submit" value="Submit">
   </form> 
