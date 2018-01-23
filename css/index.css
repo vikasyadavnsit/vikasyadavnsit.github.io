@@ -4,6 +4,10 @@ body
   padding: 0;
 }
 
+.wrapper
+{
+  display: grid;  
+}
 
 h1{
   background-color: blue;
