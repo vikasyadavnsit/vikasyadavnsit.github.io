@@ -96,6 +96,25 @@
 }
 
 
+.welcome
+{
+ height:100%;
+ margin:0;
+ padding-top:35;
+ font-family:Oleo script;
+ font-size:30px;
+ background-color:orange;
+ color:black;
+}
+
+@media screen and (max-width:430px)
+{
+  .welcome
+  {
+    padding-top: 18px;
+  }
+}
+
 
 /* body affix top naigation bar */
 body {
