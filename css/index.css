@@ -1,3 +1,102 @@
+
+/* preloader */
+.preloader
+{
+  background: linear-gradient(270deg, #1068eb, #10ebca, #5beb10, #eb7610, #e410eb, #eb103b, #96c21a);
+  background-size: 1400% 1400%;
+  position: fixed;
+  -webkit-animation: vikaspreloader 16s ease infinite;
+  -moz-animation: vikaspreloader 16s ease infinite;
+  -o-animation: vikaspreloader 16s ease infinite;
+  animation: vikaspreloader 16s ease infinite;
+}
+
+  @-webkit-keyframes vikaspreloader {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+  }
+  @-moz-keyframes vikaspreloader {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+  }
+  @-o-keyframes vikaspreloader {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+  }
+  @keyframes vikaspreloader {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+  }
+
+
+/*loader */
+#center
+ {
+   position:relative;
+   top:40%;
+   left:0;
+   bottom:0;
+   right:0;
+   margin-top:0;
+  font-family: "HelveticaNeue-CondensedBold", "HelveticaNeue", Helvetica;
+  font-weight: bold;
+  font-size: 10vw;
+  text-align: center;
+  color: #333;
+}
+
+.jump {
+  position: relative;
+  animation: jump 1.4s ease-in-out infinite;
+  -webkit-animation: jump 1.4s ease-in-out infinite;
+}
+.jump:nth-of-type(1){
+  animation-delay:0.2s;
+  -webkit-animation-delay:0.1s; /* Safari and Chrome */
+}
+.jump:nth-of-type(2){
+  animation-delay:0.2s;
+  -webkit-animation-delay:0.2s; /* Safari and Chrome */
+}
+.jump:nth-of-type(3){
+  animation-delay:0.3s;
+  -webkit-animation-delay:0.3s; /* Safari and Chrome */
+}
+.jump:nth-of-type(4){
+  animation-delay:0.4s;
+  -webkit-animation-delay:0.4s; /* Safari and Chrome */
+}
+.jump:nth-of-type(5){
+  animation-delay:0.5s;
+  -webkit-animation-delay:0.5s; /* Safari and Chrome */
+}
+.jump:nth-of-type(6){
+  animation-delay:0.6s;
+  -webkit-animation-delay:0.6s; /* Safari and Chrome */
+}
+.jump:nth-of-type(7){
+  animation-delay:0.7s;
+  -webkit-animation-delay:0.7s; /* Safari and Chrome */
+}
+
+
+@-webkit-keyframes jump {
+  0% { top: 0; }
+  50% { top: -50px; }
+  100% { top: 0; }
+}
+@keyframes jump {
+  0% { top: 0; }
+  50% { top: -50px; }
+  100% { top: 0; }
+}
+
+
+
 /* body affix top naigation bar */
 body {
      position: relative;
@@ -171,5 +270,5 @@ body {
 /* footer  */
 .fa:hover
 {
- opacity:0.7;  
+ opacity:0.7;
 }
