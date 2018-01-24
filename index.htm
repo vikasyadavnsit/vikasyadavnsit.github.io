@@ -16,17 +16,17 @@
 
     <script>
 
-  setTimeout(function(){
-   $(".preloader").hide();
-   $(".mainclass").fadeIn(2000);
-},5000);
+     setTimeout(function(){
+  //     $(".preloader").remove();
+//       $(".mainclass").fadeIn(2000);
+      },5000);
 
     </script>
   </head>
   <body data-spy="scroll" data-target=".navbar" data-offset="50"  >
 
 
-  <div class="preloader" style="width:100%;height:100%">
+  <div class="preloader" style="width:100%;height:100%; display:none;">
     <div id="center">
      <span class="jump">L</span>
      <span class="jump">O</span>
@@ -38,11 +38,10 @@
     </div>
   </div>
 
-<div class="mainclass" style="display:none;">
-  <div class="container-fluid" style="background-color:black; color:#fff;">
+<div class="mainclass" style=";">
+  <div class="container-fluid" style="background-color:orange; color:#fff;">
     <h1 class="text-center jumbotron" style="background-color:orange;color:black;">WELCOME  COHORTS!</h1>
-    <h3 class="text-center"></h3>
-  </div>
+   </div>
 
 
     <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
@@ -59,8 +58,8 @@
 
        <div class="collapse navbar-collapse" id="mynavbar">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="index.htm">Home</a></li>
-          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm">C++ &nbsp;
+          <li class="active"><a href="index.htm"><strong>Home</strong></a></li>
+          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>C++</strong> &nbsp;
            <span class="caret"></span></a>
            <ul class="dropdown-menu">
              <li><a href="#">Beginners</a></li>
@@ -69,7 +68,7 @@
            </ul>
          </li>
 
-          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm">Python
+          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>Python</strong>
            <span class="caret"></span></a>
              <ul class="dropdown-menu">
                <li><a  href="#">Image Processing</a></li>
@@ -78,7 +77,7 @@
              </ul>
          </li>
 
-          <li class="dropdown" ><a class="dropdown-toglle" data-toggle="dropdown" href="index.htm">Web Development
+          <li class="dropdown" ><a class="dropdown-toglle" data-toggle="dropdown" href="index.htm"><strong>Web Development</strong>
            <span class="caret"></span></a>
            <ul class="dropdown-menu">
              <li><a href="#">HTML5</a></li>
@@ -90,7 +89,7 @@
              <li><a href="#">SQL</a></li>
            </ul>
          </li>
-          <li ><a href="index.htm">Contact</a></li>
+          <li ><a href="index.htm"><strong>Contact</strong></a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
@@ -238,7 +237,7 @@
    <div class="container-fluid font-weight-light" style="background-color:#1F262A; color:white;">
      <div class="row">
 
-         <div class="col-md-6 col-sm-12 col-xs-12">
+         <div class="col-md-12 col-sm-12 col-xs-12">
           <p class="text-center">Website Developer Game Developer and Software Developer
           <br>Designed By : Vikas Yadav</p>
         </div>
@@ -251,7 +250,7 @@
        </div>
 
        <div class="col-xs-12 col-md-12" style="margin-top:10px; background-color:#1F262A;">
-        <p class="text-center">COPYRIGHT
+        <p class="text-center">
           <i class="fa fa-copyright" aria-hidden="true"></i> 2018 BATTLERAMP &nbsp;ALL RIGHTS RESERVED <br>
         </p>
        </div>
