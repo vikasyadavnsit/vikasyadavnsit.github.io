@@ -1,4 +1,34 @@
 
+
+/* body affix top naigation bar */
+body {
+     position: relative;
+ }
+
+ .affix {
+     top:0;
+     width: 100%;
+     z-index: 3 !important;
+ }
+ .navbar {
+     margin-bottom: 0px;
+ }
+
+ .affix ~ .container-fluid {
+    position: relative;
+    top: 50px;
+ }
+
+
+
+
+
+
+
+
+
+
+
 /* preloader */
 .preloader
 {
@@ -118,23 +148,6 @@
 }
 
 
-/* body affix top naigation bar */
-body {
-     position: relative;
- }
- .affix {
-     top:0;
-     width: 100%;
-     z-index: 9999 !important;
- }
- .navbar {
-     margin-bottom: 0px;
- }
-
- .affix ~ .container-fluid {
-    position: relative;
-    top: 50px;
- }
 
 /* progress bar */
 

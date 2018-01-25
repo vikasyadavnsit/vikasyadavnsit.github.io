@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1,shrink-to-fit=no">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> Welcome To Homepage </title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet"/>
@@ -12,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css?family=Teko:400,700" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <script src='https://www.google.com/recaptcha/api.js'></script>
-
     <style>
 
     </style>
@@ -25,15 +24,18 @@
       },5000);
 
       $(document).ready(function(){
-          $("#loginbtn").click(function(){
-              $("#myModal").modal();
-          });
+        $("a.loginbtn").click(function(){
+          $("#loginModal").modal('show');
+        });
+
+        $("a.signupbtn").click(function(){
+          $("#singupModal").modal('show');
+        });
       });
+
     </script>
-
-
   </head>
-  <body data-spy="scroll" data-target=".navbar" data-offset="50"  >
+  <body data-spy="scroll" data-target=".navbar" data-offset="50" >
 
 
   <div class="preloader" style="width:100%;height:100%; display:none;">
@@ -50,80 +52,68 @@
 
 
 <div class="mainclass" style=";">
-  <div class="container-fluid" style="background-color:orange; height:100px;">
-    <div class="row" >
-      <div class="col-sm-5 col-md-5 col-xs-4 text-right" style="margin:0px;padding:0;">
-       <i class="fa fa-gg-circle fa-5x" style="padding:16px;" aria-hidden="true"></i>
-     </div>
 
-     <div class="col-sm-7 col-md-7 col-xs-8" style="margin:0;padding:0; background-color:red; height:100%;">
-      <h2 class="text-left welcome">
-        WELCOME COHORTS!</h2>
-    </div>
-  </div>
-</div>
+  <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
+    <div class="container-fluid">
 
-
-    <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
-      <div class="container-fluid">
-
-        <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynavbar">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-          <a class="navbar-brand" href="index.htm"><strong>BattleRamp</strong></a>
-        </div>
-
-       <div class="collapse navbar-collapse" id="mynavbar">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="index.htm"><strong>Home</strong></a></li>
-          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>C++</strong> &nbsp;
-           <span class="caret"></span></a>
-           <ul class="dropdown-menu">
-             <li><a href="#">Beginners</a></li>
-             <li><a href="#">Basic</a></li>
-             <li><a href="#">Advaced</a></li>
-           </ul>
-         </li>
-
-          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>Python</strong>
-           <span class="caret"></span></a>
-             <ul class="dropdown-menu">
-               <li><a  href="#">Image Processing</a></li>
-               <li><a  href="#">Data Mining</a></li>
-               <li><a  href="#">Machine Learning</a></li>
-             </ul>
-         </li>
-
-          <li class="dropdown" ><a class="dropdown-toglle" data-toggle="dropdown" href="index.htm"><strong>Web Development</strong>
-           <span class="caret"></span></a>
-           <ul class="dropdown-menu">
-             <li><a href="#">HTML5</a></li>
-             <li><a href="#">CSS3</a></li>
-             <li><a href="#">JavaScript</a></li>
-             <li><a href="#">Bootstrap</a></li>
-             <li><a href="#">Jquery</a></li>
-             <li><a href="#">PHP</a></li>
-             <li><a href="#">SQL</a></li>
-           </ul>
-         </li>
-          <li ><a href="contact.htm"><strong>Contact</strong></a></li>
-        </ul>
-
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><span class="glyphicon glyphicon-user"></span> SingUp</a></li>
-          <li><a id="loginbtn" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-        </ul>
-
+      <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+        <a class="navbar-brand" href="index.htm"><strong>BattleRamp</strong></a>
       </div>
-     </div>
-    </nav>
+
+     <div class="collapse navbar-collapse" id="mynavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="index.htm"><strong>Home</strong></a></li>
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>C++</strong> &nbsp;
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li><a href="#">Beginners</a></li>
+           <li><a href="#">Basic</a></li>
+           <li><a href="#">Advaced</a></li>
+         </ul>
+       </li>
+
+        <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="index.htm"><strong>Python</strong>
+         <span class="caret"></span></a>
+           <ul class="dropdown-menu">
+             <li><a  href="#">Image Processing</a></li>
+             <li><a  href="#">Data Mining</a></li>
+             <li><a  href="#">Machine Learning</a></li>
+           </ul>
+       </li>
+
+        <li class="dropdown" ><a class="dropdown-toglle" data-toggle="dropdown" href="index.htm"><strong>Web Development</strong>
+         <span class="caret"></span></a>
+         <ul class="dropdown-menu">
+           <li><a href="#">HTML5</a></li>
+           <li><a href="#">CSS3</a></li>
+           <li><a href="#">JavaScript</a></li>
+           <li><a href="#">Bootstrap</a></li>
+           <li><a href="#">Jquery</a></li>
+           <li><a href="#">PHP</a></li>
+           <li><a href="#">SQL</a></li>
+         </ul>
+       </li>
+        <li ><a href="contact.htm"><strong>Contact</strong></a></li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a class="signupbtn" href="#"><span class="glyphicon glyphicon-user"></span> SingUp</a></li>
+        <li><a class="loginbtn" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+
+    </div>
+   </div>
+  </nav>
 
 <!--  Login and signup modal -->
+<!--  Login and signup modal -->
 <!-- login Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
+  <div class="modal fade" id="loginModal" role="dialog" style="overflow-y:scroll;" >
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content" style="margin-top:30%;">
@@ -149,7 +139,7 @@
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-          <p>Not a member? <a href="#">Sign Up</a></p>
+          <p>Not a member? <a data-dismiss="modal" class="signupbtn">SignUp</a></p>
           <p>Forgot <a href="#">Password?</a></p>
         </div>
       </div>
@@ -158,14 +148,14 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="singupModal" role="dialog">
+    <div class="modal fade" id="singupModal" role="dialog" style="overflow-y:scroll;">
       <div class="modal-dialog">
 
         <!-- Modal content-->
         <div class="modal-content" style="margin-top:30%;">
           <div class="modal-header" style="padding:35px 50px;">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
+            <h4><span class="glyphicon glyphicon-lock"></span> SignUp</h4>
           </div>
           <div class="modal-body" style="padding:40px 50px;">
             <form role="form">
@@ -206,6 +196,7 @@
 
             <!--  <div class="g-recaptcha" data-sitekey="6LcNdEIUAAAAAKzD1YeZ3vapDPbfC7t-OUsYPQoZ"></div> -->
             <div class="g-recaptcha" data-sitekey="6LcSdEIUAAAAAL4q-7keXluaJnwA1tx3s7wuQNCD"></div>
+
               <div class="checkbox">
                 <label><input type="checkbox" value="" checked>Remember me</label>
               </div>
@@ -214,7 +205,7 @@
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-            <p>Not a member? <a href="#">Sign Up</a></p>
+            <p>Already a member? <a data-dismiss="modal" class="loginbtn">Login</a></p>
             <p>Forgot <a href="#">Password?</a></p>
           </div>
         </div>
@@ -223,17 +214,15 @@
     </div>
   </div>
 
-  <script>
-  $(document).ready(function(){
-          $("#singupModal").modal();
-  });
-  </script>
 
 
 
 
 
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+
+
+    <div id="myCarousel" class="carousel slide" data-ride="carousel" >
       <!-- Indicators -->
       <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -244,7 +233,7 @@
       </ol>
 
       <!-- Wrapper for slides -->
-      <div class="carousel-inner">
+      <div class="carousel-inner"  >
         <div class="item active">
           <img src="images/homepage/slider1.png" alt="Be youself">
           <div class="carousel-caption">
