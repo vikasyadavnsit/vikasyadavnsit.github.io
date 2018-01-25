@@ -22,21 +22,7 @@
   </head>
   <body data-spy="scroll" data-target=".navbar" data-offset="50"  >
 
-<div class="mainclass" style=";">
-  <div class="container-fluid" style="background-color:orange; height:100px;">
-    <div class="row" >
-      <div class="col-sm-5 col-md-5 col-xs-4 text-right" style="margin:0px;padding:0;">
-       <i class="fa fa-gg-circle fa-5x" style="padding:16px;" aria-hidden="true"></i>
-     </div>
-
-     <div class="col-sm-7 col-md-7 col-xs-8" style="margin:0;padding:0; background-color:red; height:100%;">
-      <h2 class="text-left welcome">
-        WELCOME COHORTS!</h2>
-    </div>
-  </div>
-</div>
-
-
+<div class="mainclass" style="">
     <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
       <div class="container-fluid">
 
@@ -93,28 +79,106 @@
       </div>
      </div>
     </nav>
-
+ </div>
 
     <div class="container-fluid">
      <div class="row">
       <div class="col-sm-12 col-xs-12" style="background-color:dodgerblue; margin:0;padding:10px">
-        <h1 class="text-center" style="font-family:Oleo Script; color:orange; ">
+        <h1 class="text-center" style="font-family:Oleo Script; color:black; ">
           Connect with Us </h1>
        </div>
      </div>
+   </div>
 
-     <div class="row">
-      <div class="col-sm-12 col-xs-12" style="background-color:dodgerblue; margin:0;padding:10px">
-        <h1 class="text-center" style="font-family:Oleo Script; color:orange; ">
-          Connect with Us </h1>
-       </div>
+   <div class="container-fluid" style="padding-top:20px; background-color:#FF033E;">
+     <form id="contactForm1" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
+      <div class="form-row">
+       <div class="form-group col-md-6">
+        <label for="name" >Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name.." required>
+      </div>
+      <div class="form-group col-md-6">
+       <label for="email">E-Mail</label>
+       <input type="email" id="email" name="E-mail" placeholder="Your E-mail Address" required>
+      </div>
      </div>
 
-    <form>
-      </form>
+     <div class="form-row">
+      <div class="form-group col-md-6">
+       <label for="contactno">Contact No</label>
+       <input type="number" id="contactno" name="number" placeholder="Your Contact No (optional)" optional>
+      </div>
+      <div class="form-group col-md-6">
+       <label for="country">Country</label>
+       <select id="country" class="dropdown" name="country" value="India">
+         <option value="India">India</option>
+         <option value="Russia">Russia</option>
+         <option value="Japan">Japan</option>
+         <option value="australia">Australia</option>
+         <option value="canada">Canada</option>
+         <option value="usa">USA</option>
+       </select>
+      </div>
     </div>
 
-   <div class="container-fluid font-weight-light" style="background-color:#1F262A; color:white;">
+    <div class="form-row">
+     <div class="form-group col-md-6">
+       <label for="subject">Subject</label>
+       <textarea id="subject" name="subject" placeholder="Write something.." style="height:200px" required></textarea>
+        <div  style="text-align: center;">
+         <input  type="submit" value="Submit">
+       </div>
+      </div>
+     </div>
+
+     </form>
+
+   </div>
+
+    <script type="text/javascript">
+       var frm = $('#contactForm1');
+
+       frm.submit(function (e) {
+
+           e.preventDefault();
+
+           $.ajax({
+               type: frm.attr('method'),
+               url: frm.attr('action'),
+               data: frm.serialize(),
+               success: function (data) {
+                  $("#myModal").modal('show');
+          //        alert("Thankyou ! Your Submission Has Been Accepted");
+               },
+               error: function (data) {
+                aler("Error ! Connection failed")
+               },
+           });
+       });
+   </script>
+
+   <div class="modal fade" id="myModal" role="dialog">
+       <div class="modal-dialog" >
+
+         <!-- Modal content-->
+         <div class="modal-content" style="background-color:orange;">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+             <h1 class="modal-title text-center">battleramp.com</h1>
+           </div>
+           <div class="modal-body text-center">
+             <h3>Thankyou ! Your Submission Has Been Accepted</h3>
+             <p>We Will Contact You Soon</p>
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           </div>
+         </div>
+
+       </div>
+     </div>
+
+   <div class="container-fluid" style="background-color:#1F262A; color:white;">
      <div class="row">
          <div class="col-md-12' col-sm-12 col-xs-12">
           <p class="text-center ">Website Developer Game Developer and Software Developer
@@ -135,6 +199,6 @@
        </div>
      </div>
    </div>
-</div>
+
   </body>
 </html>

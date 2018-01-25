@@ -1,29 +1,9 @@
 
-.welcome
-{
- height:100%;
- margin:0;
- padding-top:35px;
- font-family:Oleo script;
- font-size:30px;
- background-color:orange;
- color:black;
-}
-
-@media screen and (max-width:428px)
-{
-  .welcome
-  {
-    font-size: 20px;
-    padding-top: 38px;
-  }
-}
-
-
 /* body affix top naigation bar */
 body {
      position: relative;
  }
+
  .affix {
      top:0;
      width: 100%;
@@ -39,8 +19,39 @@ body {
  }
 
 
-/* footer  */
-.fa:hover
+input[type=text],input[type=number],input[type=email], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    resize: vertical;
+}
+
+input[type=submit] {
+    background-color: dodgerblue;
+    color: black;
+    font-family: Oleo script;
+    padding: 12px 20px;
+    float: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=text]:hover,input[type=number]:hover,input[type=email]:hover , #country:hover , textarea:hover
 {
- opacity:0.7;
+  background-color: lightgray;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
 }
