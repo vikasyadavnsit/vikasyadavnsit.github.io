@@ -21,14 +21,6 @@ body {
 
 
 
-
-
-
-
-
-
-
-
 /* preloader */
 .preloader
 {
@@ -305,4 +297,16 @@ body {
 .fa:hover
 {
  opacity:0.7;
+}
+
+
+/* parallax */
+
+.parallax {
+  height: 400px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 0.9;
 }
