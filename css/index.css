@@ -300,6 +300,7 @@ body {
 }
 
 
+
 /* parallax */
 
 .parallax {
@@ -310,6 +311,28 @@ body {
     background-size: cover;
     opacity: 0.9;
 }
+
+.pl
+{
+  padding: 80px;
+}
+
+@media only screen and (max-with:768px)
+{
+  #pl1 , #pl2
+  {
+   display:none;
+  }
+
+  .pl
+  {
+    padding:5px;
+  }
+
+}
+
+
+
 
 
 
