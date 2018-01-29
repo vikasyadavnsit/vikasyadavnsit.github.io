@@ -317,19 +317,13 @@ body {
   padding: 80px;
 }
 
-@media only screen and (max-with:768px)
+@media only screen and (max-width:768px)
 {
-  #pl1 , #pl2
-  {
-    background-image: none;
-  }
 
   .pl
   {
-
-    padding:20px 20px;
+    padding:30px 20px;
   }
-
 }
 
 
