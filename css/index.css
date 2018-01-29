@@ -321,12 +321,13 @@ body {
 {
   #pl1 , #pl2
   {
-   display:none;
+    background-image: none;
   }
 
   .pl
   {
-    padding:5px;
+
+    padding:20px 20px;
   }
 
 }
