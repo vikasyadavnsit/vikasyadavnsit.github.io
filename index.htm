@@ -21,7 +21,7 @@
      setTimeout(function(){
        $(".preloader").remove();
        $(".mainclass").fadeIn(2000);
-      },5000);
+     },5000);
 
       $(document).ready(function(){
         $("a.loginbtn").click(function(){
@@ -33,9 +33,13 @@
         });
       });
 
+
+
     </script>
   </head>
   <body data-spy="scroll" data-target=".navbar" data-offset="50" >
+
+  <a href="j" id="return-to-top"><i class="icon-chevron-up"></i></a>
 
 
   <div class="preloader" style="width:100%;height:100%; z-index:100;">
@@ -432,6 +436,9 @@
 
 
 <!-- Time lIne -->
+<div class="jumbotron" style="background-color:orange;margin-bottom:0px;">
+  <h2 class="text-center" style="color:black;font-family:Oleo script;">TimeLine</h2>
+</div>
 
 <div ckass="container-fluid" style=" box-sizing: border-box; background-color: #474e5d; font-family: Helvetica, sans-serif; ">
 <div class="timeline">
@@ -480,6 +487,9 @@
 
 
 <!-- Profiles   -->
+<div class="jumbotron" style="background-color:dodgerblue;margin-bottom:0px;">
+  <h2 class="text-center" style="color:black;font-family:Oleo script;">Profiles</h2>
+</div>
 
 <div class="profiles row" style="background:white; margin:40px 20px; margin:0;">
 
@@ -518,8 +528,11 @@
 
 
 <!--User Ratings  -->
+<div class="jumbotron" style="background-color:tomato;margin-bottom:0px;">
+  <h2 class="text-center" style="color:black;font-family:Oleo script;">User Ratings</h2>
+</div>
 
-<div style="padding:40px 0px; background-color:	#778899;">
+<div style="padding:40px 0px; background-color:white">
 <div  class="userrating container-fluid">
  <span class="heading">User Rating</span>
  <span class="fa fa-star checked"></span>
@@ -594,38 +607,33 @@
 
 
 <!-- quotes slideshow -->
-<!--
+<div class="container-fluid" style="background-color:#e1cbf6; padding:40px 20px;">
     <div id="myCarousel" class="carousel slide" data-ride="carousel" >
 
-      <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-        <li data-target="#myCarousel" data-slide-to="3"></li>
-        <li data-target="#myCarousel" data-slide-to="4"></li>
-      </ol>
-
-      <div class="carousel-inner"  >
+      <div class="carousel-inner" style="text-align:center;font-size:calc(2vw + 0.4em);" >
         <div class="item active">
-         <div class="jumbotron">
-           <q>I love you the more in that I believe you had liked me for my own sake and for nothing else</q>
-           <p class="author">- John Keats</p>
-         </div>
+           <q style="font-style:italic;">I have not failed. I've just found 10,000 ways that won't work.</q>
+           <p style="color:cornflowerblue;">- Thomas A. Edison</p>
         </div>
 
+        <div class="item ">
+           <q style="font-style:italic;">It’s not that I’m so smart, it’s just that I stay with problems longer.</q>
+           <p style="color:cornflowerblue;">— Albert Einstein</p>
+        </div>
+
+        <div class="item ">
+           <q style="font-style:italic;">Do not confuse motion and progress. A rocking horse keeps moving but does not make any progress.</q>
+           <p style="color:cornflowerblue;">— Alfred A. Montapert</p>
+        </div>
+
+        <div class="item ">
+           <q style="font-style:italic;">The very best thing you can do for the whole world is to make the most of yourself.</q>
+           <p style="color:cornflowerblue;">— Wallace Wattles</p>
+        </div>
 
       </div>
-
-      <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-        <span class="glyphicon glyphicon-chevron-left"></span>
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="right carousel-control" href="#myCarousel" data-slide="next">
-        <span class="glyphicon glyphicon-chevron-right"></span>
-        <span class="sr-only">Next</span>
-      </a>
     </div>
--->
+</div>
 
 
 <!-- footer -->
