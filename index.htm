@@ -10,8 +10,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Oleo+Script:400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Teko:400,700" rel="stylesheet">
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="js/predictionmap.js"> </script>
+    <script src='https://www.google.com/recaptcha/api.j'></script>
+
     <style>
 
     </style>
@@ -20,8 +24,8 @@
 
      setTimeout(function(){
        $(".preloader").remove();
-       $(".mainclass").fadeIn(2000);
-     },5000);
+       $(".mainclass").fadeIn(2);
+     },5);
 
       $(document).ready(function(){
         $("a.loginbtn").click(function(){
@@ -56,6 +60,7 @@
 
 
 <div class="mainclass" style=" display:none;">
+
 
   <nav class="navbar navbar-inverse" style="border-radius:0;" data-spy="affix" data-offset-top="197">
     <div class="container-fluid">
@@ -326,6 +331,15 @@
         </div>
     </div>
   </div>
+
+
+<!-- prediction  graph -->
+<div class="jumbotron" style="background-color:tomato;margin-bottom:0px;">
+  <h2 class="text-center" style="color:black;font-family:Oleo script;">Statistics</h2>
+</div>
+<div id="chartContainer" class="predictiongraph" style="width: 100%;"></div>
+
+
 
 <!-- Parallax Section -->
   <div class="jumbotron" style="background-color:dodgerblue;margin-bottom:0px;">
@@ -607,10 +621,10 @@
 
 
 <!-- quotes slideshow -->
-<div class="container-fluid" style="background-color:#e1cbf6; padding:40px 20px;">
+<div class="container-fluid quoteslide" style="background-color:#e1cbf6;">
     <div id="myCarousel" class="carousel slide" data-ride="carousel" >
 
-      <div class="carousel-inner" style="text-align:center;font-size:calc(2vw + 0.4em);" >
+      <div class="carousel-inner" style="text-align:center;font-size:calc(2vw + 0.3em);" >
         <div class="item active">
            <q style="font-style:italic;">I have not failed. I've just found 10,000 ways that won't work.</q>
            <p style="color:cornflowerblue;">- Thomas A. Edison</p>
@@ -634,6 +648,17 @@
       </div>
     </div>
 </div>
+
+
+<!-- Visitor Number-->
+<div  class="row" style="height:50px;">
+  <div class="col-md-12 text-center">
+    <p  class="visitor" style="color:#44D7A8; font-weight:bold;">Visitor Number :
+    <img  border="0" src="http://cc.amazingcounters.com/counter.php?i=3220201&c=9660916" alt="001200">
+    </p>
+  </div>
+</div>
+
 
 
 <!-- footer -->

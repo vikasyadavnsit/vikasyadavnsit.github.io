@@ -587,4 +587,81 @@ body {
 
 
 
-/* return to top  button*/
+/* quotes slidedshow*/
+.quoteslide
+{
+  padding: 40px;
+  height: 200px;
+}
+
+@media all and (max-width:950px)
+{
+  .quoteslide
+  {
+     padding:20px;
+    height: 125px;
+  }
+}
+
+@media all and (max-width:600px)
+{
+  .quoteslide
+  {
+     padding:20px;
+    height: 100px;
+  }
+}
+
+/*   Visitor */
+.visitor
+{
+ font-size:27px;
+ padding-top:4px;
+}
+
+@media all and (max-width:400px)
+{
+  .visitor
+  {
+   padding-top:10px;
+   font-size:20px;
+  }
+}
+@media all and (max-width:350px)
+{
+  .visitor
+  {
+   padding-top:12px;
+   font-size:15px;
+  }
+}
+
+/* prediction graph*/
+.predictiongraph
+{
+  height: 650px;
+}
+
+@media all and (max-width:950px)
+{
+  .predictiongraph
+  {
+   height: 550px;
+  }
+}
+
+@media all and (max-width:700px)
+{
+  .predictiongraph
+  {
+   height: 400px;
+  }
+}
+
+@media all and (max-width:400px)
+{
+  .predictiongraph
+  {
+   height: 280px;
+  }
+}
