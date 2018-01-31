@@ -640,6 +640,7 @@ body {
 .predictiongraph
 {
   height: 510px;
+  width: 100%;
 }
 
 @media all and (max-width:950px)

@@ -15,7 +15,7 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="js/highchartsd.js"></script>
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    <script src='https://www.google.com/recaptcha/api.j'></script>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
 
     <style>
 
@@ -25,20 +25,10 @@
     <script>
      setTimeout(function(){
        $(".preloader").remove();
-       $(".mainclass").fadeIn(2);
-     },5);
-
-      $(document).ready(function(){
-        $("a.loginbtn").click(function(){
-          $("#loginModal").modal('show');
-        });
-
-        $("a.signupbtn").click(function(){
-          $("#singupModal").modal('show');
-        });
-      });
-
+       $(".mainclass").fadeIn(2000);
+     },5000);
     </script>
+
 
   </head>
   <body data-spy="scroll" data-target=".navbar" data-offset="50" >
@@ -70,7 +60,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-        <a class="navbar-brand" href="index.htm"><strong>BattleRamp</strong></a>
+        <a class="navbar-brand" href="index.htm"><strong>BATTLERAMP</strong></a>
       </div>
 
      <div class="collapse navbar-collapse" id="mynavbar">
@@ -110,10 +100,9 @@
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a class="signupbtn" href="#"><span class="glyphicon glyphicon-user"></span> SingUp</a></li>
-        <li><a class="loginbtn" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a type="button" data-toggle="modal" data-target="#signupModal" href="#"><span class="glyphicon glyphicon-user"></span> SingUp</a></li>
+        <li><a type="button" data-toggle="modal" data-target="#loginModal" href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
       </ul>
-
     </div>
    </div>
   </nav>
@@ -130,24 +119,24 @@
           <h4><span class="glyphicon glyphicon-lock"></span> Login</h4>
         </div>
         <div class="modal-body" style="padding:40px 50px;">
-          <form role="form">
+          <form role="form" id="loginform" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
             <div class="form-group">
               <label for="usrname"><span class="glyphicon glyphicon-user"></span> Username</label>
-              <input type="text" class="form-control" id="usrname" placeholder="Enter email">
+              <input type="text" class="form-control" name="User Name" id="usrname" placeholder="Enter email">
             </div>
             <div class="form-group">
               <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-              <input type="text" class="form-control" id="psw" placeholder="Enter password">
+              <input type="text" class="form-control" name="Password" id="psw" placeholder="Enter password">
             </div>
             <div class="checkbox">
-              <label><input type="checkbox" value="" checked>Remember me</label>
+              <label><input type="checkbox" value="" name="checkbox" checked>Remember me</label>
             </div>
               <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-off"></span> Login</button>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-          <p>Not a member? <a data-dismiss="modal" class="signupbtn">SignUp</a></p>
+          <button type="submit"  class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
+          <p>Not a member? <a  href="#" type="button" data-toggle="modal" data-target="#signupModal" data-dismiss="modal">SignUp</a></p>
           <p>Forgot <a href="#">Password?</a></p>
         </div>
       </div>
@@ -155,8 +144,55 @@
   </div>
 
 
+  <script type="text/javascript">
+     var frm = $('#loginform');
+
+     frm.submit(function (e) {
+
+         e.preventDefault();
+
+         $.ajax({
+             type: frm.attr('method'),
+             url: frm.attr('action'),
+             data: frm.serialize(),
+             success: function (data) {
+              $("#loginModal .close").click();
+              jQuery.noConflict();
+              $("#loginmsg").modal('show');
+             },
+             error: function (data) {
+              alert("Error ! Connection failed")
+             },
+         });
+     });
+ </script>
+
+ <div class="modal fade" id="loginmsg" role="dialog">
+     <div class="modal-dialog" >
+
+       <!-- Modal content-->
+       <div class="modal-content" style="background-color:dodgerblue;margin-top:30%;">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal">&times;</button>
+           <h1 class="modal-title text-center">battleramp.com</h1>
+         </div>
+         <div class="modal-body text-center">
+           <h3>You have Sucessfully Sent a Login Request !</h3>
+           <p>Your Account will be live soon. Have a Nice Day!</p>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+       </div>
+
+     </div>
+   </div>
+
+
+
+
     <!-- Modal -->
-    <div class="modal fade" id="singupModal" role="dialog" style="overflow-y:scroll;">
+    <div class="modal fade" id="signupModal" role="dialog" style="overflow-y:scroll;">
       <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -166,54 +202,54 @@
             <h4><span class="glyphicon glyphicon-lock"></span> SignUp</h4>
           </div>
           <div class="modal-body" style="padding:40px 50px;">
-            <form role="form">
+            <form role="form" id="signupform" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
 
               <div class="row">
                <div class="form-group col-md-6 col-sm-6 col-xs-12">
                 <label for="firstname"><span class="fa fa-user"></span> First Name</label>
-                <input type="text" class="form-control" id="firstname" placeholder="First Name">
+                <input type="text" name="firstname" class="form-control" id="firstname" placeholder="First Name" required>
                </div>
 
                <div class="form-group col-md-6 col-sm-6 col-xs-12">
                 <label for="lastname"><span class="fa fa-user"></span> Last Name</label>
-                <input type="text" class="form-control" id="lastname" placeholder="Last Name">
+                <input type="text" name="lastname" class="form-control" id="lastname" placeholder="Last Name">
                </div>
              </div>
 
              <div class="row">
               <div class="form-group col-xs-12">
                <label for="emailadd"><span class="fa fa-envelope"></span> Email</label>
-               <input type="email" class="form-control" id="emailadd" placeholder="Your Email">
+               <input type="email" name="email" class="form-control" id="emailadd" placeholder="Your Email" required>
               </div>
             </div>
 
             <div class="form-group">
               <label for="contactnum"><span class="fa fa-phone"></span> Contact</label>
-               <input type="number" class="form-control" id="contactnum" placeholder="Contact">
+               <input type="number" name="contact number" class="form-control" id="contactnum" placeholder="Contact" required>
              </div>
 
                  <div class="form-group">
                    <label for="Username"><span class="glyphicon glyphicon-user"></span> Username</label>
-                    <input type="text" class="form-control" id="Username" placeholder="User Name">
+                    <input type="text" name="username" class="form-control" id="Username" placeholder="User Name" required>
                   </div>
 
                   <div class="form-group">
                     <label for="psw"><span class="glyphicon glyphicon-eye-open"></span> Password</label>
-                    <input type="password" class="form-control" id="psw" placeholder="Enter password">
+                    <input type="password" name="password" class="form-control" id="psw" placeholder="Enter password" required>
                   </div>
 
             <!--  <div class="g-recaptcha" data-sitekey="6LcNdEIUAAAAAKzD1YeZ3vapDPbfC7t-OUsYPQoZ"></div> -->
             <div class="g-recaptcha" data-sitekey="6LcSdEIUAAAAAL4q-7keXluaJnwA1tx3s7wuQNCD"></div>
 
               <div class="checkbox">
-                <label><input type="checkbox" value="" checked>Remember me</label>
+                <label><input type="checkbox" name="checkbox" value="" checked>Remember me</label>
               </div>
                 <button type="submit" class="btn btn-success btn-block"><span class="fa fa-sign-in"></span> Sign In</button>
             </form>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancel</button>
-            <p>Already a member? <a data-dismiss="modal" class="loginbtn">Login</a></p>
+            <p>Already a member? <a type="button" href="#" data-toggle="modal" data-target="#loginModal" data-dismiss="modal" >Login</a></p>
             <p>Forgot <a href="#">Password?</a></p>
           </div>
         </div>
@@ -221,6 +257,53 @@
       </div>
     </div>
   </div>
+
+
+  <script type="text/javascript">
+     var frm = $('#signupform');
+
+     frm.submit(function (e) {
+
+         e.preventDefault();
+
+         $.ajax({
+             type: frm.attr('method'),
+             url: frm.attr('action'),
+             data: frm.serialize(),
+             success: function (data) {
+              $("#signupModal .close").click();
+              jQuery.noConflict();
+              $("#signupmsg").modal('show');
+             },
+             error: function (data) {
+              alert("Error ! Connection failed")
+             },
+         });
+     });
+ </script>
+
+ <div class="modal fade" id="signupmsg" role="dialog">
+     <div class="modal-dialog" >
+
+       <!-- Modal content-->
+       <div class="modal-content" style="background-color:#8FD400; margin-top:30%;">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal">&times;</button>
+           <h1 class="modal-title text-center">battleramp.com</h1>
+         </div>
+         <div class="modal-body text-center">
+           <h3>You have Sucessfully Created Your Account !</h3>
+           <p>Your Account will be activated soon. Have a Nice Day!</p>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+         </div>
+       </div>
+
+     </div>
+   </div>
+
+
 
 
 <!-- Caraousel or slider-->
@@ -654,7 +737,7 @@
 
 
 <!-- Visitor Number-->
-<div  class="row" style="height:50px;">
+<div  class="row" style="height:50px; width:100%;">
   <div class="col-md-12 text-center">
     <p  class="visitor" style="color:#44D7A8; font-weight:bold;">Visitor Number :
     <img  border="0" src="http://cc.amazingcounters.com/counter.php?i=3220201&c=9660916" alt="001200">
