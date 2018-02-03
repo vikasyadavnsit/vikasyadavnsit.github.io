@@ -1,0 +1,93 @@
+*, body
+{
+  position: relative;
+  box-sizing: border-box;
+  margin:0;
+  padding:0;
+}
+
+.fixedbutton
+{
+  position:fixed;
+  text-decoration:none;
+  color:white;
+  bottom:0px;
+  border-radius: 5px;
+  z-index:99;
+  padding:10px;
+}
+.fixedbutton:hover
+{
+  background-color:red;
+}
+
+
+.parallax
+{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.pimage
+{
+  height:800px;
+  width: 100%;
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-attachment:fixed;
+  background-position: center;
+  opacity: 0.9;
+}
+
+#my-content
+{
+  display: none;
+}
+#Curious
+{
+  display: none;
+}
+
+@media all and (max-width:1024px)
+{
+  .pimage
+  {
+    height:700px;
+  }
+}
+
+@media all and (max-width:768px)
+{
+  .pimage
+  {
+    height:650px;
+  }
+}
+
+@media all and (max-width:767px)
+{
+  .pimage
+  {
+    display: none;
+  }
+  .parallax
+  {
+    display: none;
+  }
+  #my-content
+  {
+    text-align: center;
+    display: block;
+    margin:0px;
+    padding: 30px;
+    padding-top: 100px;
+    background-color: black;
+    color:white;
+  }
+  body{ background-color: black;}
+  #Curious
+  {
+    display:block;
+  }
+}
