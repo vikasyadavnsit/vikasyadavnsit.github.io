@@ -615,24 +615,14 @@ body {
 /*   Visitor */
 .visitor
 {
- font-size:27px;
- padding-top:4px;
+ font-size:50px;
 }
 
-@media all and (max-width:400px)
+@media all and (max-width:450px)
 {
   .visitor
   {
-   padding-top:10px;
-   font-size:20px;
-  }
-}
-@media all and (max-width:350px)
-{
-  .visitor
-  {
-   padding-top:12px;
-   font-size:15px;
+   font-size:30px;
   }
 }
 

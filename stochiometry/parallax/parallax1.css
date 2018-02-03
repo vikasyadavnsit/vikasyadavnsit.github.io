@@ -57,15 +57,7 @@
   }
 }
 
-@media all and (max-width:768px)
-{
-  .pimage
-  {
-    height:650px;
-  }
-}
-
-@media all and (max-width:767px)
+@media only screen and (max-width:768px)
 {
   .pimage
   {
