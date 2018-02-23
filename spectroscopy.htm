@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Spectral Analysis</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Aldrich&effect=destruction" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css">
+  <script src="js/viewportChecker.js"></script>
+
+  <style>
+
+.animated{
+-webkit-animation-duration: 2s;
+-moz-animation-duration: 2;
+-ms-transition-animation-duration: 2s;
+}
+
+.hideit { opacity: 0}
+.visible
+{
+  opacity:1;
+}
+
+  html, body
+   {
+   height: 100%;
+   width: 100%;
+   margin: 0;
+   padding: 0;
+   }
+  </style>
+
+</head>
+<body>
+<!-->  <div class="font-effect-destruction" class="font-size:8vh;"></div>  <!-->
+<div id="block1" class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; align-items:center; color:white; font-family:Aldrich; background-color:tomato; padding:0px; margin:0px;">
+    <h1 class="animated bounceIndown" style="font-size:45px"><i class="fab fa-app-store fa-3x"></i>
+    <br><br>EMPRYEAN<h1>
+</div>
+
+
+ <div  class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; align-items:center; color:white; font-family:Aldrich; background-color:dodgerblue; padding:0px; margin:0px;">
+    <h1 id="block2" style="font-size:45px"><i class="fab fa-earlybirds fa-3x"></i>
+    <br><br>SPECTRUM ANALYZER<h1>
+ </div>
+
+
+<script>
+jQuery(document).ready(function() {
+    jQuery('#block2').addClass("hideit").viewportChecker({
+        classToAdd: 'visible animated bounceInleft',
+        offset: 200
+       });
+});
+</script>
+
+
+</body>
+</html>
