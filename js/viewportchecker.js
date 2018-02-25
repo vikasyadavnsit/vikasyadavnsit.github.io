@@ -19,7 +19,7 @@
   $.fn.viewportChecker = function(useroptions) {
     // Define options and extend with user
     var options = {
-      classToAdd: 'visible',
+      classToAdd: 'showit',
       offset: 100,
       callbackFunction: function(elem) {}
     };
