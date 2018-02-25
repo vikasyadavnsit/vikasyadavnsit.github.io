@@ -277,7 +277,8 @@
         left: 0%;
       }
     }
-  </style>
+
+   </style>
 
   <script>
     jQuery(document).ready(function() {
@@ -347,8 +348,13 @@
         offset: 50
       });
 
+      jQuery('#cedt').addClass('hideit').viewportChecker({
+        classToAdd: 'showit animated bounce infinite',
+        offset: 0
+      });
 
-    });
+});
+
   </script>
 
 </head>
@@ -357,7 +363,7 @@
   <!-->
   <div class="font-effect-destruction" class="font-size:8vh;"></div>
   <!-->
-  <div  class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; align-items:center; color:white; font-family:Aldrich; background-color:tomato; padding:0px; margin:0px;">
+  <div class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; align-items:center; color:white; font-family:Aldrich; background-color:tomato; padding:0px; margin:0px;">
     <h1 id="block1" style="font-size:45px"><i class="fab fa-app-store fa-3x"></i>
     <br><br>EMPRYEAN</h1>
   </div>
@@ -404,7 +410,7 @@
   </div>
 
 
-  <div class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; flex-direction:column; align-items:center; color:white; font-family:Aldrich; background-color:	#E5CCC9; padding:0px; margin:0px;">
+  <div class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; flex-direction:column; align-items:center; color:white; font-family:Aldrich; background-color:gray; padding:0px; margin:0px;">
     <h1 id="block4" style="font-size:45px; color:white;">
       <br><span style="color:red; font-size:55px;"><b>Texas Instruments</b></span><br> India Innovation Design Challenge<br>(TI-IICDC)</h1>
   </div>
@@ -444,14 +450,14 @@
         </div>
       </div>
       <div id="tblock4" class="tcontainer tright">
-        <div class="tcontent">
+        <div class="tcontent" style="text-align:justify">
           <h3>Semi Finals (May 2018 – June 2018)</h3>
           <p>Shortlisted teams will advance to Semifinals of the India Innovation Challenge. The Semifinalist teams will be invited to the Regional Demonstration and Evaluation event for live demonstration and evaluation of their project. These events will
             be held in June 2018 and shortlisted teams for Finals will be identified byJune30, 2018.</p>
         </div>
       </div>
       <div id="tblock5" class="tcontainer tleft">
-        <div class="tcontent">
+        <div class="tcontent" style="text-align:justify">
           <h3>Finals (July 2018 – August 2018)</h3>
           <p>Each selected team for Finals will receive Product Development Fund from DST for field testing and prototyping. Select finalist teams will be invited to Final Evaluation event in August 2018 and top teams will be selected for Incubation at IIMBangalore.
             Top teams will receive additional seed fund from DST to launch their startup.</p>
@@ -460,29 +466,44 @@
     </div>
   </div>
 
+
+  <div class="container-fluid text-center" style="height:100%;width:100%; display:flex; justify-content:center; flex-direction:column; align-items:center; color:white; font-family:Aldrich; background-color:dodgerblue; padding:0px; margin:0px;">
+    <h1 id="block4" style="font-size:45px; color:white;">
+      <span style="color:white; font-size:55px;">
+          <b>MADE IN INDIA !</b>
+      </span>
+       <br><br>
+      <span style="color:white; font-size:20px;" >at
+      </span><br><br><div id="cedt"><a href="http://cedtnsit.in/" target="_blank" style="text-decoration:none;">
+      <span style="color:red; font-weight:bold; font-size:70px;" >CEDT
+      </span><br>
+      <span style="color:white; font-size:20px;">(Center for Electronics Design and Technology)
+      </span> </a></div>
+    </h1>
+  </div>
+
   <!-- footer -->
-     <div class="container-fluid font-weight-light" style="background-color:#1F262A; color:white;">
-       <div class="row">
+  <div class="container-fluid font-weight-light" style="background-color:#1F262A; color:white;">
+    <div class="row">
 
-           <div class="col-md-12' col-sm-12 col-xs-12">
-            <p class="text-center ">Website Developer Game Developer and Software Developer
-            <br>Designed By : Vikas Yadav</p>
-          </div>
+      <div class="col-md-12' col-sm-12 col-xs-12">
+        <p class="text-center">Designed By : Vikas Yadav and Rahul Sharma</p>
+      </div>
 
-          <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-           <a href="https://github.com/vikasyadavnsit" style="color:white; margin:10px;"><i class="fab fa-github fa-2x "></i></a>
-           <a href="https://www.youtube.com/channel/UCOOq4WUXAWch34YIj77B7cw?view_as=subscriber" style="color:white; margin:10px;"><i class="fab fa-youtube fa-2x"></i></a>
-           <a href="https://www.facebook.com/vikastauruss" style="color:white;margin:10px"><i class="fab fa-facebook fa-2x"></i></a>
-           <a href="https://plus.google.com/+VikasYadavCEDTVikasYadv" style="color:white;margin:10px"><i class="fab fa-google fa-2x"></i></a>
-         </div>
+      <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+        <a href="https://github.com/vikasyadavnsit" style="color:white; margin:10px;"><i class="fab fa-github fa-2x "></i></a>
+        <a href="https://www.youtube.com/channel/UCOOq4WUXAWch34YIj77B7cw?view_as=subscriber" style="color:white; margin:10px;"><i class="fab fa-youtube fa-2x"></i></a>
+        <a href="https://www.facebook.com/vikastauruss" style="color:white;margin:10px"><i class="fab fa-facebook fa-2x"></i></a>
+        <a href="https://plus.google.com/+VikasYadavCEDTVikasYadv" style="color:white;margin:10px"><i class="fab fa-google fa-2x"></i></a>
+      </div>
 
-         <div class="col-xs-12 col-md-12" style="margin-top:10px; background-color:#1F262A;">
-          <p class="text-center">
-            <i class="fa fa-copyright" aria-hidden="true"></i> 2018 BATTLERAMP &nbsp;ALL RIGHTS RESERVED <br>
-          </p>
-         </div>
-       </div>
-     </div>
+      <div class="col-xs-12 col-md-12" style="margin-top:10px; background-color:#1F262A;">
+        <p class="text-center">
+          <i class="fa fa-copyright" aria-hidden="true"></i> 2018 EMPYREAN &nbsp;ALL RIGHTS RESERVED <br>
+        </p>
+      </div>
+    </div>
+  </div>
 
 </body>
 
