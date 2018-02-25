@@ -11,8 +11,64 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Aldrich&effect=destruction" rel="stylesheet">
-  <script src="js/viewportChecker.js"></script>
-  <link rel="stylesheet" href="css/animate.css">
+<link rel="stylesheet" href="css/animate.css">
+
+
+<script>
+
+(function($) {
+  $.fn.viewportChecker = function(useroptions) {
+    // Define options and extend with user
+    var options = {
+      classToAdd: 'showit',
+      offset: 100,
+      callbackFunction: function(elem) {}
+    };
+    $.extend(options, useroptions);
+
+    // Cache the given element and height of the browser
+    var $elem = this,
+      windowHeight = $(window).height();
+
+    this.checkElements = function() {
+      // Set some vars to check with
+      var viewportTop = Math.max($('html').scrollTop(), $('body').scrollTop(), $(window).scrollTop()),
+      viewportBottom = (viewportTop + windowHeight);
+      $elem.each(function() {
+        var $obj = $(this);
+        // If class already exists; quit
+        if ($obj.hasClass(options.classToAdd)) {
+          return;
+        }
+
+        // define the top position of the element and include the offset which makes is appear earlier or later
+        var elemTop = Math.round($obj.offset().top) + options.offset,
+          elemBottom = elemTop + ($obj.height());
+
+        // Add class if in viewport
+        if ((elemTop < viewportBottom) && (elemBottom > viewportTop)) {
+          $obj.addClass(options.classToAdd);
+
+          // Do the callback function. Callback wil send the jQuery object as parameter
+          options.callbackFunction($obj);
+        }
+      });
+    };
+
+    // Run checkelements on load and scroll
+    $(window).scroll(this.checkElements);
+    this.checkElements();
+
+    // On resize change the height var
+    $(window).resize(function(e) {
+      windowHeight = e.currentTarget.innerHeight;
+    });
+  };
+})(jQuery);
+
+</script>
+
+
 
   <style>
     .animated {
