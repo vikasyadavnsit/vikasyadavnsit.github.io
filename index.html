@@ -168,8 +168,8 @@
       }     
 
       .list-group-item{
-        border: 2px solid #f1f1f1;
-        background-color: #d1d1d1;
+        border: 2px solid #d1d1d1;
+        background-color: #f1f1f1;
         text-align: justify-all;
       }
 
@@ -194,14 +194,23 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#purpose">Purpose</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#discount">Discount</a>
+            </li>            
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#team">Team</a>
             </li>
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#team">Team</a>
-            </li>
+              <a class="nav-link js-scroll-trigger" href="#faq">FAQ</a>
+            </li>            
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
             </li>
@@ -222,7 +231,7 @@
     </header>
 
 
-      <div class="jumbotron text-center" style="margin: 0; border-radius: 0; background-color: blueviolet;">
+      <div class="jumbotron text-center" id="purpose" style="margin: 0; border-radius: 0; background-color: blueviolet;">
         <h1 style="color:white;">Why You Would Need A Website !</h1><hr>
                <br> <p  class="text-center" style="color:white;">Having a website is like opening a door and inviting potential customers into your business.
                 </p><br>
@@ -295,7 +304,7 @@
 
 
 
-    <div class="con">
+    <div id="discount">
       <div class="jumbotron text-center" style="margin: 0; border-radius: 0;">
         <h1 >Discount Coupons</h1><hr>
            <div class="row">
@@ -455,7 +464,7 @@
           <div class="row">
             
             <div class="column school">
-              <div class="content" style="background-color: tomato;">
+              <div class="content"">
                   <div class="cport">
                     <img src="img/portfolio/1.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -468,7 +477,7 @@
             </div>
 
             <div class="column school">
-              <div class="content" style="background-color: dodgerblue;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/2.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -481,7 +490,7 @@
             </div>
 
             <div class="column school">
-              <div class="content" style="background-color: green;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/3.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -494,7 +503,7 @@
             </div>
 
             <div class="column school">
-              <div class="content" style="background-color: orange;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/4.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -508,7 +517,7 @@
 
 
             <div class="column tution">
-              <div class="content" style="background-color: dodgerblue;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/41.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -521,7 +530,7 @@
             </div>
 
             <div class="column tution">
-              <div class="content" style="background-color: tomato;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/42.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -534,7 +543,7 @@
             </div>
 
             <div class="column tution">
-              <div class="content" style="background-color: green;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/43.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -547,7 +556,7 @@
             </div>
 
             <div class="column tution">
-              <div class="content" style="background-color: orange;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/44.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -560,7 +569,7 @@
             </div>
 
             <div class="column misc">
-              <div class="content" style="background-color: tomato;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/81.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -573,7 +582,7 @@
             </div>
 
             <div class="column misc">
-              <div class="content" style="background-color: dodgerblue;">
+              <div class="content">
                   <div class="cport">
                     <img src="img/portfolio/82.png" alt="Avatar" class="image1" style="width:100%">
                     <div class="middle">
@@ -585,11 +594,44 @@
               </div>
             </div>
 
-
           <!-- END GRID -->
           </div>
       </div>
     </section>
+
+      <div class="jumbotron text-center" id="faq" style="margin: 0; border-radius: 0; background-color: blueviolet;">
+        <h1 style="color:white;">Frequently Asked Questions ?</h1><hr>
+          <br>
+          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#faq">Simple collapsible</button>
+           <div class="row group-list collapse" id="faq">
+              <div class="list-group-item" style="margin: 20px 10px;" >
+                <p ><strong> Will my web site need on-going maintenance?</strong><br><br>
+                  This really depends on the individual website, but really the answer ought to be “yes”. It is good practice to add new content to your site, however small, on a regular basis as this will keep search engines like Google interested in your site, encouraging them to come back and index you regularly. If this isn’t so important to you, you may just want to change your contact details or a small amount of content. However, you should bear in mind that your website will realistically have a shelf-life of 18 months to 2 years. After this it would be advisable to do a major update in order to take advantage of the latest technological advances, design and user experience changes and perform optimisations for better search results.  
+                </p>
+              </div>
+
+             <div class="list-group-item" style="margin: 20px 10px;">
+                <p ><strong> Will I have to spend more money on my website in the future? How much and how often?</strong><br><br>
+                  Unfortunately yes! Developing a website, and keeping it competitive in the search engines can be a time consuming affair. You also need to understand that even if your site works perfectly when it is launched, technology on the hosting servers and within the web browsers will be always changing and eventually your site will develop problems and these need to be fixed to keep the site working properly. You should always get a quotation before asking your developer to embark on work of this nature as sometimes it could end up being cheaper to create a new site.
+                </p>
+              </div>
+
+             <div class="list-group-item" style="margin: 20px 10px;">
+                <p ><strong> Do you offer on-going support in a timely manner?</strong><br><br>
+                  Yes!  It’s one of the many reasons clients choose us – we do our best to make your changes as quickly as possible, often within the same day if required. We offer a variety of support packages covering all aspects of your website. We also run training sessions so you are able to update your website in-house, should you wish to.
+                </p>
+              </div>
+
+             <div class="list-group-item" style="margin: 20px 10px;" >
+                <p ><strong>Will your code be compatible or usable if I switch to another web company?</strong><br><br>
+                  Coding styles differ from company to company and programmer to programmer. Usually if you change to a different development company, they should be able to pick up where it was left off. However they would need to have the complete source code for your website. This can sometimes be tricky to acquire, especially if your relationship with the first company ended badly.  Also bear in mind that if your site uses the first companies own CMS system, then you may not be entitled to take the code with you, in which case you would have to start from scratch.Yes!  All our programming is done using best practices and so other developers will be able to edit and add to it.
+                </p>
+              </div>
+
+
+           </div>
+         </div>
+
 
 
     <!-- Contact -->
