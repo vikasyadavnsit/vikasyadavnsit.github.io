@@ -148,7 +148,24 @@
 
       .expire {
           color: red;
-      }     
+      }    
+
+
+      .progress-container {
+        bottom: 0;
+        position: fixed;
+        width: 100%;
+        height: 8px;
+        background: #ccc;
+        z-index: 999;
+
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: #4caf50;
+        width: 0%;
+      }       
 
    </style>
 
@@ -619,7 +636,10 @@
       </div>
     </footer>
 
-  
+     <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+      </div> 
+
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -635,6 +655,17 @@
     <script src="js/agency.min.js"></script>
 
    <script type="text/javascript">
+      
+      window.onscroll = function() {myFunction()};
+
+      function myFunction() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("myBar").style.width = scrolled + "%";
+      }
+
+
       filterSelection("all") // Execute the function and show all columns
       function filterSelection(c) {
         var x, i;
