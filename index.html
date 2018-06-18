@@ -128,6 +128,28 @@
         padding: 12px 12px;
       }
 
+       .coupon {
+          border: 5px dotted #bbb;
+          width: 100%;
+          border-radius: 15px;
+          margin: 0 auto;
+          max-width: 400px;
+      }
+
+      .pcontainer {
+          padding: 2px 6px;
+          background-color: #f1f1f1;
+      }
+
+      .promo {
+          background: #ccc;
+          padding: 3px;
+      }
+
+      .expire {
+          color: red;
+      }     
+
    </style>
 
   </head>
@@ -172,17 +194,14 @@
       </div>
     </header>
 
-    <div class="con">
-      <div class="jumbotron text-center" style="margin: 0; border-radius: 0;">
-        <h1 >Why Us ?</h1>
-      </div>
-    </div>
+
+
     <!-- Services -->
     <section id="services" style="background-color: #6d6eef; color:white;">
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-            <h2 class="section-heading text-uppercase">Services</h2>
+            <h2 class="section-heading text-uppercase" style="font-weight:700;">Services</h2>
             <h3 class="section-subheading" style="color:white;" >Handful of Services offered by us</h3>
           </div>
         </div>
@@ -215,6 +234,61 @@
         </div>
       </div>
     </section>
+
+
+
+
+    <div class="con">
+      <div class="jumbotron text-center" style="margin: 0; border-radius: 0;">
+        <h1 >Discount Coupons</h1><hr>
+           <div class="row">
+
+           <div class="col-lg-4" style="margin-bottom: 20px;">
+            <div class="coupon">
+              <img src="img/offers/1.jpg" alt="Avatar" style="width:100%;">
+              <div class="pcontainer" style="background-color:white">
+                <h2><b>20% OFF YOUR PURCHASE</b></h2> 
+                <p>Valid Only on first static Website and Domain Name</p>
+              </div>
+              <div class="pcontainer">
+                <p>Use Promo Code: <span class="promo">SWFT20</span></p>
+                <p class="expire">Expires: Dec 12, 2018</p>
+              </div>
+            </div>
+           </div>
+            
+           <div class="col-lg-4" style="margin-bottom: 20px;">
+            <div class="coupon">
+              <img src="img/offers/2.jpg" alt="Avatar" style="width:100%;">
+              <div class="pcontainer" style="background-color:white">
+                <h2><b>15% OFF YOUR PURCHASE</b></h2> 
+                <p>Valid only on your first Static or Dynamic Website Maintainance</p>
+              </div>
+              <div class="pcontainer">
+                <p>Use Promo Code: <span class="promo">WMFT15</span></p>
+                <p class="expire">Expires: Jan 03, 2019</p>
+              </div>
+            </div>
+           </div>
+
+           <div class="col-lg-4" style="margin-bottom: 20px;">
+            <div class="coupon">
+              <img src="img/offers/3.jpg" alt="Avatar" style="width:100%;">
+              <div class="pcontainer" style="background-color:white">
+                <h2><b>10% OFF YOUR PURCHASE</b></h2> 
+                <p>Valid on Dynamic Web Application, Website and APIs</p>
+              </div>
+              <div class="pcontainer">
+                <p>Use Promo Code: <span class="promo">DAW910</span></p>
+                <p class="expire">Expires: Oct 30, 2018</p>
+              </div>
+            </div>
+           </div>
+
+        </div>    
+      </div>
+    </div>
+
 
     <!-- Portfolio Grid -->
     <section  id="portfolio"  style="background-color: #f3f3f3;">
@@ -374,7 +448,7 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12 text-center">
-            <h2 class="section-heading text-uppercase" >Our Amazing Team</h2>
+            <h2 class="section-heading text-uppercase" style="font-weight:700; ">Our Amazing Team</h2>
             <h3 class="section-subheading" style="color:white;">We Are Developers, Just For Fun.</h3>
           </div>
         </div>
