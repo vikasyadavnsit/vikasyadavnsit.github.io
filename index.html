@@ -42,10 +42,15 @@
       /* Create three equal columns that floats next to each other */
       .column {
           float: left;
-          width: 100%;
+          width: 50%;
           display: none; /* Hide columns by default */
       }
-
+      
+      @media screen and (max-width: 1000px) {
+          .column {
+              width: 100%;
+          }
+      }
       /* Clear floats after rows */ 
       .row:after {
           content: "";
@@ -233,6 +238,33 @@
                   </div>                                            
               </div>
             </div>
+
+            <div class="column nature">
+              <div class="content">
+                  <div class="cport">
+                    <img src="img/portfolio/2.png" alt="Avatar" class="image1" style="width:100%">
+                    <div class="middle">
+                      <a href="http://www.dpsgurgaon.org/" style="text-decoration: none; color:white;">
+                        <div class="text btn btn-lg">Delhi Public School</div>
+                      </a>  
+                    </div>
+                  </div>                                            
+              </div>
+            </div>
+
+            <div class="column nature">
+              <div class="content">
+                  <div class="cport">
+                    <img src="img/portfolio/3.png" alt="Avatar" class="image1" style="width:100%">
+                    <div class="middle">
+                      <a href="http://www.mothermarysschoolmayurvihar.com/" style="text-decoration: none; color:white;">
+                        <div class="text btn btn-lg">Mother Mary School</div>
+                      </a>  
+                    </div>
+                  </div>                                            
+              </div>
+            </div>
+
 
           <!-- END GRID -->
           </div>
