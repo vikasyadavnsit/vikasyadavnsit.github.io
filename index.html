@@ -19,9 +19,10 @@
     <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
-
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <!-- Custom styles for this template -->
     <link href="css/agency.min.css" rel="stylesheet">
+
 
    <style type="text/css">
      
@@ -232,7 +233,7 @@
 
 
       <div class="jumbotron text-center" id="purpose" style="margin: 0; border-radius: 0; background-color: blueviolet;">
-        <h1 style="color:white;">Why You Would Need A Website !</h1><hr>
+        <h1 style="color:white;">Why Would You Need A Website !</h1><hr>
                <br> <p  class="text-center" style="color:white;">Having a website is like opening a door and inviting potential customers into your business.
                 </p><br>
            <div class="row group-list">
@@ -602,7 +603,7 @@
       <div class="jumbotron text-center" id="faq" style="margin: 0; border-radius: 0; background-color: blueviolet;">
         <h1 style="color:white;">Frequently Asked Questions ?</h1><hr>
           <br>
-          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dfaq">Simple collapsible</button>
+          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dfaq">Click For More</button>
            <div class="row group-list collapse" id="dfaq">
               <div class="list-group-item" style="margin: 20px 10px;" >
                 <p ><strong> Will my web site need on-going maintenance?</strong><br><br>
@@ -640,33 +641,40 @@
         <div class="row">
           <div class="col-lg-12 text-center">
             <h2 class="section-heading text-uppercase">Give Us A Shout</h2>
-            <h3 class="section-subheading" style="color:white;">fill out this form and we will reach you as soon as possible</h3>
+            <h3 class="section-subheading" style="color:white;">contact us on +91-7503706240, +91-7982756353 or fill out this form , we will contact you</h3>
           </div>
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <form id="contactForm" name="sentMessage" novalidate="novalidate">
+            <form id="contactForm1" name="sentMessage" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <input class="form-control" id="name" type="text" placeholder="Your Name *" required="required" data-validation-required-message="Please enter your name.">
+                    <input class="form-control" id="name" name="Customer_Name" type="text" placeholder="Your Name *" required maxlength="50" oninvalid="this.setCustomValidity('Please Enter a valid Name')" oninput="setCustomValidity('')">
                     <p class="help-block text-danger"></p>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" id="email" type="email" placeholder="Your Email *" required="required" data-validation-required-message="Please enter your email address.">
+                    <input class="form-control" id="email" name="Customer_Email" type="email" placeholder="Your Email *" required maxlength="50" oninvalid="this.setCustomValidity('Please Enter a valid Email Address')" oninput="setCustomValidity('')">
                     <p class="help-block text-danger"></p>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" id="phone" type="tel" placeholder="Your Phone *" required="required" data-validation-required-message="Please enter your phone number.">
-                    <p class="help-block text-danger"></p>
+                    <input class="form-control" id="phone" name="Contact_No" type="number" placeholder="Your Phone *" required oninvalid="this.setCustomValidity('Please Enter a valid Contact No')" oninput="setCustomValidity('')">
+                    <p class="help-block text-danger" ></p>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <textarea class="form-control" id="message" placeholder="Your Message *" required="required" data-validation-required-message="Please enter a message."></textarea>
+                    <textarea class="form-control" name="Message" id="message" placeholder="Your Message *" required maxlength="1000" oninvalid="this.setCustomValidity('Please Enter Your Message')" oninput="setCustomValidity('')"></textarea>
                     <p class="help-block text-danger"></p>
                   </div>
                 </div>
+               
+               <div class="col-md-6 text-center">
+                   <div class="form-group form-control">
+                 <div class="g-recaptcha"  data-sitekey="6LcSdEIUAAAAAL4q-7keXluaJnwA1tx3s7wuQNCD"></div>
+               </div>
+             </div>
+                 
                 <div class="clearfix"></div>
                 <div class="col-lg-12 text-center">
                   <div id="success"></div>
@@ -678,6 +686,31 @@
         </div>
       </div>
     </section>
+
+
+
+   <div class="modal fade text-center" id="myModal" role="dialog">
+       <div class="modal-dialog" >
+
+         <!-- Modal content-->
+         <div class="modal-content" style="background-color:orange; margin-top:30%; border: 2px solid white;">
+           <div class="modal-body text-center">
+             <h1 >battleramp.com</h1>
+           </div>
+           <hr>
+           <div class="modal-body text-center">
+             <h3>Thankyou ! Your Submission Has Been Accepted</h3>
+             <p>We Will Contact You Soon</p>
+           </div>
+           <hr>
+           <div class="modal-body text-center" >
+             <button type="button" class="btn btn-lg btn-success" data-dismiss="modal">Close</button>
+           </div>
+         </div>
+
+       </div>
+     </div>
+
 
     <!-- Footer -->
     <footer>
@@ -694,7 +727,7 @@
                 </a>
               </li>
               <li class="list-inline-item">
-                <a href="#">
+                <a href="https://facebook.com/vickytauruss/">
                   <i class="fa fa-facebook"></i>
                 </a>
               </li>
@@ -732,8 +765,6 @@
 
     <!-- Contact form JavaScript -->
     <script src="js/jqBootstrapValidation.js"></script>
-    <script src="js/contact_me.js"></script>
-
     <!-- Custom scripts for this template -->
     <script src="js/agency.min.js"></script>
 
@@ -797,6 +828,29 @@
         });
       }
          </script>
+
+
+    <script type="text/javascript">
+       var frm = $('#contactForm1');
+
+       frm.submit(function (e) {
+
+           e.preventDefault();
+
+           $.ajax({
+               type: frm.attr('method'),
+               url: frm.attr('action'),
+               data: frm.serialize(),
+               success: function (data) {
+                  $("#myModal").modal('show');
+                // alert("Thankyou ! Your Submission Has Been Accepted");
+               },
+               error: function (data) {
+                aler("Error ! Connection failed")
+               },
+           });
+       });
+   </script>   
 
   </body>
 
