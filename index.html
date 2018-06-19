@@ -178,6 +178,85 @@
         background-color: white;
       }      
 
+.demo{ background: #333; }
+.pricingTable{
+    text-align: center;
+    background: #f95b34;
+    transition: all 0.3s ease 0s;
+}
+.pricingTable:hover{
+    background: #f95b34;
+}
+.pricingTable .pricingTable-header{
+    padding: 25px 0;
+    color: #fff;
+    transition: all 0.3s ease 0s;
+}
+.pricingTable:hover .pricingTable-header{
+    color: #222;
+}
+.pricingTable .icon{
+    display: block;
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+.pricingTable .title{
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+.pricingTable .price-value{
+    display: inline-block;
+    font-size: 50px;
+    position: relative;
+}
+.pricingTable .currency{
+    font-size: 25px;
+    position: absolute;
+    top: 13px;
+    left: -19px;
+}
+.pricingTable .month{
+    font-size: 20px;
+    position: absolute;
+    top: 32px;
+    right: -65px;
+}
+.pricingTable .pricing-content{
+    padding: 35px 0;
+    background: #222;
+    border-radius: 30px 30px 0 0;
+    color: #fff;
+}
+.pricingTable .pricing-content ul{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+}
+.pricingTable .pricing-content ul li{
+    font-size: 16px;
+    line-height: 40px;
+}
+.pricingTable .pricingTable-signup{
+    display: inline-block;
+    padding: 8px 40px;
+    border-radius: 30px;
+    border: 1px solid #595555;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    transition: all 0.5s ease 0s;
+}
+.pricingTable .pricingTable-signup:hover{
+    background: #f95b34;
+    border-color: #f95b34;
+    color: #222;
+}
+@media only screen and (max-width: 400px){
+    .pricingTable{ margin-bottom: 30px; }
+}
+
    </style>
 
   </head>
@@ -600,10 +679,95 @@
       </div>
     </section>
 
+<div class="jumbotron text-center" id="faq" style="margin: 0; border-radius: 0; background-color: #333;">
+  <h1 style="color:white;">Basic Starters Pack</h1><br>
+    <br>
+      <div class="demo">
+          <div class="container">
+              <div class="row" style="padding: 50px 0px;">
+                  <div class="col-md-6 col-lg-4" style=" margin-bottom: 30px;">
+                      <div class="pricingTable">
+                          <div class="pricingTable-header">
+                              <span class="icon"><i class="fa fa-pencil-square-o"></i></span>
+                              <h3 class="title">Basic</h3>
+                              <div class="price-value">
+                                  <span class="currency">₹</span>1999
+                                  <span class="month">/year</span>
+                              </div>
+                          </div>
+                          <div class="pricing-content">
+                              <ul>
+                                  <li>1GB Disk Space</li>
+                                  <li>5 Email Accounts</li>
+                                  <li>Static Website</li>
+                                  <li>Responsive</li>
+                                  <li>2 Sub Domains</li>
+                              </ul>
+                              <a href="#contact" style="text-decoration: none;" class="pricingTable-signup  js-scroll-trigger">Contact Us</a>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-md-6 col-lg-4" style=" margin-bottom: 30px;">
+                      <div class="pricingTable">
+                          <div class="pricingTable-header">
+                              <span class="icon"><i class="fa fa-globe"></i></span>
+                              <h3 class="title">Standard</h3>
+                              <div class="price-value">
+                                  <span class="currency">₹</span>4500
+                                  <span class="month">/year</span>
+                              </div>
+                          </div>
+                          <div class="pricing-content">
+                              <ul>
+                                  <li>10GB Disk Space</li>
+                                  <li>10 Email Accounts</li>
+                                  <li>Static/Dynamic Website</li>
+                                  <li>Fully Responsive</li>
+                                  <li>10 Sub Domains</li>
+                              </ul>
+                              <a href="#contact" style="text-decoration: none;" class="pricingTable-signup  js-scroll-trigger">Contact Us</a>
+                          </div>
+                      </div>
+                  </div>
+
+                 <div class="col-md-6 col-lg-4" style=" margin-bottom: 30px;">
+                      <div class="pricingTable">
+                          <div class="pricingTable-header">
+                              <span class="icon"><i class="fa fa-briefcase"></i></span>
+                              <h3 class="title">Business</h3>
+                              <div class="price-value">
+                                  <span class="currency">₹</span>9999
+                                  <span class="month">/year</span>
+                              </div>
+                          </div>
+                          <div class="pricing-content">
+                              <ul>
+                                  <li>25GB Disk Space</li>
+                                  <li>50 Email Accounts</li>
+                                  <li>Totally Dynamic Website</li>
+                                  <li>Fully Responsive</li>
+                                  <li>3X Faster</li>
+                              </ul>
+                              <a href="#contact" style="text-decoration: none;" class="pricingTable-signup  js-scroll-trigger">Contact Us</a>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+     </div> 
+
+
+
+
+
+
       <div class="jumbotron text-center" id="faq" style="margin: 0; border-radius: 0; background-color: blueviolet;">
-        <h1 style="color:white;">Frequently Asked Questions ?</h1><hr>
+        <h1 style="color:white;">Frequently Asked Questions ?</h1><br>
           <br>
-          <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#dfaq">Click For More</button>
+          <button type="button" class="btn btn-info btn-lg" data-toggle="collapse" data-target="#dfaq">Click For More</button>
            <div class="row group-list collapse" id="dfaq">
               <div class="list-group-item" style="margin: 20px 10px;" >
                 <p ><strong> Will my web site need on-going maintenance?</strong><br><br>
@@ -632,7 +796,6 @@
 
            </div>
          </div>
-
 
 
     <!-- Contact -->
