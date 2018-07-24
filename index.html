@@ -846,7 +846,7 @@
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <form id="contactForm1" name="sentMessage">
+            <form id="contactForm1" name="sentMessage" onsubmit="return validateMyForm();" method="POST">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -970,6 +970,18 @@
 
    <script type="text/javascript">
 
+    function validateMyForm()
+{
+   if(grecaptcha.getResponse() == "")     
+  { 
+    alert("validation failed false");
+    returnToPreviousPage();
+    return false;
+  }
+
+  alert("validations passed");
+  return true;
+}
       
     var button = document.getElementById('showhide1')
     button.addEventListener('click',hideshow,false);
@@ -1073,17 +1085,11 @@
 
        frm.submit(function (e) {
 
-        if(grecaptcha.getResponse() == "")
-        {  alert("Please Fill The Recaptcha");
-        returnToPreviousPage();
-         return false;
-       }
-        else
-        {
+       
            e.preventDefault();
 
            $.ajax({
-               type: 'POST',
+               type: frm.attr('method'),
                url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
                data: frm.serialize(),
                success: function (data) {
@@ -1094,7 +1100,7 @@
                 alert("Error ! Connection failed")
                },
            });
-         }  
+         
        });
    </script>   
 
