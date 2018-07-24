@@ -969,6 +969,7 @@
     <script src="js/agency.min.js"></script>
 
    <script type="text/javascript">
+
       
     var button = document.getElementById('showhide1')
     button.addEventListener('click',hideshow,false);
@@ -1071,6 +1072,9 @@
        var frm = $('#contactForm1');
 
        frm.submit(function (e) {
+
+        if(grecaptcha.getResponse() == "")
+          alert("Please Fill the recaptcha");
 
            e.preventDefault();
 
