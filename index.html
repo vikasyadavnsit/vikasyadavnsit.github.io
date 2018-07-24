@@ -1084,7 +1084,8 @@
        var frm = $('#contactForm1');
 
        frm.submit(function (e) {
-
+         e.preventDefault();
+         
         if(grecaptcha.getResponse() == "")
         { 
          window.location.href = "https://battleramp.com";
@@ -1093,7 +1094,7 @@
         }  
         else
         {
-           e.preventDefault();
+          
 
            $.ajax({
                type: frm.attr('method'),
