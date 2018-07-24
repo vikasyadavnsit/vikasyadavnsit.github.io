@@ -1086,8 +1086,10 @@
        frm.submit(function (e) {
 
         if(grecaptcha.getResponse() == "")
-        {  alert("Please Fill The Recaptcha");
-          window.location.href = "https://battleramp.com";
+        { 
+         window.location.href = "https://battleramp.com";
+         alert("Please Fill The Recaptcha");
+          
         }  
         else
         {
