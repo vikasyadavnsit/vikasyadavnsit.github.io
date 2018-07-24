@@ -1075,7 +1075,8 @@
 
         if(grecaptcha.getResponse() == "")
           alert("Please Fill the recaptcha");
-
+        else
+        {
            e.preventDefault();
 
            $.ajax({
@@ -1090,6 +1091,7 @@
                 aler("Error ! Connection failed")
                },
            });
+         }  
        });
    </script>   
 
