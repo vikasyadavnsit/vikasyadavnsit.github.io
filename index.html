@@ -1085,12 +1085,11 @@
 
        frm.submit(function (e) {
          e.preventDefault();
-         
+
         if(grecaptcha.getResponse() == "")
         { 
-         window.location.href = "https://battleramp.com";
-         //alert("Please Fill The Recaptcha");
-          
+       alert("Please Fill The Recaptcha"); 
+       //  window.location.href = "https://battleramp.com";
         }  
         else
         {
