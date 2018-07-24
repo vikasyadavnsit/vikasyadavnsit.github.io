@@ -1074,7 +1074,10 @@
        frm.submit(function (e) {
 
         if(grecaptcha.getResponse() == "")
-          alert("Please Fill The Recaptcha");
+        {  alert("Please Fill The Recaptcha");
+        returnToPreviousPage();
+         return false;
+       }
         else
         {
            e.preventDefault();
