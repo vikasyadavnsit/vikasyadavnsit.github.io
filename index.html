@@ -972,38 +972,15 @@
 
     function validateMyForm()
 {
-   if(grecaptcha.getResponse() == "")     
+  if()
   { 
     alert("validation failed false");
     returnToPreviousPage();
     return false;
   }
-  else
-  {
-         var frm = $('#contactForm1');
 
-       frm.submit(function (e) {
-
-       
-           e.preventDefault();
-
-           $.ajax({
-               type: frm.attr('method'),
-               url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
-               data: frm.serialize(),
-               success: function (data) {
-                  $("#myModal").modal('show');
-                // alert("Thankyou ! Your Submission Has Been Accepted");
-               },
-               error: function (data) {
-                alert("Error ! Connection failed")
-               },
-           });
-         
-       });
-  return true; 
-  }
-  
+  alert("validations passed");
+  return true;
 }
       
     var button = document.getElementById('showhide1')
@@ -1104,7 +1081,32 @@
 
 
     <script type="text/javascript">
- 
+       var frm = $('#contactForm1');
+
+       frm.submit(function (e) {
+
+        if(grecaptcha.getResponse() == "")
+        {  alert("Please Fill The Recaptcha");
+          window.location.href = "https://battleramp.com";
+        }  
+        else
+        {
+           e.preventDefault();
+
+           $.ajax({
+               type: frm.attr('method'),
+               url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
+               data: frm.serialize(),
+               success: function (data) {
+                  $("#myModal").modal('show');
+                // alert("Thankyou ! Your Submission Has Been Accepted");
+               },
+               error: function (data) {
+                alert("Error ! Connection failed")
+               },
+           });
+         }  
+       });
    </script>   
 
   </body>
