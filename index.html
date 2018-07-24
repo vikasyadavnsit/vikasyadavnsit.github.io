@@ -846,7 +846,7 @@
         </div>
         <div class="row">
           <div class="col-lg-12">
-            <form id="contactForm1" name="sentMessage" action="https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec" method="POST">
+            <form id="contactForm1" name="sentMessage" action="" method="POST">
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -1081,14 +1081,14 @@
 
            $.ajax({
                type: frm.attr('method'),
-               url: frm.attr('action'),
+               url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
                data: frm.serialize(),
                success: function (data) {
                   $("#myModal").modal('show');
                 // alert("Thankyou ! Your Submission Has Been Accepted");
                },
                error: function (data) {
-                aler("Error ! Connection failed")
+                alert("Error ! Connection failed")
                },
            });
          }  
