@@ -253,3 +253,11 @@
     text-transform: uppercase;
     width: 100vw;  height: 100vh;
 }
+
+.flx
+{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
