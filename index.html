@@ -750,43 +750,75 @@
   </div>
 
 
-    <div class="jumbotron text-center" id="faq" style="margin: 0;overflow:auto;border-radius: 0; background-color: blueviolet;">
-        <br><h1 style="color:white;">Frequently Asked Questions ?</h1><br><br>
-       
-          <div id="myBtnContainer" class="text-center">
-            <button class="btn btn1" id="showhide2" style="margin: 4px;" onclick="filterSelection3('dfaq')">Click To See</button>
+      <div id="container-fluid" id="faq" style=" background-color: #333;  padding: 50px 0px;">
+      <div class="row justify-content-center" style="padding: 5px;">
+        <h3 style="color:white; text-align: center;" class="mb-5">Frequently <br>Asked Questions ?</h3>   
+        
+        <div class="accordion col-md-8" id="accordionExample">
+          <div class="card">
+            <div class="card-header" id="faq1">
+              <h5 class="mb-0">
+                <button class="btn btn-link" type="button" style="white-space:normal !important;" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Do you offer on-going support in a timely manner #1
+                </button> 
+              </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse" aria-labelledby="faq1" data-parent="#accordionExample">
+              <div class="card-body" style="text-align: justify;">
+                Yes! It’s one of the many reasons clients choose us – we do our best to make your changes as quickly as possible, often within the same day if required. We offer a variety of support packages covering all aspects of your website. We also run training sessions so you are able to update your website in-house, should you wish to.
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="faq2">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" style="white-space:normal !important;" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Will I have to spend more money on my website in the future? How much and how often #2
+                </button>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="faq2" data-parent="#accordionExample">
+              <div class="card-body" style="text-align: justify;">
+                Unfortunately yes! Developing a website, and keeping it competitive in the search engines can be a time consuming affair. You also need to understand that even if your site works perfectly when it is launched, technology on the hosting servers and within the web browsers will be always changing and eventually your site will develop problems and these need to be fixed to keep the site working properly. You should always get a quotation before asking your developer to embark on work of this nature as sometimes it could end up being cheaper to create a new site.
+              </div>
+            </div>
+          </div>
+          
+          <div class="card">
+            <div class="card-header" id="faq3">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" style="white-space:normal !important;" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                   Will my web site need on-going maintenance #3
+                </button>
+              </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="faq3" data-parent="#accordionExample">
+              <div class="card-body" style="text-align: justify;">
+               This really depends on the individual website, but really the answer ought to be “yes”. It is good practice to add new content to your site, however small, on a regular basis as this will keep search engines like Google interested in your site, encouraging them to come back and index you regularly. If this isn’t so important to you, you may just want to change your contact details or a small amount of content. However, you should bear in mind that your website will realistically have a shelf-life of 18 months to 2 years. After this it would be advisable to do a major update in order to take advantage of the latest technological advances, design and user experience changes and perform optimisations for better search results.
+              </div>
+            </div>
           </div>
 
-      <div class="column2 dfaq" >   
-        <div class="row group-list">
-        <div class="col-lg-6" style="margin-bottom: 30px;">
-            <div class="list-group-item">
-              <strong> Will my web site need on-going maintenance?</strong><br><br>
-                  This really depends on the individual website, but really the answer ought to be “yes”. It is good practice to add new content to your site, however small, on a regular basis as this will keep search engines like Google interested in your site, encouraging them to come back and index you regularly. If this isn’t so important to you, you may just want to change your contact details or a small amount of content. However, you should bear in mind that your website will realistically have a shelf-life of 18 months to 2 years. After this it would be advisable to do a major update in order to take advantage of the latest technological advances, design and user experience changes and perform optimisations for better search results.          
+          <div class="card">
+            <div class="card-header" id="faq4">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" style="white-space:normal !important;"  data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                  Will your code be compatible or usable if I switch to another web company #4
+                </button>
+              </h5>
             </div>
-         </div>
-         <div class="col-lg-6" style="margin-bottom: 30px;">
-            <div class="list-group-item">
-             <strong> Will I have to spend more money on my website in the future? How much and how often?</strong><br><br>
-                  Unfortunately yes! Developing a website, and keeping it competitive in the search engines can be a time consuming affair. You also need to understand that even if your site works perfectly when it is launched, technology on the hosting servers and within the web browsers will be always changing and eventually your site will develop problems and these need to be fixed to keep the site working properly. You should always get a quotation before asking your developer to embark on work of this nature as sometimes it could end up being cheaper to create a new site.
+            <div id="collapseFour" class="collapse" aria-labelledby="faq4" data-parent="#accordionExample">
+              <div class="card-body" style="text-align: justify;">
+               Coding styles differ from company to company and programmer to programmer. Usually if you change to a different development company, they should be able to pick up where it was left off. However they would need to have the complete source code for your website. This can sometimes be tricky to acquire, especially if your relationship with the first company ended badly. Also bear in mind that if your site uses the first companies own CMS system, then you may not be entitled to take the code with you, in which case you would have to start from scratch.Yes! All our programming is done using best practices and so other developers will be able to edit and add to it.
+              </div>
             </div>
-         </div>
-         <div class="col-lg-6" style="margin-bottom: 30px;">
-            <div class="list-group-item">
-              <strong> Do you offer on-going support in a timely manner?</strong><br><br>
-                  Yes!  It’s one of the many reasons clients choose us – we do our best to make your changes as quickly as possible, often within the same day if required. We offer a variety of support packages covering all aspects of your website. We also run training sessions so you are able to update your website in-house, should you wish to.
-            </div>
-         </div>
-         <div class="col-lg-6" style="margin-bottom: 30px;">
-            <div class="list-group-item">
-              <strong>Will your code be compatible or usable if I switch to another web company?</strong><br><br>
-                  Coding styles differ from company to company and programmer to programmer. Usually if you change to a different development company, they should be able to pick up where it was left off. However they would need to have the complete source code for your website. This can sometimes be tricky to acquire, especially if your relationship with the first company ended badly.  Also bear in mind that if your site uses the first companies own CMS system, then you may not be entitled to take the code with you, in which case you would have to start from scratch.Yes!  All our programming is done using best practices and so other developers will be able to edit and add to it.
-            </div>
-         </div>
-       </div>
-      </div> 
-        
-  </div>
+          </div>
+
+        </div>
+
+     </div>
+    </div>
 
 
     <!-- Contact -->
