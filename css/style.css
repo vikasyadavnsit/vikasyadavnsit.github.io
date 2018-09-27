@@ -1,0 +1,255 @@
+     
+     * {
+        box-sizing: border-box;
+      }
+
+      .row {
+          margin: 8px -16px;
+      }
+
+      /* Add padding BETWEEN each column (if you want) */
+      .row,
+      .row > .column {
+          padding: 8px;
+      }
+
+      /* Create three equal columns that floats next to each other */
+      .column {
+          float: left;
+          width: 50%;
+          display: none; /* Hide columns by default */
+      }
+
+      .column1 {
+          float: left;
+          width: 100%;
+          display: none; /* Hide columns by default */
+      }
+
+      .column2 {
+          float: left;
+          width: 100%;
+          display: none; /* Hide columns by default */
+      }
+      
+      @media screen and (max-width: 1000px) {
+          .column {
+              width: 100%;
+          }
+      }
+      /* Clear floats after rows */ 
+      .row:after {
+          content: "";
+          display: table;
+          clear: both;
+      }
+
+      /* Content */
+      .content {
+          background-color: white;
+          padding: 10px;
+      }
+
+      /* The "show" class is added to the filtered elements */
+      .show {
+          display: block;
+      }
+
+      /* Style the buttons */
+      .btn1 {
+        border: none;
+        outline: none;
+        padding: 12px 16px;
+        background-color: white;
+        cursor: pointer;
+      }
+
+      /* Add a grey background color on mouse-over */
+      .btn1:hover {
+        background-color: #ddd;
+      }
+
+      /* Add a dark background color to the active button */
+      .btn1.active {
+        background-color: #666;
+         color: white;
+      }
+
+      .cport {
+        position: relative;
+      }
+
+     .image1 {
+        opacity: 1;
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: .5s ease;
+        backface-visibility: hidden;
+      }
+
+      .middle {
+        transition: .5s ease;
+        opacity: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        text-align: center;
+      }
+
+      .cport:hover .image1 {
+        opacity: 0.3;
+      }
+
+      .cport:hover .middle {
+        opacity: 1;
+      }
+
+      .text {
+        background-color: tomato;
+        color: white;
+        font-size: 15px;
+        padding: 12px 12px;
+      }
+
+       .coupon {
+          border: 5px dotted #bbb;
+          width: 100%;
+          border-radius: 15px;
+          margin: 0 auto;
+          max-width: 400px;
+      }
+
+      .pcontainer {
+          padding: 2px 6px;
+          background-color: #f1f1f1;
+      }
+
+      .promo {
+          background: #ccc;
+          padding: 3px;
+      }
+
+      .expire {
+          color: red;
+      }    
+
+
+      .progress-container {
+        bottom: 0;
+        position: fixed;
+        width: 100%;
+        height: 8px;
+        background: #ccc;
+        z-index: 999;
+
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: #4caf50;
+        width: 0%;
+      }     
+
+      .list-group-item{
+        border: 1px solid blue;
+        padding: 50px 20px;
+        background-color: white;
+        text-align: justify-all;
+      }
+
+
+.demo{ background: #333; }
+.pricingTable{
+    text-align: center;
+    background: #f95b34;
+    transition: all 0.3s ease 0s;
+}
+.pricingTable:hover{
+    background: #f95b34;
+}
+.pricingTable .pricingTable-header{
+    padding: 25px 0;
+    color: #fff;
+    transition: all 0.3s ease 0s;
+}
+.pricingTable:hover .pricingTable-header{
+    color: #222;
+}
+.pricingTable .icon{
+    display: block;
+    font-size: 50px;
+    margin-bottom: 10px;
+}
+.pricingTable .title{
+    display: block;
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+}
+.pricingTable .price-value{
+    display: inline-block;
+    font-size: 50px;
+    position: relative;
+}
+.pricingTable .currency{
+    font-size: 25px;
+    position: absolute;
+    top: 13px;
+    left: -19px;
+}
+.pricingTable .month{
+    font-size: 20px;
+    position: absolute;
+    top: 32px;
+    right: -65px;
+}
+.pricingTable .pricing-content{
+    padding: 35px 0;
+    background: #222;
+    border-radius: 30px 30px 0 0;
+    color: #fff;
+}
+.pricingTable .pricing-content ul{
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+}
+.pricingTable .pricing-content ul li{
+    font-size: 16px;
+    line-height: 40px;
+}
+.pricingTable .pricingTable-signup{
+    display: inline-block;
+    padding: 8px 40px;
+    border-radius: 30px;
+    border: 1px solid #595555;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    transition: all 0.5s ease 0s;
+}
+.pricingTable .pricingTable-signup:hover{
+    background: #f95b34;
+    border-color: #f95b34;
+    color: #222;
+}
+@media only screen and (max-width: 400px){
+    .pricingTable{ margin-bottom: 30px; }
+}
+
+.particle_container
+{ 
+    font-family: 'Source Sans Pro';
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    color:white;
+    text-transform: uppercase;
+    width: 100vw;  height: 100vh;
+}

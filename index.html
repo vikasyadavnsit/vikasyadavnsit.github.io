@@ -11,7 +11,7 @@
     <title>Battleramp.com</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="img/favicon.png" type="image/png" />
     <!-- Custom fonts for this template -->
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -22,252 +22,11 @@
     <script src='https://www.google.com/recaptcha/api.js'></script>
     <!-- Custom styles for this template -->
     <link href="css/agency.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">    
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,500i,600,600i,700" rel="stylesheet">
-   <style type="text/css">
-     
-     * {
-        box-sizing: border-box;
-      }
-
-      .row {
-          margin: 8px -16px;
-      }
-
-      /* Add padding BETWEEN each column (if you want) */
-      .row,
-      .row > .column {
-          padding: 8px;
-      }
-
-      /* Create three equal columns that floats next to each other */
-      .column {
-          float: left;
-          width: 50%;
-          display: none; /* Hide columns by default */
-      }
-
-      .column1 {
-          float: left;
-          width: 100%;
-          display: none; /* Hide columns by default */
-      }
-
-      .column2 {
-          float: left;
-          width: 100%;
-          display: none; /* Hide columns by default */
-      }
-      
-      @media screen and (max-width: 1000px) {
-          .column {
-              width: 100%;
-          }
-      }
-      /* Clear floats after rows */ 
-      .row:after {
-          content: "";
-          display: table;
-          clear: both;
-      }
-
-      /* Content */
-      .content {
-          background-color: white;
-          padding: 10px;
-      }
-
-      /* The "show" class is added to the filtered elements */
-      .show {
-          display: block;
-      }
-
-      /* Style the buttons */
-      .btn1 {
-        border: none;
-        outline: none;
-        padding: 12px 16px;
-        background-color: white;
-        cursor: pointer;
-      }
-
-      /* Add a grey background color on mouse-over */
-      .btn1:hover {
-        background-color: #ddd;
-      }
-
-      /* Add a dark background color to the active button */
-      .btn1.active {
-        background-color: #666;
-         color: white;
-      }
-
-      .cport {
-        position: relative;
-      }
-
-     .image1 {
-        opacity: 1;
-        display: block;
-        width: 100%;
-        height: auto;
-        transition: .5s ease;
-        backface-visibility: hidden;
-      }
-
-      .middle {
-        transition: .5s ease;
-        opacity: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        -ms-transform: translate(-50%, -50%);
-        text-align: center;
-      }
-
-      .cport:hover .image1 {
-        opacity: 0.3;
-      }
-
-      .cport:hover .middle {
-        opacity: 1;
-      }
-
-      .text {
-        background-color: tomato;
-        color: white;
-        font-size: 15px;
-        padding: 12px 12px;
-      }
-
-       .coupon {
-          border: 5px dotted #bbb;
-          width: 100%;
-          border-radius: 15px;
-          margin: 0 auto;
-          max-width: 400px;
-      }
-
-      .pcontainer {
-          padding: 2px 6px;
-          background-color: #f1f1f1;
-      }
-
-      .promo {
-          background: #ccc;
-          padding: 3px;
-      }
-
-      .expire {
-          color: red;
-      }    
-
-
-      .progress-container {
-        bottom: 0;
-        position: fixed;
-        width: 100%;
-        height: 8px;
-        background: #ccc;
-        z-index: 999;
-
-      }
-
-      .progress-bar {
-        height: 8px;
-        background: #4caf50;
-        width: 0%;
-      }     
-
-      .list-group-item{
-        border: 1px solid blue;
-        padding: 50px 20px;
-        background-color: white;
-        text-align: justify-all;
-      }
-
-
-.demo{ background: #333; }
-.pricingTable{
-    text-align: center;
-    background: #f95b34;
-    transition: all 0.3s ease 0s;
-}
-.pricingTable:hover{
-    background: #f95b34;
-}
-.pricingTable .pricingTable-header{
-    padding: 25px 0;
-    color: #fff;
-    transition: all 0.3s ease 0s;
-}
-.pricingTable:hover .pricingTable-header{
-    color: #222;
-}
-.pricingTable .icon{
-    display: block;
-    font-size: 50px;
-    margin-bottom: 10px;
-}
-.pricingTable .title{
-    display: block;
-    font-size: 22px;
-    font-weight: 600;
-    margin: 0 0 10px 0;
-}
-.pricingTable .price-value{
-    display: inline-block;
-    font-size: 50px;
-    position: relative;
-}
-.pricingTable .currency{
-    font-size: 25px;
-    position: absolute;
-    top: 13px;
-    left: -19px;
-}
-.pricingTable .month{
-    font-size: 20px;
-    position: absolute;
-    top: 32px;
-    right: -65px;
-}
-.pricingTable .pricing-content{
-    padding: 35px 0;
-    background: #222;
-    border-radius: 30px 30px 0 0;
-    color: #fff;
-}
-.pricingTable .pricing-content ul{
-    list-style: none;
-    padding: 0;
-    margin: 0 0 40px 0;
-}
-.pricingTable .pricing-content ul li{
-    font-size: 16px;
-    line-height: 40px;
-}
-.pricingTable .pricingTable-signup{
-    display: inline-block;
-    padding: 8px 40px;
-    border-radius: 30px;
-    border: 1px solid #595555;
-    font-size: 20px;
-    font-weight: 600;
-    color: #fff;
-    transition: all 0.5s ease 0s;
-}
-.pricingTable .pricingTable-signup:hover{
-    background: #f95b34;
-    border-color: #f95b34;
-    color: #222;
-}
-@media only screen and (max-width: 400px){
-    .pricingTable{ margin-bottom: 30px; }
-}
-
-   </style>
-
+    
+    <style type="text/css">
+    </style>
   </head>
 
   <body id="page-top">
@@ -284,9 +43,6 @@
           <ul class="navbar-nav text-uppercase ml-auto">
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#services">Services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
             </li>
             <li class="nav-item">
               <a class="nav-link js-scroll-trigger" href="#charges">Charges</a>
@@ -313,33 +69,18 @@
 
   
 
-<div id="particles-js" style="background-color: black;                       width: 100vw;  height: 100vh;
- " 
-                        
-                        >
-          <div class="" style="
-                        font-family: 'Source Sans Pro';
-                        position: absolute;
-                        z-index: 10;
-                        display: flex;
-                        text-align: center;
-                        justify-content: center;
-                        flex-direction: column;
-                        color:white;
-                        text-transform: uppercase;
-                        width: 100vw;  height: 100vh;
-                        ">
- 
-    <header class="masthead">
-      <div class="container">
-        <div class="intro-text">
-          <div class="intro-lead-in">Welcome To Our Studio!</div>
-          <div class="intro-heading text-uppercase">It's Nice To Meet You</div>
-          <a class="btn btn-primary btn-lg text-uppercase js-scroll-trigger" style="color:black;" href="#services">See More</a>
-        </div>
-      </div>
-    </header>
-        </div>          
+<div id="particles-js" style="background-color: black; width: 100vw;  height: 100vh;">
+    <div class="particle_container" >
+        <header class="masthead">
+          <div class="container">
+            <div class="intro-text">
+              <div class="intro-lead-in">Welcome To Our Studio!</div>
+              <div class="intro-heading text-uppercase">It's Nice To Meet You</div>
+              <a class="btn btn-primary btn-lg text-uppercase js-scroll-trigger" style="color:black;" href="#services">See More</a>
+            </div>
+          </div>
+        </header>
+    </div>          
 </div>
 
 
@@ -795,8 +536,8 @@
 
 
 
-      <div id="container-fluid" id="faq" style=" background-color: #333;  padding: 50px 0px;">
-  
+  <div id="container-fluid" id="faq" style=" background-color: #333;  padding: 50px 0px;">
+
      <div class="row justify-content-center" style="padding: 10px;">
           <h3 style="color:white; text-align: center;" class="mb-5">Frequently Asked Questions ?</h3>      
      </div>
@@ -865,7 +606,7 @@
 
         </div>
      </div>
-    </div>
+   </div>
 
 
     <!-- Contact -->
@@ -989,194 +730,88 @@
         <div class="progress-bar" id="myBar"></div>
       </div> 
 
- <script type="text/javascript" src="./js/particles.js"></script>
- <script type="text/javascript" src="./js/app.js"></script>
-
-    <!-- Bootstrap core JavaScript -->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Contact form JavaScript -->
-    <!-- Custom scripts for this template -->
+    <script type="text/javascript" src="./js/particles.js"></script>
+    <script type="text/javascript" src="./js/app.js"></script>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/jquery.easing.min.js"></script>
     <script src="js/agency.min.js"></script>
 
-<script type="text/javascript">
-  $( document ).ready(function() {
-    var service = false;
-
-    $('#show_services').click(function(){
-      if(!service)
-      {
-         $('.our_services').css('display','contents');        
-        $('#show_services').text("Hide");
-        $('#show_services').css('background-color',"orangered");
-        service = true;      
-      }
-      else
-       {
-        $('.our_services').css('display','none');
-        $('#show_services').text("Show More");
-        $('#show_services').css('background-color',"#17a2b8");
-        service = false;                     
-       } 
-    });
-
-
-    var need_website = false;
-
-    $('#show_why_you_need_website').click(function(){
-      if(!need_website)
-      {
-         $('.our_why_you_need_website').css('display','contents');        
-        $('#show_why_you_need_website').text("Hide");
-        $('#show_why_you_need_website').css('background-color',"royalblue");
-        need_website = true;      
-      }
-      else
-       {
-        $('.our_why_you_need_website').css('display','none');
-        $('#show_why_you_need_website').text("Show More");
-        $('#show_why_you_need_website').css('background-color',"orangered");
-        need_website = false;                     
-       } 
-    });
-
-
-  });
-</script>
-   <script type="text/javascript">
-    
-    var button = document.getElementById('showhide1')
-    button.addEventListener('click',hideshow,false);
-
-    function hideshow() {
-        document.getElementById('showhide1').style.display = 'none'; 
-    }   
-
-    var button2 = document.getElementById('showhide2')
-    button2.addEventListener('click',hideshow2,false);
-
-    function hideshow2() {
-        document.getElementById('showhide2').style.display = 'none'; 
-    }   
-
-
-      window.onscroll = function() {myFunction()};
-
-      function myFunction() {
-        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        var scrolled = (winScroll / height) * 100;
-        document.getElementById("myBar").style.width = scrolled + "%";
-      }
-
-
-      filterSelection("school") // Execute the function and show only school columns
-      function filterSelection(c) {
-        var x, i;
-        x = document.getElementsByClassName("column");
-        if (c == "all") c = "";
-        // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
-        for (i = 0; i < x.length; i++) {
-          w3RemoveClass(x[i], "show");
-          if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-        }
-      }
-
-      function filterSelection2(c) {
-        var x, i;
-        x = document.getElementsByClassName("column1");
-        if (c == "all") c = "";
-        // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
-        for (i = 0; i < x.length; i++) {
-          w3RemoveClass(x[i], "show");
-          if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-        }
-      }
-
-      function filterSelection3(c) {
-        var x, i;
-        x = document.getElementsByClassName("column2");
-        if (c == "all") c = "";
-        // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
-        for (i = 0; i < x.length; i++) {
-          w3RemoveClass(x[i], "show");
-          if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
-        }
-      }
-
-      // Show filtered elements
-      function w3AddClass(element, name) {
-        var i, arr1, arr2;
-        arr1 = element.className.split(" ");
-        arr2 = name.split(" ");
-        for (i = 0; i < arr2.length; i++) {
-          if (arr1.indexOf(arr2[i]) == -1) {
-            element.className += " " + arr2[i];
-          }
-        }
-      }
-
-      // Hide elements that are not selected
-      function w3RemoveClass(element, name) {
-        var i, arr1, arr2;
-        arr1 = element.className.split(" ");
-        arr2 = name.split(" ");
-        for (i = 0; i < arr2.length; i++) {
-          while (arr1.indexOf(arr2[i]) > -1) {
-            arr1.splice(arr1.indexOf(arr2[i]), 1); 
-          }
-        }
-        element.className = arr1.join(" ");
-      }
-
-      // Add active class to the current button (highlight it)
-      var btnContainer = document.getElementById("myBtnContainer");
-      var btns = btnContainer.getElementsByClassName("btn");
-      for (var i = 0; i < btns.length; i++) {
-        btns[i].addEventListener("click", function(){
-          var current = document.getElementsByClassName("active");
-          current[0].className = current[0].className.replace(" active", "");
-          this.className += " active";
-        });
-      }
-         </script>
-
-
     <script type="text/javascript">
-       var frm = $('#contactForm1');
+      $( document ).ready(function() {
+        var service = false;
 
-       frm.submit(function (e) {
-         e.preventDefault();
+        $('#show_services').click(function(){
+          if(!service)
+          {
+             $('.our_services').css('display','contents');        
+            $('#show_services').text("Hide");
+            $('#show_services').css('background-color',"orangered");
+            service = true;      
+          }
+          else
+           {
+            $('.our_services').css('display','none');
+            $('#show_services').text("Show More");
+            $('#show_services').css('background-color',"#17a2b8");
+            service = false;                     
+           } 
+        });
 
-        if(grecaptcha.getResponse() == "")
-        { 
-       alert("Please Fill The Recaptcha"); 
-       //  window.location.href = "https://battleramp.com";
-        }  
-        else
-        {
-          
 
-           $.ajax({
-               type: frm.attr('method'),
-               url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
-               data: frm.serialize(),
-               success: function (data) {
-                  $("#myModal").modal('show');
-                // alert("Thankyou ! Your Submission Has Been Accepted");
-               },
-               error: function (data) {
-                alert("Error ! Connection failed")
-               },
-           });
-         }  
-       });
-   </script>   
+        var need_website = false;
+
+        $('#show_why_you_need_website').click(function(){
+          if(!need_website)
+          {
+             $('.our_why_you_need_website').css('display','contents');        
+            $('#show_why_you_need_website').text("Hide");
+            $('#show_why_you_need_website').css('background-color',"royalblue");
+            need_website = true;      
+          }
+          else
+           {
+            $('.our_why_you_need_website').css('display','none');
+            $('#show_why_you_need_website').text("Show More");
+            $('#show_why_you_need_website').css('background-color',"orangered");
+            need_website = false;                     
+           } 
+        });
+
+
+        window.onscroll = function() {myFunction()};
+        function myFunction() {
+          var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+          var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          var scrolled = (winScroll / height) * 100;
+          document.getElementById("myBar").style.width = scrolled + "%";
+        }
+
+        var frm = $('#contactForm1');
+         frm.submit(function (e) {
+           e.preventDefault();
+          if(grecaptcha.getResponse() == "")
+            alert("Please Fill The Recaptcha"); 
+          else
+          {
+             $.ajax({
+                 type: frm.attr('method'),
+                 url: 'https://script.google.com/macros/s/AKfycbwL2wcjG8V9EOgPbLhUDAUVAZhHT6BzuHM-j3gkIWy_YPNaqhiu/exec',
+                 data: frm.serialize(),
+                 success: function (data) {
+                    $("#myModal").modal('show');
+                  // alert("Thankyou ! Your Submission Has Been Accepted");
+                 },
+                 error: function (data) {
+                  alert("Error ! Connection failed")
+                 },
+             });
+           }  
+         });
+
+      });
+    </script>
+ 
 
   </body>
-
 </html>
