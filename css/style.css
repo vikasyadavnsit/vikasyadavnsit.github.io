@@ -1,55 +1,5 @@
      
-     * {
-        box-sizing: border-box;
-      }
-
-      .row {
-          margin: 8px -16px;
-           width:100%;
-      }
-
-      /* Add padding BETWEEN each column (if you want) */
-      .row,
-      .row > .column {
-          padding: 8px;
-      }
-
-      /* Create three equal columns that floats next to each other */
-      .column {
-          float: left;
-          width: 50%;
-          display: none; /* Hide columns by default */
-      }
-
-      .column1 {
-          float: left;
-          width: 100%;
-          display: none; /* Hide columns by default */
-      }
-
-      .column2 {
-          float: left;
-          width: 100%;
-          display: none; /* Hide columns by default */
-      }
-      
-      @media screen and (max-width: 1000px) {
-          .column {
-              width: 100%;
-          }
-      }
-      /* Clear floats after rows */ 
-      .row:after {
-          content: "";
-          display: table;
-          clear: both;
-      }
-
-      /* Content */
-      .content {
-          background-color: white;
-          padding: 10px;
-      }
+     
 
       /* The "show" class is added to the filtered elements */
       .show {
