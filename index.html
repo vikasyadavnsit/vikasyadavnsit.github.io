@@ -26,6 +26,56 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,500i,600,600i,700" rel="stylesheet">
     
     <style type="text/css">
+          .tbox-scene {
+    -webkit-perspective: 11000;
+    width: 280px;
+    height: 280px;
+    z-index: 9;
+    margin: 30px auto;
+}
+
+.tbox-scene:hover .tbox {
+    -webkit-transform: rotateX(90deg);
+}
+.tbox {
+    width: 280px;
+    height: 280px;
+    position: relative;
+    
+    -webkit-transform-style: preserve-3d;
+    
+    -webkit-transition: all 0.4s ease-out;
+    -webkit-transform-origin: 90px 90px -90px ;
+    
+    /* float: left; */
+    
+    
+    
+}
+
+.tface {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: visible;  
+    -webkit-transform-origin: 0 0;
+}
+
+.tfront {
+    -webkit-transform: rotateX(0deg);
+    z-index: 2;
+    background: #d9d9d9;
+}
+.tside {
+    background: #9dcc78;
+    -webkit-transform: rotateX(-90deg);
+    z-index: 1;
+    left: 0px;
+    height: 280px;
+    width: 280px;
+    top:280px;
+}
+
     </style>
   </head>
 
@@ -350,87 +400,161 @@
 
 
     <!-- Team -->
-    <section class="bg-blue" id="team" style="background-color: #6d6eef; color:white;">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h2 class="section-heading text-uppercase" style="font-weight:700; ">Our Amazing Team</h2>
-            <h3 class="section-subheading" style="color:white;">We Are Developers, Just For Fun.</h3>
-          </div>
+   <div id="srvices" style=" background-color: white; font-family: 'Montserrat', sans-serif; padding: 40px 0px;">
+      <div class="container-fluid">
+        
+        <div class="row justify-content-center">
+          <div class="col-md-12 text-center">
+            <h2 class="section-heading text-uppercase" style="color: #17a2b8;">Our Team</h2>
+            <span class="section-subheading"  >We Are A Team, Just For Fun</span><br><br>
+          </div >
         </div>
-        <div class="row">
-          <div class="col-sm-4">
-            <div class="team-member">
-              <img class="mx-auto rounded-circle" src="img/team/1.jpg" alt="">
-              <h4>Sunil Yadav</h4>
-              <p style="color:white;">Lead Designer</p>
-              <ul class="list-inline social-buttons">
-                <li class="list-inline-item">
-                  <a href="#">
-                    <i class="fa fa-twitter"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a href="https://www.facebook.com/100008381058480">
-                    <i class="fa fa-facebook"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a href="#">
-                    <i class="fa fa-linkedin"></i>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="team-member">
-              <img class="mx-auto rounded-circle" src="img/team/2.jpg" alt="">
-              <h4>Vikas Yadav</h4>
-              <p style="color:white;">Web Developer</p>
-              <ul class="list-inline social-buttons">
-                
-                <li class="list-inline-item">
-                  <a href="https://facebook.com/vikastauruss">
-                    <i class="fa fa-facebook"></i>
-                  </a>
-                </li>
-                
-              </ul>
-            </div>
-          </div>
-          <div class="col-sm-4">
-            <div class="team-member">
-              <img class="mx-auto rounded-circle" src="img/team/3.jpg" alt="">
-              <h4>Jitendra Kumar</h4>
-              <p style="color:white;">Marketing Head</p>
-              <ul class="list-inline social-buttons">
-                <li class="list-inline-item">
-                  <a href="#">
-                    <i class="fa fa-twitter"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a href="https://www.facebook.com/jitendra.yadav.12576049">
-                    <i class="fa fa-facebook"></i>
-                  </a>
-                </li>
-                <li class="list-inline-item">
-                  <a href="#">
-                    <i class="fa fa-linkedin"></i>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+
+        <div class="row mt-0 justify-content-center">
+          
+          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+                <div class='tbox-scene shadow-lg' >
+                    <div class='tbox'>
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: #17a2b8; color: white;">
+                            <div class="text-center">
+                              <img src='./img/team/1.jpg' style="width: 150px; height: 150px; border-radius: 50%;">
+                            </div>
+                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Vikas Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Founder<br>Web Developer</span><br>
+                        </div>
+                        <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the brain behind battleramp and I believe in doing things with Perfection. so i do as i think.</span><br> 
+                                <ul class="list-inline social-buttons">
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>            
+          </div >
+
+
+          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+                <div class='tbox-scene shadow-lg' >
+                    <div class='tbox'>
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: steelblue; color: white;">
+                            <div class="text-center">
+                              <img src='/img/team/4.jpg' style="width: 150px; height: 150px; border-radius: 50%;">
+                            </div>
+                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Vishal Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Lead Designer</span><br>
+                        </div>
+                        <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the leading helping hand behind every design we build on Web.</span><br> 
+                                <ul class="list-inline social-buttons">
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>            
+          </div >
+
+          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+                <div class='tbox-scene shadow-lg' >
+                    <div class='tbox'>
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: teal; color: white;">
+                            <div class="text-center">
+                              <img src='./img/team/3.jpg' style="width: 150px; height: 150px; border-radius: 50%;">
+                            </div>
+                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Jitendra Singh</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Marketing Head</span><br>
+                        </div>
+                        <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
+                                <ul class="list-inline social-buttons">
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>            
+          </div >
+
+
+          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+                <div class='tbox-scene shadow-lg' >
+                    <div class='tbox'>
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: royalblue; color: white;">
+                            <div class="text-center">
+                              <img src='./img/team/2.jpg' style="width: 150px; height: 150px; border-radius: 50%;">
+                            </div>
+                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Sunil Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Debugging</span><br>
+                        </div>
+                        <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
+                                <ul class="list-inline social-buttons">
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>
+                        </div>
+                    </div>
+                </div>            
+          </div >
+
+
         </div>
-        <div class="row">
-          <div class="col-lg-8 mx-auto text-center">
-            <p class="large" style="color:white;">We are self-taught designers, developers and entrepreneurs from National Capital Territory of Delhi. We are obsessed with all things business, technology and design and often step inside related fields. Our lifetime goal is to use technology to change the World. Our journey in designing and developing websites, building interactive experiences and creating businesses began in 2017. Beside work, We write extensively on our blog. Our goal is to make an impact and change the World.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+
+     </div>
+   </div> 
 
 
 
