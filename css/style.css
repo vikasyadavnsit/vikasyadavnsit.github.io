@@ -5,6 +5,7 @@
 
       .row {
           margin: 8px -16px;
+           width:100%;
       }
 
       /* Add padding BETWEEN each column (if you want) */
