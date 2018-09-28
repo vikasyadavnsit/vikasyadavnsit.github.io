@@ -26,31 +26,22 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,500i,600,600i,700" rel="stylesheet">
     
     <style type="text/css">
-          .tbox-scene {
+.tbox-scene {
     -webkit-perspective: 11000;
-    width: 280px;
-    height: 280px;
+    width: 310px;
+    height: 310px;
     z-index: 9;
-    margin: 30px auto;
+    margin: 25px auto;
 }
 
-.tbox-scene:hover .tbox {
-    -webkit-transform: rotateX(90deg);
-}
+
 .tbox {
-    width: 280px;
-    height: 280px;
+    width: 310px;
+    height: 310px;
     position: relative;
-    
     -webkit-transform-style: preserve-3d;
-    
     -webkit-transition: all 0.4s ease-out;
-    -webkit-transform-origin: 90px 90px -90px ;
-    
-    /* float: left; */
-    
-    
-    
+    -webkit-transform-origin: 90px 90px -90px ;    
 }
 
 .tface {
@@ -71,9 +62,124 @@
     -webkit-transform: rotateX(-90deg);
     z-index: 1;
     left: 0px;
-    height: 280px;
-    width: 280px;
-    top:280px;
+    height: 310px;
+    width: 310px;
+    top:310px;
+}
+
+.tbox-scene:hover .tbox {
+    -webkit-transform: rotateX(90deg);
+}
+
+.timg
+{
+  border:7px solid whitesmoke;  
+  width: 150px; 
+  height: 150px; 
+  border-radius: 50%;
+}
+
+.th1
+{
+  font-size: 25px; 
+  font-weight: 500; 
+  display: inline-block; 
+  padding-top: 10px
+}
+
+@media only screen and (min-width: 1320px) 
+{
+ 
+  .tbox-scene {
+      width: 270px;
+      height: 270px;
+  }
+
+  .tbox {
+      width: 270px;
+      height: 270px;
+  }
+
+  .tside {
+      height: 270px;
+      width: 270px;
+      top:270px;
+  }
+  
+  .timg
+  {
+    border:6px solid whitesmoke;  
+    width: 140px; 
+    height: 140px; 
+    border-radius: 50%;
+  }
+ 
+  .th1
+  {
+    font-size: 23px; 
+    font-weight: 500; 
+    display: inline-block; 
+    padding-top: 10px
+  }
+}
+ 
+ @media only screen and (min-width: 1014px) 
+{
+ 
+  .tbox-scene {
+      width: 265px;
+      height: 265px;
+  }
+
+  .tbox {
+      width: 265px;
+      height: 265px;
+  }
+
+  .tside {
+      height: 265px;
+      width: 265px;
+      top:265px;
+  }
+
+  .timg
+  {
+    border:6px solid whitesmoke;  
+    width: 140px; 
+    height: 140px; 
+    border-radius: 50%;
+  }
+
+}
+
+
+ @media only screen and (min-width: 767px) 
+{
+ 
+  .tbox-scene {
+      width: 300px;
+      height: 300px;
+  }
+
+  .tbox {
+      width: 300px;
+      height: 300px;
+  }
+
+  .tside {
+      height: 300px;
+      width: 300px;
+      top:300px;
+  }
+
+  .timg
+  {
+    border:6px solid whitesmoke;  
+    width: 150px; 
+    height: 150px; 
+    border-radius: 50%;
+  }
+
 }
 
     </style>
@@ -400,27 +506,45 @@
 
 
     <!-- Team -->
-      <div id="team" style=" background-color: #333; font-family: 'Montserrat', sans-serif; padding: 40px 0px;">
+   <div id="team" style=" background-color: #333; font-family: 'Montserrat', sans-serif; padding: 40px 0px;">
       <div class="container-fluid">
         
         <div class="row justify-content-center">
           <div class="col-md-12 text-center">
-            <h2 class="section-heading text-uppercase" style="color: white;">Our Team</h2>
-            <span class="section-subheading" style="color: white;" >We Are A Team, Just For Fun</span><br><br>
+            <h2 class="section-heading text-uppercase" style="color: #17a2b8;"></h2>
+            <span class="section-subheading" style="color: white;" ></span><br><br>
           </div >
         </div>
 
         <div class="row mt-1 justify-content-center">
           
-          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+          <div class="tcontrol col-xl-3 col-md-4 text-center justify-content-center">
                 <div class='tbox-scene shadow-lg' >
                     <div class='tbox'>
                         <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: #17a2b8; color: white;">
                             <div class="text-center">
-                              <img src='./img/team/2.jpg' style="border:7px solid whitesmoke;  width: 150px; height: 150px; border-radius: 50%;">
+                              <img class="timg" src='./img/team/2.jpg' style="">
                             </div>
-                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Vikas Yadav</span>
-                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Founder & Web Developer</span><br>
+                            <span class="th1" >Vikas Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Founder & Web Developer</span>
+                                <ul class="list-inline mt-1" >
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter" ></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>    
+
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
                            <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the brain behind battleramp and I believe in doing things with Perfection. so i do as i think.</span><br> 
@@ -446,16 +570,33 @@
                 </div>            
           </div >
 
-
-          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+         <div class="tcontrol col-xl-3 col-md-4 text-center justify-content-center">
                 <div class='tbox-scene shadow-lg' >
                     <div class='tbox'>
-                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: steelblue; color: white;">
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: #17a2b8; color: white;">
                             <div class="text-center">
-                              <img src='http://thecraftchop.com/files/others/bb8_1.svg' style="border:7px solid whitesmoke; width: 150px; height: 150px; border-radius: 50%;">
+                              <img class="timg" src='http://thecraftchop.com/files/others/bb8_1.svg' style="">
                             </div>
-                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Vishal Yadav</span>
-                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Lead Designer</span><br>
+                            <span class="th1">Vishal Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Lead Designer</span>
+                                <ul class="list-inline mt-1" >
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter" ></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>    
+
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
                            <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the leading helping hand behind every design we build on Web.</span><br> 
@@ -481,15 +622,33 @@
                 </div>            
           </div >
 
-          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+         <div class="tcontrol col-xl-3 col-md-4 text-center justify-content-center">
                 <div class='tbox-scene shadow-lg' >
                     <div class='tbox'>
-                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: teal; color: white;">
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: #17a2b8; color: white;">
                             <div class="text-center">
-                              <img src='./img/team/3.jpg' style="border:7px solid whitesmoke; width: 150px; height: 150px; border-radius: 50%;">
+                              <img class="timg" src='./img/team/3.jpg' style="">
                             </div>
-                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Jitendra Singh</span>
-                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Marketing Head</span><br>
+                            <span class="th1">Jitendra Singh</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Marketing Head</span>
+                                <ul class="list-inline mt-1" >
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter" ></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>    
+
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
                            <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
@@ -515,16 +674,33 @@
                 </div>            
           </div >
 
-
-          <div class="col-xl-3 col-md-4 text-center justify-content-center">
+         <div class="tcontrol col-xl-3 col-md-4 text-center justify-content-center">
                 <div class='tbox-scene shadow-lg' >
                     <div class='tbox'>
-                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: royalblue; color: white;">
+                        <div class='tfront tface' style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: #17a2b8; color: white;">
                             <div class="text-center">
-                              <img src='./img/team/1.jpg' style="border:7px solid whitesmoke; width: 150px; height: 150px; border-radius: 50%;">
+                              <img class="timg" src='./img/team/1.jpg' style="">
                             </div>
-                            <span style="font-size: 25px; font-weight: 500; display: inline-block; padding-top: 10px;">Sunil Yadav</span>
-                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Debugging</span><br>
+                            <span class="th1">Sunil Yadav</span>
+                            <span style="display: inline-block;  padding: 0px; font-size: 14px;">Debugging</span>
+                                <ul class="list-inline mt-1" >
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-twitter" ></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="">
+                                      <i class="fa fa-facebook"></i>
+                                    </a>
+                                  </li>
+                                  <li class="list-inline-item">
+                                    <a href="#">
+                                      <i class="fa fa-linkedin"></i>
+                                    </a>
+                                  </li>
+                                </ul>    
+
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
                            <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
@@ -550,12 +726,11 @@
                 </div>            
           </div >
 
-
+   
         </div>
 
      </div>
    </div>   
-
 
 
 
