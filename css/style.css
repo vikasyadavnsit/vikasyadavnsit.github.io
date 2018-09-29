@@ -220,6 +220,10 @@
 
 .tbox-scene {
     -webkit-perspective: 11000;
+    -ms-perspective: 11000;
+    -moz-perspective: 11000;
+    -o-perspective: 11000;
+
     width: 310px;
     height: 310px;
     z-index: 9;
@@ -234,6 +238,20 @@
     -webkit-transform-style: preserve-3d;
     -webkit-transition: all 0.4s ease-out;
     -webkit-transform-origin: 90px 90px -90px ;    
+
+    -ms-transform-style: preserve-3d;
+    -ms-transition: all 0.4s ease-out;
+    -ms-transform-origin: 90px 90px -90px ;    
+
+    -moz-transform-style: preserve-3d;
+    -moz-transition: all 0.4s ease-out;
+    -moz-transform-origin: 90px 90px -90px ;    
+
+    -o-transform-style: preserve-3d;
+    -o-transition: all 0.4s ease-out;
+    -o-transform-origin: 90px 90px -90px ;    
+
+
 }
 
 .tface {
@@ -242,16 +260,34 @@
     height: 100%;
     -webkit-backface-visibility: visible;  
     -webkit-transform-origin: 0 0;
+
+    -ms-backface-visibility: visible;  
+    -ms-transform-origin: 0 0;
+
+    -moz-backface-visibility: visible;  
+    -moz-transform-origin: 0 0;
+
+    -o-backface-visibility: visible;  
+    -o-transform-origin: 0 0;
+
 }
 
 .tfront {
     -webkit-transform: rotateX(0deg);
+    -ms-transform: rotateX(0deg);
+    -moz-transform: rotateX(0deg);
+    -o-transform: rotateX(0deg);
+
     z-index: 2;
     background: #d9d9d9;
 }
 .tside {
     background: #9dcc78;
     -webkit-transform: rotateX(-90deg);
+    -ms-transform: rotateX(-90deg);
+    -moz-transform: rotateX(-90deg);
+    -o-transform: rotateX(-90deg);
+
     z-index: 1;
     left: 0px;
     height: 310px;
@@ -261,6 +297,10 @@
 
 .tbox-scene:hover .tbox {
     -webkit-transform: rotateX(90deg);
+    -ms-transform: rotateX(90deg);
+    -moz-transform: rotateX(90deg);
+    -o-transform: rotateX(90deg);
+
 }
 
 .timg
