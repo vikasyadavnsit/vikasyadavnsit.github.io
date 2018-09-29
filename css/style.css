@@ -373,3 +373,59 @@
   }
 
 }
+
+
+   #space
+   {
+     margin-left:30%;
+   }
+
+   @media only screen and (max-width: 1090px) {
+    #space {
+        margin-left: 0;
+        display: none;
+    }
+   }
+ 
+    #contact{
+      text-align: center;
+      color: white;
+      background-color: #17a2b8;
+      padding: 30px 20px;
+    }
+   #map{
+     width:100%;
+     height:600px;
+   }
+   @media only screen and (max-width: 992px) {
+    #map {
+      margin-top: 10px;
+      width:100%;
+      height:400px;
+    }
+    #contact
+    {
+      padding: 0px;
+    }
+
+    .half
+    {
+      margin-bottom: 0px ;
+    }
+}
+
+
+
+#contact_right
+{
+  border-left: solid cyan 2px;
+  padding: 0px 100px;
+}
+ @media only screen and (max-width: 992px) {
+   #contact_right
+   {
+      border-left: solid teal 0px;
+       padding: 10px 0px;
+       padding-top: 50px;
+   }
+ }

@@ -209,10 +209,6 @@
 
 
 
-
-
-
-
 <div class="container-fluid text-center" id="charges" style="margin: 0; border-radius: 0; background-color: #333;">
   <br><br>
   <h1 style="color:orangered;">STARTER PACK</h1>
@@ -477,7 +473,7 @@
 
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
-                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the leading helping hand behind every design we build on Web.</span><br> 
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">I am the leading helping hand behind every design we build on Web.</span><br> <br>
                                 <ul class="list-inline social-buttons">
                                   <li class="list-inline-item">
                                     <a href="#">
@@ -529,7 +525,7 @@
 
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
-                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> <br>
                                 <ul class="list-inline social-buttons">
                                   <li class="list-inline-item">
                                     <a href="#">
@@ -581,7 +577,7 @@
 
                         </div>
                         <div class="tside tface" style="display: flex; flex-direction: column; justify-content: center;text-align: center; background-color: orangered; color: white; padding: 20px;">
-                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> 
+                           <span style="display: inline-block;  padding: 0px; font-size: 15px;">Helping Hands at every Door Step.</span><br> <br>
                                 <ul class="list-inline social-buttons">
                                   <li class="list-inline-item">
                                     <a href="#">
@@ -792,56 +788,53 @@
 
 
     <!-- Contact -->
-    <section id="contact">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 text-center">
-            <h2 class="section-heading text-uppercase">Give Us A Shout</h2>
-            <h3 class="section-subheading" style="color:white;">contact us on +91-7503706240, +91-7982756353 or fill out this form , we will contact you</h3>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <form id="contactForm1" name="sentMessage" onsubmit="return validateMyForm();" method="POST">
-              <div class="row">
-                <div class="col-md-6">
+    <div id="contact">
+
+       <div class="container-fluid" id="contact_us" style="background-color:#17a2b8; color: white; text-align:center;">
+        <br><br><h1>CONTACT US</h1>
+         <br><p>A-19, Street No-3, Vipin Garden, North Block, Dwarka Mor, New Delhi-110059 
+         <br>E-mail: vikasyadav@battleramp.com, vickytauruss@gmail.com
+         <br>Cell: +91-7503706240, +91-7982756353</p>
+          <div class="row justify-content-center" id="contact">
+            <div class="col-lg-6 col-md-12 half">
+             <div id="map" style="border-radius: 10px;"></div>
+            </div>
+
+            <div class="col-lg-6 col-md-12 half text-left">
+              <div style="height:100%;" id="contact_right">
+                <form  id="contactForm1" name="sentMessage"  method="POST">
                   <div class="form-group">
-                    <input class="form-control" id="name" name="Customer_Name" type="text" placeholder="Your Name *" required maxlength="50" oninvalid="this.setCustomValidity('Please Enter a valid Name')" oninput="setCustomValidity('')">
-                    <p class="help-block text-danger"></p>
+                    <label >Name:</label>
+                    <input type="text" class="form-control"  placeholder="Enter Your Name" name="name" required>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" id="email" name="Customer_Email" type="email" placeholder="Your Email *" required maxlength="50" oninvalid="this.setCustomValidity('Please Enter a valid Email Address')" oninput="setCustomValidity('')">
-                    <p class="help-block text-danger"></p>
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control"  placeholder="Enter email" name="email" required>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" id="phone" name="Contact_No" type="number" placeholder="Your Phone *" required oninvalid="this.setCustomValidity('Please Enter a valid Contact No')" oninput="setCustomValidity('')">
-                    <p class="help-block text-danger" ></p>
+                    <label >Contact No:</label>
+                    <input type="number" class="form-control" min="7777777777" max="9999999999" placeholder="Enter Contact No" name="phone" required>
                   </div>
-                </div>
-                <div class="col-md-6">
                   <div class="form-group">
-                    <textarea class="form-control" name="Message" id="message" placeholder="Your Message *" required maxlength="1000" oninvalid="this.setCustomValidity('Please Enter Your Message')" oninput="setCustomValidity('')"></textarea>
-                    <p class="help-block text-danger"></p>
+                    <label >Message:</label>
+                    <textarea name="message" rows="6" cols="80" placeholder="Enter Your Message Over Here" class="form-control" required ></textarea>
                   </div>
-                </div>
-               
-               <div class="col-md-6 text-center">
-                   <div class="form-group form-control">
-                 <div class="g-recaptcha"  data-sitekey="6LcSdEIUAAAAAL4q-7keXluaJnwA1tx3s7wuQNCD"></div>
-               </div>
-             </div>
-                 
-                <div class="clearfix"></div>
-                <div class="col-lg-12 text-center">
-                  <div id="success"></div>
-                  <button id="sendMessageButton" class="btn btn-primary btn-xl text-uppercase" type="submit">Send Message</button>
-                </div>
+                 <div class="form-group row justify-content-center">
+                     <div class="g-recaptcha"  data-sitekey="6LcSdEIUAAAAAL4q-7keXluaJnwA1tx3s7wuQNCD"></div>
+                  </div>
+                  <div class="form-group text-center">
+                    <button type="submit" class="btn" style="background-color: teal; color: white; font-weight: 400;">Submit</button>
+                  </div>
+
+                </form>
+
               </div>
-            </form>
+            </div>
+
           </div>
-        </div>
       </div>
-    </section>
+
+    </div>
 
 
 
@@ -912,12 +905,26 @@
         <div class="progress-bar" id="myBar"></div>
       </div> 
 
+
+    <script>
+    function myMap() {
+      var myCenter = new google.maps.LatLng(28.6245595,77.02781900000002);
+      var mapCanvas = document.getElementById("map");
+      var mapOptions = {center: myCenter, zoom: 14};
+      var map = new google.maps.Map(mapCanvas, mapOptions);
+      var marker = new google.maps.Marker({position:myCenter});
+      marker.setMap(map);
+    }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-Can0B2F00P0j-A6YhYbOpJYUrxlMuR0&callback=myMap"></script>
     <script type="text/javascript" src="./js/particles.js"></script>
     <script type="text/javascript" src="./js/app.js"></script>
     <script src="./js/jquery.min.js"></script>
     <script src="./js/bootstrap.bundle.min.js"></script>
     <script src="./js/jquery.easing.min.js"></script>
     <script src="js/agency.min.js"></script>
+
 
     <script type="text/javascript">
       $( document ).ready(function() {
