@@ -145,7 +145,7 @@
 }
 .pricingTable .price-value{
     display: inline-block;
-    font-size: 50px;
+    font-size: 45px;
     position: relative;
 }
 .pricingTable .currency{
@@ -174,14 +174,15 @@
 .pricingTable .pricing-content ul li{
     font-size: 16px;
     line-height: 40px;
+    font-weight: 400;
 }
 .pricingTable .pricingTable-signup{
     display: inline-block;
     padding: 8px 40px;
     border-radius: 30px;
     border: 1px solid #595555;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 500;
     color: #fff;
     transition: all 0.5s ease 0s;
 }
