@@ -12,6 +12,12 @@
       type="image/png"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script type="text/javascript">
+    	var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    	if(!isChrome){
+    		window.location.href="http://battleramp.com/error";
+    	}
+    </script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css"
@@ -20,8 +26,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css"
     />
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-      <script>
+      <script>	
     var map = { 17: false, 16: false, 73: false, 123: false };
     $(document)
       .keydown(function(e) {
