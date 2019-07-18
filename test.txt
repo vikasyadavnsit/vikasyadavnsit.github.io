@@ -1,1 +1,10 @@
 https://xd.adobe.com/view/27c10510-2a3d-4639-5433-2294c46f6ea8-51f0/
+
+
+https://lastminuteengineers.com/esp8266-nodemcu-arduino-tutorial/
+
+
+
+https://randomnerdtutorials.com/getting-started-with-esp8266-wifi-transceiver-review/
+https://randomnerdtutorials.com/esp8266-web-server/
+https://randomnerdtutorials.com/esp32-dht11-dht22-temperature-humidity-web-server-arduino-ide/
