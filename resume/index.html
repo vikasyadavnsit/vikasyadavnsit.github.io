@@ -20,7 +20,6 @@
         window.location.href = "https://battleramp.com/error";
       }
     </script>
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css"
@@ -715,7 +714,7 @@
 
       .user-experience-job-title {
         position: absolute;
-        padding: 10px 20px;
+        padding: 20px 20px;
         left: 50%;
         transform: translateX(-50%);
         background: linear-gradient(to right, #11998e, #38ef7d);
@@ -724,14 +723,15 @@
         top: -15px;
         border-radius: 4px;
         letter-spacing: 0.7px;
-        font-size: 15px;
+        font-size: 17px;
         text-transform: uppercase;
       }
 
       .user-experience-job-description {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         grid-column-gap: 4px;
+        margin-top: 20px;
       }
 
       .user-experience-job-items {
@@ -744,7 +744,9 @@
         padding: 10px 7px;
         border-radius: 5px;
         color: white;
-        min-height: 80px;
+        min-height: 180px;
+      font-size: 16px;
+      padding: 17px 0px;
       }
 
       b {
@@ -904,6 +906,10 @@
           grid-area: 2 / 1 / 4 / 2;
           grid-auto-rows: auto;
         }
+
+        .user-experience-job-title{
+           padding:10px 20px;
+        }
       }
 
       @media screen and (min-width: 500px) and (max-width: 900px) {
@@ -953,6 +959,19 @@
         .user-footer {
           grid-area: 7 / 1 / 8 / 2;
           grid-auto-rows: auto;
+        }
+
+        .user-experience-job-items{
+          min-height: 80px;
+          padding: 10px;
+        }
+
+        .user-experience-job-description{
+          margin-top:5px;
+        }
+
+        .user-experience-job-title{
+          padding: 10px;
         }
       }
 
@@ -1084,7 +1103,19 @@
           margin-top: 10px;
           margin-bottom: 10px;
         }
-      }
+
+        .user-experience-job-items{
+          min-height: 80px;
+          padding: 10px;
+        }
+
+        .user-experience-job-description{
+          margin-top:5px;
+        }
+
+        .user-experience-job-title{
+          padding: 10px;
+        }      }
     </style>
   </head>
   <body>
@@ -1121,7 +1152,7 @@
           <div>
             <span class="user-designation">Full Stack Developer</span>
             <span class="user-organisation"
-              >[ IFFCO Tokio General Insurance ] <br />[ battleramp.com ]
+              >[ IFFCO Tokio General Insurance ] <br /><!-- [ battleramp.com ] -->
             </span>
             <div class="user-contact" style="margin-top:15px;">
               <div class="user-contact-details">
@@ -1170,9 +1201,9 @@
         <div class="user-project-title">
           <span> Projects</span>
         </div>
-        <span class="user-project-autoscroll">
+        <span class="user-project-autoscroll"  style="visibility: hidden;">
           <i class="fas fa-2x fa-caret-right"></i>
-        </span>
+        </span> 
         <div class="user-project-block dragscroll" id="scroll-project-block">
           <div class="user-prject-block-container">
             <div class="user-project-block-title">
@@ -1272,7 +1303,7 @@
                   <i style="color:lightpink;;" class="fas fa-list-ul"></i>
                 </span>
                 <span class="user-project-tech-text"
-                  >Used to view, download and modify multiple transaction
+                  >Used to view, downloand and modify multiple transaction
                   reports of the policies purchased.
                 </span>
               </div>
@@ -1412,7 +1443,7 @@
                   <i style="color:lightpink;;" class="fas fa-fist-raised"></i>
                 </span>
                 <span class="user-project-tech-text"
-                  >Complete UI, Backend mapping and validations</span
+                  >Complete UI, Backend mapping sand validations</span
                 >
               </div>
               <div class="user-project-tech-block">
@@ -1588,7 +1619,7 @@
               </div>
               <div class="user-education-school-block">
                 <span class="school-block-left">Percentage</span>
-                <span class="school-block-right">62.5%</span>
+                <span class="school-block-right">63.59%</span>
               </div>
             </div>
           </div>
@@ -1596,8 +1627,9 @@
       </div>
       <div class="block user-experiences">
         <div class="user-experience-title">
-          <span> Experiences</span>
+          <span> Experience</span>
         </div>
+
         <div class="user-experience-block">
           <div class="user-experience-job-title">
             Full Stack Java Developer
@@ -1607,25 +1639,20 @@
               <span> <b>IFFCO</b> TOKIO GENERAL INSURANCE </span>
             </div>
             <div class="user-experience-job-items">
-              <span> <b>1</b>Year of experience </span>
+              <span> <b>1+</b>Year of experience </span>
             </div>
             <div class="user-experience-job-items">
               <span> <b>7</b>+ Projects </span>
             </div>
-            <div class="user-experience-job-items" style="font-size: 12px;">
+            <div class="user-experience-job-items" >
               <span>
-                [SPRING, STRUTS, HIBERNATE, JASPER, IBM-DB2, MYSQL,
-                APACHE-TOMCAT]
-              </span>
-            </div>
-            <div class="user-experience-job-items">
-              <span>
-                <b>JAVA</b>
+                [SPRING MVC, SPRING BOOT,STRUTS, HIBERNATE, ANGULAR 8, TYPESCRIPT, HTML5, CSS3, CORE JS , IBM-DB2, MYSQL ]
               </span>
             </div>
           </div>
         </div>
-        <div class="user-experience-block">
+
+<!--         <div class="user-experience-block">
           <div class="user-experience-job-title">
             Full Stack Developer
           </div>
@@ -1649,6 +1676,7 @@
             </div>
           </div>
         </div>
+ -->        
       </div>
       <div class="block user-extracurricular">
         <div class="user-extracurricular-title">
@@ -1690,6 +1718,7 @@
     </div>
   </body>
   <script>
+
     var element = new Image();
     var devtoolsOpen = false;
     element.__defineGetter__("id", function() {
@@ -1700,7 +1729,7 @@
       console.log(element);
       devtoolsOpen
         ? (window.location.href = "https://battleramp.com/unauthorised")
-        : console.log("dev tools is closed");
+        : console.clear();
     }, 500);
 
     (function() {
@@ -1836,8 +1865,8 @@
 
       const learningSkills = [
         new getUserCoreSkillsProperty("TypeScript", "1/3/1/4"),
-        new getUserCoreSkillsProperty("Angular6", "1/1/1/3"),
-        new getUserCoreSkillsProperty("PHP", "2/1/2/2"),
+        new getUserCoreSkillsProperty("Angular8", "1/1/1/3"),
+        new getUserCoreSkillsProperty("Angular Material", "2/1/2/2"),
         new getUserCoreSkillsProperty("Software Testing", "2/2/2/4"),
         new getUserCoreSkillsProperty("Graphic Designing", "3/1/3/4"),
         new getUserCoreSkillsProperty("POSTMAN & SOAP UI", "4/1/4/4"),
