@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Error Page</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Vikas Yadav Digital Resume" />
+    <meta name="keywords" content="HTML,CSS,JavaScript" />
+    <meta name="author" content="Vikas Yadav" />
+    <link
+      rel="icon"
+      href="http://battleramp.com/img/resume/favicon.png"
+      type="image/png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+	    * {
+  margin: 0px;
+  padding: 0px;
+}
+
+html,
+body {
+  overflow-x: hidden;
+  user-select: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction:column; 	
+  width: 100vw;
+  background-color: whitesmoke;
+   justify-content: center;
+    align-items: center;
+    font-size: calc(12px + 1.5vw);
+    font-family: monospace;
+    font-weight: lighter;
+
+}
+.container b {
+    font-size: calc(16px + 1.5vw);
+    color: palevioletred;
+}
+
+.container > div {
+	padding:10px;
+}
+    </style>
+  </head>
+<body>
+	
+	<div class="container">
+		<div>
+			<b>Error!</b>	
+		</div>
+		<div>
+			<code>Your browser is not supported</code>
+		</div>
+	</div>
+</body>
+</html>
