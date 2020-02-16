@@ -1,44 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="author" content="Vikas Yadav" />
-    <title>Battleramp.com</title>
-    <style>
-      * {
-        margin: 0px;
-        padding: 0px;
-        box-sizing: border-box;
-      }
-      body {
-        height: 100vh;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        user-select: none;
-        pointer-events: none;
-      }
-      div {
-        padding: 15px;
-        text-align: center;
-        font-family: monospace;
-        font-size: calc(25px + 1.3vw);
-      }
-      span {
-        color: dodgerblue;
-        font-size: calc(25px + 1.5vw);
-      }
-    </style>
-  </head>
 
-  <body>
-    <div><span>#</span>Something Big Coming</div>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="Vikas Yadav" />
+  <title>Battleramp.com</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    div {
+      padding: 15px;
+      text-align: center;
+      font-family: monospace;
+      font-size: calc(25px + 1.3vw);
+    }
+
+    span {
+      color: dodgerblue;
+      font-size: calc(25px + 1.5vw);
+      pointer-events: none;
+    }
+
+    div>a {
+      text-decoration: none;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: monospace;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body>
+  <div><span>#</span>Something Big Coming</div>
+  <div><a href="https://battleramp-pwa.firebaseapp.com">[Under Development]</a></div>
+</body>
+
 </html>
