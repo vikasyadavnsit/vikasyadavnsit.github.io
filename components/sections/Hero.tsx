@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowDown, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowDown, Github, Linkedin, Mail, User } from "lucide-react";
 import { useTheme } from "@/components/ThemeContext";
 
 export default function Hero() {
@@ -33,12 +33,8 @@ export default function Hero() {
         >
           <div className="relative group">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-40 group-hover:opacity-60 transition duration-1000 group-hover:duration-200" style={{ backgroundImage: 'linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)))' }} />
-            <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-foreground/10 p-1.5 bg-card">
-              <img
-                src="/img/team/2.jpg"
-                alt="Vikas Yadav"
-                className="w-full h-full object-cover rounded-full"
-              />
+            <div className="relative w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-2 border-foreground/10 p-1.5 bg-card flex items-center justify-center">
+              <User className="w-16 h-16 text-muted-foreground" />
             </div>
             <div className="absolute bottom-2 right-2 w-5 h-5 md:w-6 md:h-6 bg-primary border-4 border-background rounded-full shadow-lg transition-all duration-700" style={{ backgroundColor: 'hsl(var(--primary))', boxShadow: '0 0 20px hsla(var(--primary), 0.5)' }} />
           </div>

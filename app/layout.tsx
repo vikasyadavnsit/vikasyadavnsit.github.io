@@ -11,9 +11,8 @@ export const metadata: Metadata = {
   description: "Software Engineer & Digital Creator",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/assets/icons/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-touch-icon.png",
   },
 };
 
