@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Soft Light Mode (Less Stark White) */
+  --background: 240 10% 97%;      /* Off-white/Gray */
+  --foreground: 240 10% 10%;      /* Deep Charcoal */
+  --card: 0 0% 100%;              /* Pure White for cards */
+  --card-foreground: 240 10% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 10%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 240 5% 90%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 5% 94%;
+  --muted-foreground: 240 4% 40%;
+  --accent: 240 5% 90%;
+  --accent-foreground: 240 5.9% 10%;
+  --border: 240 6% 85%;
+  --input: 240 6% 85%;
+  --ring: 240 6% 10%;
+  --radius: 1.5rem;
+
+  --glow: rgba(59, 130, 246, 0.05);
+}
+
+.dark {
+  /* Obsidian Dark Mode (Deeper, More Premium) */
+  --background: 240 10% 2.5%;      /* Deep Ink */
+  --foreground: 0 0% 98%;
+  --card: 240 10% 5%;             /* Obsidian */
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 5%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 240 4% 12%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 4% 10%;
+  --muted-foreground: 240 5% 60%;
+  --accent: 240 4% 15%;
+  --accent-foreground: 0 0% 98%;
+  --border: 240 4% 15%;
+  --input: 240 4% 15%;
+  --ring: 240 5% 84%;
+
+  --glow: rgba(59, 130, 246, 0.12);
+}
+
+/* Enhanced Tinted Backgrounds for Dark Mode */
+.dark[data-theme='blue'] {
+  --background: 222 47% 2%;
+  --primary: 217.2 91.2% 59.8%;
+  --accent: 226.3 70% 63.9%;
+}
+
+.dark[data-theme='emerald'] {
+  --background: 160 50% 1.5%;
+  --primary: 160 84% 39%;
+  --accent: 174 75% 39%;
+}
+
+.dark[data-theme='rose'] {
+  --background: 340 50% 1.5%;
+  --primary: 346 84% 50%;
+  --accent: 262 83% 58%;
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.5s ease;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Glassmorphism Classes - Improved for visibility */
+.glass-card {
+  background-color: hsla(var(--card), 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--border), 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.dark .glass-card {
+  background-color: hsla(var(--card), 0.4);
+  border: 1px solid hsla(var(--border), 0.5);
+  box-shadow: none;
+}
+
+@layer utilities {
+  .text-primary { color: hsl(var(--primary)); }
+  .bg-primary { background-color: hsl(var(--primary)); }
+  .border-primary { border-color: hsl(var(--primary)); }
+}
