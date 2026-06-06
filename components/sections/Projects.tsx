@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { ExternalLink, Sparkles, Code2, Github, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const projects = [
   {
@@ -119,17 +120,15 @@ export default function Projects() {
           viewport={{ once: true }}
           className="flex justify-center"
         >
-          <a
-            href="https://battleramp-pwa.firebaseapp.com/projects"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/projects"
             className="group flex items-center gap-3 px-10 py-5 bg-foreground text-background font-bold rounded-2xl hover:scale-105 transition-all duration-500 shadow-xl shadow-black/10"
           >
             <span>Explore More Projects</span>
             <div className="p-2 bg-background/10 rounded-lg group-hover:rotate-45 transition-transform duration-500">
               <ExternalLink className="w-5 h-5" />
             </div>
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>
