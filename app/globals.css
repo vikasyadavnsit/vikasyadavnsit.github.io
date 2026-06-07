@@ -18,8 +18,8 @@
   --muted-foreground: 240 4% 40%;
   --accent: 240 5% 90%;
   --accent-foreground: 240 5.9% 10%;
-  --border: 240 6% 85%;
-  --input: 240 6% 85%;
+  --border: 240 6% 80%;           /* Slightly Darker for contrast */
+  --input: 240 6% 80%;
   --ring: 240 6% 10%;
   --radius: 1.5rem;
 
@@ -78,9 +78,9 @@ body {
 
 /* Glassmorphism Classes - Improved for visibility */
 .glass-card {
-  background-color: hsla(var(--card), 0.6);
+  background-color: hsla(var(--card), 0.85); /* Increased for light theme readability */
   backdrop-filter: blur(20px);
-  border: 1px solid hsla(var(--border), 0.8);
+  border: 1px solid hsla(var(--border), 0.9);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 

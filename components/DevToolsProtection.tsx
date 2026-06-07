@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation';
 
 const DevToolsProtection = () => {
   const router = useRouter();
+  const DISABLE_PROTECTION = true; // Set to true to disable all protections
 
   useEffect(() => {
+    if (DISABLE_PROTECTION) return;
+
     const redirectUnauthorised = () => {
       if (typeof window !== 'undefined') {
         window.location.href = '/unauthorised';

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Navbar from "@/components/sections/Navbar";
 import {
   ArrowLeft, RotateCcw, Undo2, Redo2, Eraser,
   MousePointer2, Download, Square, Circle,
@@ -128,6 +127,9 @@ export default function ScratchpadPage() {
         bufferRef.current = s.createGraphics(s.windowWidth, s.windowHeight);
         bufferRef.current.background(255);
         s.background(255);
+
+        // Ensure ref is synced with state on init
+        toolSettingsRef.current = { strokeWeight, strokeColor, activeTool };
       };
 
       s.mousePressed = () => {
@@ -267,17 +269,23 @@ export default function ScratchpadPage() {
       <Script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js" onLoad={initP5} />
 
       <div className={cn("absolute top-0 left-0 right-0 z-40 transition-all duration-500", isUiVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0")}>
-        <Navbar />
       </div>
 
       {/* Sidebar Tools */}
-      <div className={cn("fixed left-6 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 p-3 bg-white/80 backdrop-blur-2xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] border border-white/40 transition-all duration-500", isUiVisible ? "translate-x-0" : "-translate-x-32")}>
+      <div className={cn(
+        "fixed z-50 flex bg-white/80 backdrop-blur-2xl rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] border border-white/40 transition-all duration-500",
+        // Desktop: Left vertical
+        "md:left-6 md:top-1/2 md:-translate-y-1/2 md:flex-col md:gap-3 md:p-3",
+        // Mobile: Top horizontal
+        "left-1/2 top-4 -translate-x-1/2 flex-row gap-2 p-2",
+        isUiVisible ? "translate-y-0 opacity-100" : "-translate-y-32 opacity-0 md:translate-y-0 md:-translate-x-32"
+      )}>
         <Tooltip text="Back to Projects" position="right">
-          <Link href="/projects/creative-stuff" className="p-3 bg-gray-100 text-gray-600 rounded-2xl hover:bg-primary hover:text-white transition-all">
+          <Link href="/projects/creative-stuff" className="p-2 md:p-3 bg-gray-100 text-gray-600 rounded-2xl hover:bg-primary hover:text-white transition-all">
             <ArrowLeft className="w-5 h-5" />
           </Link>
         </Tooltip>
-        <div className="h-px bg-gray-200 mx-2 my-1" />
+        <div className="w-px md:w-auto md:h-px bg-gray-200 mx-1 md:mx-2 my-2 md:my-1" />
         {[
           { id: 'pencil', icon: MousePointer2, label: 'Pencil Tool' },
           { id: 'eraser', icon: Eraser, label: 'Eraser Tool' },
@@ -285,60 +293,73 @@ export default function ScratchpadPage() {
           { id: 'circle', icon: Circle, label: 'Circle Shape' },
         ].map((tool) => (
           <Tooltip key={tool.id} text={tool.label} position="right">
-            <button onClick={() => setActiveTool(tool.id)} className={cn("p-4 rounded-2xl transition-all", activeTool === tool.id ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-gray-500 hover:bg-gray-100")}>
-              <tool.icon className="w-6 h-6" />
+            <button onClick={() => setActiveTool(tool.id)} className={cn("p-2.5 md:p-4 rounded-2xl transition-all", activeTool === tool.id ? "bg-primary text-white shadow-lg shadow-primary/30" : "text-gray-500 hover:bg-gray-100")}>
+              <tool.icon className="w-5 h-5 md:w-6 md:h-6" />
             </button>
           </Tooltip>
         ))}
-        <div className="h-px bg-gray-200 mx-2 my-1" />
+        <div className="w-px md:w-auto md:h-px bg-gray-200 mx-1 md:mx-2 my-2 md:my-1" />
         <Tooltip text="Toggle Immersive Mode" position="right">
-          <button onClick={() => setIsUiVisible(!isUiVisible)} className="p-4 text-gray-500 hover:bg-gray-100 rounded-2xl transition-all">
-            <Maximize2 className="w-6 h-6" />
+          <button onClick={() => setIsUiVisible(!isUiVisible)} className="p-2.5 md:p-4 text-gray-500 hover:bg-gray-100 rounded-2xl transition-all">
+            <Maximize2 className="w-5 h-5 md:w-6 md:h-6" />
           </button>
         </Tooltip>
       </div>
 
       {/* Control Bar */}
-      <div className={cn("fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-6 px-8 py-5 bg-white/80 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/40 transition-all duration-500", isUiVisible ? "translate-y-0 opacity-100" : "translate-y-32 opacity-0")}>
-        <div className="flex items-center gap-3 pr-6 border-r border-gray-200">
+      <div className={cn(
+        "fixed bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-4 md:gap-6 px-4 md:px-8 py-3 md:py-5 bg-white/90 backdrop-blur-2xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-white/40 transition-all duration-500 w-[90%] md:w-auto",
+        isUiVisible ? "translate-y-0 opacity-100" : "translate-y-32 opacity-0"
+      )}>
+        <div className="flex items-center gap-2 md:gap-4 md:pr-6 md:border-r border-gray-200">
           <Tooltip text="Pick Custom Color" position="top">
-            <input type="color" value={strokeColor} onChange={(e) => setStrokeColor(e.target.value)} className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border-none p-0 overflow-hidden" />
+            <div className="relative group">
+              <input type="color" value={strokeColor} onChange={(e) => setStrokeColor(e.target.value)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl cursor-pointer bg-white border-2 border-gray-100 p-1 shadow-sm transition-transform group-hover:scale-105" />
+            </div>
           </Tooltip>
-          <div className="flex flex-wrap gap-1.5 max-w-[100px]">
+          <div className="flex flex-wrap gap-1.5 md:gap-2 max-w-[100px] md:max-w-[140px]">
             {['#9400D3', '#FF0000', '#0000FF', '#00FF00', '#FFA500', '#000000'].map(c => (
-              <button key={c} onClick={() => setStrokeColor(c)} className={cn("w-4 h-4 rounded-full border border-gray-200", strokeColor === c ? "ring-2 ring-primary ring-offset-2" : "")} style={{ backgroundColor: c }} />
+              <button
+                key={c}
+                onClick={() => setStrokeColor(c)}
+                className={cn(
+                  "w-6 h-6 md:w-8 md:h-8 rounded-lg md:rounded-xl border-2 transition-all hover:scale-110 shadow-sm",
+                  strokeColor === c ? "border-primary scale-110 ring-2 ring-primary/20" : "border-transparent"
+                )}
+                style={{ backgroundColor: c }}
+              />
             ))}
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 min-w-[160px] px-6 border-r border-gray-200">
-          <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            <span>Stroke Size</span> <span className="text-primary">{strokeWeight}px</span>
+        <div className="flex flex-col gap-1 md:gap-2 min-w-[140px] md:min-w-[200px] md:px-6 md:border-r border-gray-200 flex-1 max-w-[250px]">
+          <div className="flex justify-between items-center text-[9px] md:text-[10px] font-bold text-gray-500 uppercase tracking-widest">
+            <span>Thickness</span> <span className="text-primary bg-primary/10 px-2 py-0.5 rounded-full">{strokeWeight}px</span>
           </div>
-          <input type="range" min="1" max="40" value={strokeWeight} onChange={(e) => setStrokeWeight(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-primary" />
+          <input type="range" min="1" max="60" value={strokeWeight} onChange={(e) => setStrokeWeight(parseInt(e.target.value))} className="w-full h-1.5 md:h-2 bg-gray-100 rounded-full appearance-none cursor-pointer accent-primary" />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <Tooltip text="Undo" position="top">
-            <button onClick={handleUndo} disabled={drawLength === 0} className="p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-              <Undo2 className="w-5 h-5" />
+            <button onClick={handleUndo} disabled={drawLength === 0} className="p-2 md:p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+              <Undo2 className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </Tooltip>
           <Tooltip text="Redo" position="top">
-            <button onClick={handleRedo} disabled={drawLength === drawSet.length} className="p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-              <Redo2 className="w-5 h-5" />
+            <button onClick={handleRedo} disabled={drawLength === drawSet.length} className="p-2 md:p-3 text-gray-500 hover:bg-gray-100 rounded-xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+              <Redo2 className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </Tooltip>
           <Tooltip text="Clear All" position="top">
-            <button onClick={handleReset} className="p-3 text-red-400 hover:bg-red-50 rounded-xl transition-all">
-              <RotateCcw className="w-5 h-5" />
+            <button onClick={handleReset} className="p-2 md:p-3 text-red-400 hover:bg-red-50 rounded-xl transition-all">
+              <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
             </button>
           </Tooltip>
-          <div className="w-px h-8 bg-gray-200 mx-2" />
+          <div className="w-px h-6 md:h-8 bg-gray-200 mx-1 md:mx-2" />
           <Tooltip text="Export PNG" position="top">
-            <button onClick={handleDownload} className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-2xl hover:bg-primary transition-all shadow-lg group">
-              <Download className="w-4 h-4 group-hover:scale-110 transition-transform" />
-              <span className="font-bold text-sm">Export</span>
+            <button onClick={handleDownload} className="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 bg-gray-900 text-white rounded-xl md:rounded-2xl hover:bg-primary transition-all shadow-lg group">
+              <Download className="w-3.5 h-3.5 md:w-4 md:h-4 group-hover:scale-110 transition-transform" />
+              <span className="font-bold text-xs md:text-sm">Export</span>
             </button>
           </Tooltip>
         </div>

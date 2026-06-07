@@ -1,7 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import Navbar from "@/components/sections/Navbar";
-import { ArrowRight, Pencil, MousePointer2, LogIn } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -26,13 +25,19 @@ const creativeProjects = [
     external: true,
     icon: LogIn,
     color: "from-amber-500 to-orange-500"
+  },
+  {
+    title: "Open Chat",
+    description: "Join a global real-time network where anyone can jump in and start chatting instantly. No signup required—just pick a name and say hello.",
+    link: "/projects/creative-stuff/chat-application",
+    icon: Wifi,
+    color: "from-blue-500 to-cyan-500"
   }
 ];
 
 export default function CreativeStuffPage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
-      <Navbar />
       <div className="max-w-7xl mx-auto px-6 pt-32 pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

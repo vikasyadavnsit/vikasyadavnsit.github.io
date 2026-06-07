@@ -1,0 +1,89 @@
+/* Whiteboard Specific Themes */
+/* We override Tailwind variables locally to ensure consistency regardless of global mode */
+
+.wb-theme-light {
+  --background: 0 0% 100%;           /* Pure White */
+  --foreground: 222 47% 11%;        /* Deep Charcoal Navy */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 221.2 83.2% 53.3%;     /* Sharp Blue */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;          /* Clean Pro Gray */
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --border: 214.3 31.8% 85%;        /* Slightly Sharper Border */
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+
+  /* Popover refinement */
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --popover-border: 214.3 31.8% 80%;
+
+  /* Canvas Internal Helpers */
+  --wb-canvas: 0 0% 98%;
+  --wb-grid: rgba(0, 0, 0, 0.05);
+}
+
+.wb-theme-dark {
+  --background: 240 10% 3.9%;      /* Obsidian deep ink */
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 222.2 47.4% 11.2%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 217.2 91.2% 59.8%;
+
+  /* Canvas Internal Helpers */
+  --wb-canvas: 240 10% 4%;
+  --wb-grid: rgba(255, 255, 255, 0.04);
+}
+
+.wb-glass-card {
+  background-color: hsla(var(--card), 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--border));
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+}
+
+.wb-theme-dark .wb-glass-card {
+  background-color: hsla(var(--card), 0.5);
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+  border: 1px solid hsla(var(--border), 0.5);
+}
+
+/* Ensure icons and text inside buttons/links are sharp */
+.wb-theme-light .hover\:bg-foreground\/5:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.wb-theme-dark .hover\:bg-foreground\/5:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+@keyframes shake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.hover\:animate-shake:hover {
+  animation: shake 0.2s ease-in-out infinite;
+}

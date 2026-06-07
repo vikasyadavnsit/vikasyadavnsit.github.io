@@ -10,4 +10,9 @@
     - [ ] Fix Sidebar/Notebook creation overlap issue
     - [ ] Auto-close Sidebar on drawing start
     - [ ] Prevent drawing underneath the sidebar
+- [/] Chat Application Integration (Rewrite)
+    - [ ] Implement Login/Signup pages
+    - [ ] Implement Main Chat interface
+    - [ ] Replicate Firebase logic (Users, Chats, Uploads)
+    - [ ] Style with Tailwind/Lucide
 - [ ] Verification
