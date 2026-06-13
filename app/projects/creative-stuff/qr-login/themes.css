@@ -1,0 +1,13 @@
+/* QR Login page-specific theme */
+
+.qrl-theme-light {
+  --qrl-accent: #7c3aed;
+  --qrl-accent-glow: rgba(124, 58, 237, 0.10);
+  --qrl-accent-ring: rgba(124, 58, 237, 0.25);
+}
+
+.qrl-theme-dark {
+  --qrl-accent: #a78bfa;
+  --qrl-accent-glow: rgba(167, 139, 250, 0.15);
+  --qrl-accent-ring: rgba(167, 139, 250, 0.30);
+}

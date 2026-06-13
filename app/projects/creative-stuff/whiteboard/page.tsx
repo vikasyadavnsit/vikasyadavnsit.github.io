@@ -5,7 +5,7 @@ import {
   Square, Circle, Plus, File,
   Download, Settings, Info, Pencil, X,
   Grid, Sun, Moon, Book,
-  Trash, ChevronRight, MousePointer2, Move, Maximize, Keyboard,
+  Trash, ChevronRight, ChevronLeft, MousePointer2, Move, Maximize, Keyboard,
   LayoutTemplate, Palette
 } from "lucide-react";
 import Link from "next/link";
@@ -82,6 +82,7 @@ export default function WhiteboardPage() {
   const [showFocusHint, setShowFocusHint] = useState(false);
   const [hasUserSetColor, setHasUserSetColor] = useState(false);
   const [showThemeWarning, setShowThemeWarning] = useState<"light" | "dark" | null>(null);
+  const [isToolbarOpen, setIsToolbarOpen] = useState(false);
 
   // Creation State
   const [isCreatingSection, setIsCreatingSection] = useState(false);
@@ -123,6 +124,13 @@ export default function WhiteboardPage() {
     }
   }, []);
 
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
   // Save Persistence Settings
   useEffect(() => {
     if (loading) return;
@@ -150,6 +158,7 @@ export default function WhiteboardPage() {
   const drawLengthRef = useRef(0);
   const currentPathRef = useRef<[number, number, number, number][]>([]);
   const startPosRef = useRef({ x: 0, y: 0 });
+  const isDrawingRef = useRef(false);
   const p5InstanceRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -325,7 +334,7 @@ export default function WhiteboardPage() {
             const [x1, y1, x2, y2] = data.dataset[0]; s.noFill(); s.circle(x1, y1, s.dist(x1, y1, x2, y2) * 2);
           }
         }
-        if (s.mouseIsPressed && s.mouseButton === s.LEFT && isAuthorized && toolSettingsRef.current.appMode === 'edit') {
+        if (s.mouseIsPressed && s.mouseButton === s.LEFT && isAuthorized && toolSettingsRef.current.appMode === 'edit' && isDrawingRef.current) {
           const { activeTool, strokeColor, strokeWeight } = toolSettingsRef.current;
           const eraserColor = mode === 'dark' ? "rgb(10,10,15)" : "rgb(255,255,255)";
           s.stroke(activeTool === "eraser" ? eraserColor : strokeColor);
@@ -351,12 +360,11 @@ export default function WhiteboardPage() {
         const { offset, zoom, isAutoHideEnabled, isFocusMode: currentlyInFocus } = toolSettingsRef.current;
         const worldMouse = screenToWorld(s.mouseX, s.mouseY, offset, zoom);
         startPosRef.current = { x: worldMouse.x, y: worldMouse.y };
+        isDrawingRef.current = true;
         currentPathRef.current = [];
 
         if (isAutoHideEnabled && !currentlyInFocus) {
           setIsFocusMode(true);
-          setShowFocusHint(true);
-          setTimeout(() => setShowFocusHint(false), 5000);
         }
       };
       s.mouseDragged = () => {
@@ -374,6 +382,8 @@ export default function WhiteboardPage() {
         }
       };
       s.mouseReleased = () => {
+        if (!isDrawingRef.current) return;
+        isDrawingRef.current = false;
         const { isAuthorized, activeTool, strokeColor, strokeWeight, offset, zoom, appMode, mode } = toolSettingsRef.current;
         if (!isAuthorized || s.mouseButton !== s.LEFT || s.keyIsDown(32) || appMode !== 'edit') return;
         const worldMouse = screenToWorld(s.mouseX, s.mouseY, offset, zoom);
@@ -653,7 +663,7 @@ export default function WhiteboardPage() {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
-              className="fixed left-8 top-8 z-[200]"
+              className="fixed left-4 top-4 md:left-8 md:top-8 z-[200]"
             >
               <Tooltip text="Show Menu" position="right">
                 <button
@@ -665,19 +675,6 @@ export default function WhiteboardPage() {
               </Tooltip>
             </motion.div>
 
-            {showFocusHint && (
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 20, opacity: 0 }}
-                className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 bg-popover text-popover-foreground rounded-2xl border border-border shadow-2xl pointer-events-none"
-              >
-                <p className="text-xs font-bold tracking-wide flex items-center gap-3">
-                  <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  UI Hidden. Use the top-left icon to <span className="text-primary">Show Menu</span>.
-                </p>
-              </motion.div>
-            )}
           </>
         )}
       </AnimatePresence>
@@ -732,63 +729,121 @@ export default function WhiteboardPage() {
 
         {/* Restore Sidebar Button (If sidebar closed but UI NOT hidden) */}
         {!isSidebarOpen && !isUIHidden && (
-          <button onClick={() => setIsSidebarOpen(true)} className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 p-5 md:p-5 glass-card rounded-full text-primary shadow-2xl hover:scale-110 transition-all border border-primary/10 pointer-events-auto"><ChevronRight className="w-6 md:w-6 h-6 md:h-6" /></button>
+          <button onClick={() => setIsSidebarOpen(true)} className="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 p-2.5 md:p-5 glass-card rounded-full text-primary shadow-2xl hover:scale-110 transition-all border border-primary/10 pointer-events-auto"><ChevronRight className="w-5 h-5" /></button>
         )}
 
         <div className="flex-1 relative overflow-visible pointer-events-none">
-          {/* Tools Toolbar */}
-          <AnimatePresence>
-            {appMode === 'edit' && !isUIHidden && (
-              <motion.div initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 150, opacity: 0 }} className="absolute top-20 md:top-28 bottom-4 md:bottom-8 right-4 md:right-8 z-40 p-2.5 md:p-3 wb-glass-card rounded-[2.5rem] md:rounded-[3.5rem] flex flex-col items-center gap-3 md:gap-4 shadow-2xl border-none pointer-events-auto overflow-visible">
-                <div className="flex flex-col gap-2 md:gap-2">
-                  {[ { id: 'pencil', icon: Pencil, l: 'Pen' }, { id: 'eraser', icon: Eraser, l: 'Eraser' }, { id: 'rect', icon: Square, l: 'Shape' }, { id: 'circle', icon: Circle, l: 'Circle' } ].map((t) => (
-                    <Tooltip key={t.id} text={t.l} position="left">
-                      <button onClick={() => setActiveTool(t.id)} className={cn("p-4 md:p-3.5 rounded-[1.2rem] transition-all relative group shadow-sm", activeTool === t.id ? "bg-primary text-primary-foreground shadow-2xl scale-110" : "text-foreground opacity-60 hover:bg-foreground/5 hover:opacity-100 hover:text-foreground")}>
-                        <t.icon className="w-5 md:w-5 h-5 md:h-5" />
-                      </button>
-                    </Tooltip>
-                  ))}
-                </div>
-                <div className="w-10 h-px bg-border opacity-50" />
-                <div className="grid grid-cols-2 gap-3 md:gap-2.5 px-1">
-                  {[
-                    'hsl(var(--primary))',
-                    currentMode === 'dark' ? '#FFFFFF' : '#000000',
-                    '#FF3B30',
-                    '#34C759',
-                    '#007AFF',
-                    '#FF9500',
-                    '#AF52DE',
-                    '#5856D6',
-                  ].map(c => (
-                    <button key={c} onClick={() => { setStrokeColor(c); setHasUserSetColor(true); }} className={cn("w-8 md:w-7 h-8 md:h-7 rounded-full border-2 transition-all hover:scale-125 shadow-md", strokeColor === c ? "border-foreground scale-125 ring-2 ring-primary/40" : "border-transparent")} style={{ backgroundColor: c }} />
-                  ))}
-                  <div className="col-span-2 flex justify-center pt-1">
-                    <div className="relative group">
-                      <input
-                        type="color"
-                        value={strokeColor.startsWith('#') ? strokeColor : '#000000'}
-                        onChange={(e) => { setStrokeColor(e.target.value); setHasUserSetColor(true); }}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                      />
-                      <div className={cn(
-                        "w-9 md:w-8 h-9 md:h-8 rounded-full flex items-center justify-center border-2 transition-all group-hover:scale-110 shadow-md bg-muted text-foreground",
-                        !['hsl(var(--primary))', '#FFFFFF', '#000000', '#FF3B30', '#34C759', '#007AFF', '#FF9500', '#AF52DE', '#5856D6'].includes(strokeColor) ? "border-primary ring-2 ring-primary/20" : "border-transparent"
-                      )}>
-                        <Palette className="w-4 md:w-4 h-4 md:h-4" />
+          {/* Desktop Toolbar — hidden on mobile */}
+          <div className="hidden md:block">
+            <AnimatePresence>
+              {appMode === 'edit' && !isUIHidden && (
+                <motion.div initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: 150, opacity: 0 }} className="absolute top-28 bottom-8 right-8 z-40 p-3 wb-glass-card rounded-[3.5rem] flex flex-col items-center gap-4 shadow-2xl border-none pointer-events-auto overflow-visible">
+                  <div className="flex flex-col gap-2">
+                    {[ { id: 'pencil', icon: Pencil, l: 'Pen' }, { id: 'eraser', icon: Eraser, l: 'Eraser' }, { id: 'rect', icon: Square, l: 'Shape' }, { id: 'circle', icon: Circle, l: 'Circle' } ].map((t) => (
+                      <Tooltip key={t.id} text={t.l} position="left">
+                        <button onClick={() => setActiveTool(t.id)} className={cn("p-3.5 rounded-[1.2rem] transition-all relative group shadow-sm", activeTool === t.id ? "bg-primary text-primary-foreground shadow-2xl scale-110" : "text-foreground opacity-60 hover:bg-foreground/5 hover:opacity-100 hover:text-foreground")}>
+                          <t.icon className="w-5 h-5" />
+                        </button>
+                      </Tooltip>
+                    ))}
+                  </div>
+                  <div className="w-10 h-px bg-border opacity-50" />
+                  <div className="grid grid-cols-2 gap-2.5 px-1">
+                    {[
+                      'hsl(var(--primary))',
+                      currentMode === 'dark' ? '#FFFFFF' : '#000000',
+                      '#FF3B30', '#34C759', '#007AFF', '#FF9500', '#AF52DE', '#5856D6',
+                    ].map(c => (
+                      <button key={c} onClick={() => { setStrokeColor(c); setHasUserSetColor(true); }} className={cn("w-7 h-7 rounded-full border-2 transition-all hover:scale-125 shadow-md", strokeColor === c ? "border-foreground scale-125 ring-2 ring-primary/40" : "border-transparent")} style={{ backgroundColor: c }} />
+                    ))}
+                    <div className="col-span-2 flex justify-center pt-1">
+                      <div className="relative group">
+                        <input type="color" value={strokeColor.startsWith('#') ? strokeColor : '#000000'} onChange={(e) => { setStrokeColor(e.target.value); setHasUserSetColor(true); }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                        <div className={cn("w-8 h-8 rounded-full flex items-center justify-center border-2 transition-all group-hover:scale-110 shadow-md bg-muted text-foreground", !['hsl(var(--primary))', '#FFFFFF', '#000000', '#FF3B30', '#34C759', '#007AFF', '#FF9500', '#AF52DE', '#5856D6'].includes(strokeColor) ? "border-primary ring-2 ring-primary/20" : "border-transparent")}>
+                          <Palette className="w-4 h-4" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="w-10 h-px bg-border opacity-50" />
-                <div className="flex flex-col gap-1.5 md:gap-1">
-                  <Tooltip text="Undo" position="left"><button onClick={() => { if (drawLength > 0) { const nl = drawLength - 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === 0} className="p-4 md:p-3.5 text-foreground opacity-60 hover:opacity-100 hover:text-foreground disabled:opacity-20 transition-all"><Undo className="w-5 h-5" /></button></Tooltip>
-                  <Tooltip text="Redo" position="left"><button onClick={() => { if (drawLength < drawSet.length) { const nl = drawLength + 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === drawSet.length} className="p-4 md:p-4 text-foreground opacity-60 hover:opacity-100 hover:text-foreground disabled:opacity-20 transition-all"><Redo className="w-5 h-5" /></button></Tooltip>
-                  <Tooltip text="Clear" position="left"><button onClick={() => { if (window.confirm("Clear this page?")) { setDrawSet([]); setDrawLength(0); pushDataLocally([], 0); } }} className="p-5 md:p-4 text-destructive hover:scale-110 transition-all"><RotateCcw className="w-5 h-5" /></button></Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <div className="w-10 h-px bg-border opacity-50" />
+                  <div className="flex flex-col gap-1">
+                    <Tooltip text="Undo" position="left"><button onClick={() => { if (drawLength > 0) { const nl = drawLength - 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === 0} className="p-3.5 text-foreground opacity-60 hover:opacity-100 hover:text-foreground disabled:opacity-20 transition-all"><Undo className="w-5 h-5" /></button></Tooltip>
+                    <Tooltip text="Redo" position="left"><button onClick={() => { if (drawLength < drawSet.length) { const nl = drawLength + 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === drawSet.length} className="p-4 text-foreground opacity-60 hover:opacity-100 hover:text-foreground disabled:opacity-20 transition-all"><Redo className="w-5 h-5" /></button></Tooltip>
+                    <Tooltip text="Clear" position="left"><button onClick={() => { if (window.confirm("Clear this page?")) { setDrawSet([]); setDrawLength(0); pushDataLocally([], 0); } }} className="p-4 text-destructive hover:scale-110 transition-all"><RotateCcw className="w-5 h-5" /></button></Tooltip>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Mobile Palette Chevron — only on mobile */}
+          {appMode === 'edit' && !isUIHidden && (
+            <>
+              {isToolbarOpen && (
+                <div className="fixed inset-0 z-[45] md:hidden" onClick={() => setIsToolbarOpen(false)} />
+              )}
+              <div className="fixed right-4 top-1/2 -translate-y-1/2 z-[50] md:hidden pointer-events-auto">
+                <AnimatePresence>
+                  {isToolbarOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: 10, scale: 0.95 }}
+                      className="fixed right-16 top-1/2 -translate-y-1/2 w-56 max-h-[80vh] overflow-y-auto wb-glass-card rounded-3xl shadow-2xl"
+                    >
+                      <div className="p-4 space-y-5">
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-2">Tool</p>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {[{id:'pencil',icon:Pencil},{id:'eraser',icon:Eraser},{id:'rect',icon:Square},{id:'circle',icon:Circle}].map(t => (
+                              <button key={t.id} onClick={() => { setActiveTool(t.id); setIsToolbarOpen(false); }} className={cn("p-3 rounded-2xl flex items-center justify-center transition-all", activeTool === t.id ? "bg-primary text-primary-foreground shadow-lg" : "text-foreground opacity-60 hover:bg-foreground/5")}>
+                                <t.icon className="w-4 h-4" />
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-2">Color</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {['hsl(var(--primary))', currentMode==='dark'?'#FFFFFF':'#000000', '#FF3B30','#34C759','#007AFF','#FF9500','#AF52DE','#5856D6'].map(c => (
+                              <button key={c} onClick={() => { setStrokeColor(c); setHasUserSetColor(true); }} className={cn("w-9 h-9 rounded-full border-2 transition-all shadow-md", strokeColor===c ? "border-foreground ring-2 ring-primary/40 scale-110" : "border-transparent")} style={{ backgroundColor: c }} />
+                            ))}
+                          </div>
+                          <div className="relative group mt-2">
+                            <input type="color" value={strokeColor.startsWith('#') ? strokeColor : '#000000'} onChange={e => { setStrokeColor(e.target.value); setHasUserSetColor(true); }} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                            <div className={cn("flex items-center gap-2 px-3 py-2 rounded-2xl border transition-all bg-muted", !['hsl(var(--primary))','#FFFFFF','#000000','#FF3B30','#34C759','#007AFF','#FF9500','#AF52DE','#5856D6'].includes(strokeColor) ? "border-primary" : "border-border")}>
+                              <Palette className="w-4 h-4 text-foreground opacity-60" />
+                              <span className="text-[10px] font-bold opacity-60">Custom</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-black uppercase tracking-widest opacity-40 mb-2">Actions</p>
+                          <div className="flex gap-2">
+                            <button onClick={() => { if (drawLength > 0) { const nl = drawLength - 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === 0} className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-2xl bg-muted text-foreground text-[10px] font-bold disabled:opacity-30 transition-all">
+                              <Undo className="w-3.5 h-3.5" /> Undo
+                            </button>
+                            <button onClick={() => { if (drawLength < drawSet.length) { const nl = drawLength + 1; setDrawLength(nl); pushDataLocally(drawSet, nl); } }} disabled={drawLength === drawSet.length} className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-2xl bg-muted text-foreground text-[10px] font-bold disabled:opacity-30 transition-all">
+                              <Redo className="w-3.5 h-3.5" /> Redo
+                            </button>
+                            <button onClick={() => { if (window.confirm("Clear this page?")) { setDrawSet([]); setDrawLength(0); pushDataLocally([], 0); } }} className="flex-1 flex items-center justify-center gap-1 py-2.5 rounded-2xl bg-destructive/10 text-destructive text-[10px] font-bold transition-all">
+                              <RotateCcw className="w-3.5 h-3.5" /> Clear
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <button
+                  onClick={() => setIsToolbarOpen(v => !v)}
+                  className="p-2.5 wb-glass-card rounded-full text-primary shadow-2xl hover:scale-110 transition-all border border-primary/10"
+                >
+                  {isToolbarOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+                </button>
+              </div>
+            </>
+          )}
 
           {/* Center Zoom Panel - Bottom Center */}
           <AnimatePresence>

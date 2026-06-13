@@ -77,6 +77,7 @@ export default function ScratchpadPage() {
   const drawLengthRef = useRef(0);
   const currentPathRef = useRef<[number, number, number, number][]>([]);
   const startPosRef = useRef({ x: 0, y: 0 });
+  const isDrawingRef = useRef(false);
   const p5InstanceRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const bufferRef = useRef<any>(null); // Off-screen buffer
@@ -132,9 +133,11 @@ export default function ScratchpadPage() {
         toolSettingsRef.current = { strokeWeight, strokeColor, activeTool };
       };
 
-      s.mousePressed = () => {
+      s.mousePressed = (event: MouseEvent) => {
         if (s.mouseButton !== s.LEFT) return;
+        if (event && event.target && (event.target as HTMLElement).tagName !== 'CANVAS') return;
         startPosRef.current = { x: s.mouseX, y: s.mouseY };
+        isDrawingRef.current = true;
       };
 
       s.draw = () => {
@@ -144,7 +147,7 @@ export default function ScratchpadPage() {
         s.image(bufferRef.current, 0, 0);
 
         // 2. Draw active preview on top of history
-        if (s.mouseIsPressed && s.mouseButton === s.LEFT) {
+        if (s.mouseIsPressed && s.mouseButton === s.LEFT && isDrawingRef.current) {
           const x = s.mouseX;
           const y = s.mouseY;
 
@@ -174,6 +177,8 @@ export default function ScratchpadPage() {
       };
 
       s.mouseReleased = () => {
+        if (!isDrawingRef.current) return;
+        isDrawingRef.current = false;
         if (s.mouseButton !== s.LEFT) return;
         const { activeTool, strokeColor, strokeWeight } = toolSettingsRef.current;
 

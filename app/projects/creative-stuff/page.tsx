@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -21,8 +21,7 @@ const creativeProjects = [
   {
     title: "QR Based Remote Login",
     description: "Remotely login to accounts by scanning a QR code from a mobile device. A seamless cross-browser authentication experience.",
-    link: "https://qr-login-9a688.web.app",
-    external: true,
+    link: "/projects/creative-stuff/qr-login",
     icon: LogIn,
     color: "from-amber-500 to-orange-500"
   },
@@ -32,6 +31,41 @@ const creativeProjects = [
     link: "/projects/creative-stuff/chat-application",
     icon: Wifi,
     color: "from-blue-500 to-cyan-500"
+  },
+  {
+    title: "URL Shortener",
+    description: "Shorten long URLs and store them in your browser. Share the short link — it works across any tab in this browser. No servers, fully local.",
+    link: "/projects/creative-stuff/url-shortener",
+    icon: Scissors,
+    color: "from-violet-500 to-fuchsia-500"
+  },
+  {
+    title: "TOTP Authenticator",
+    description: "Two-factor authentication codes in your browser. Add accounts via QR scan, image upload, or secret key. Codes update every 30 seconds.",
+    link: "/projects/creative-stuff/totp-authenticator",
+    icon: ShieldCheck,
+    color: "from-sky-500 to-blue-600"
+  },
+  {
+    title: "Task Manager",
+    description: "A Notion-like task manager in your browser. Multiple boards, Kanban + List + Table views, block editor descriptions. Fully local.",
+    link: "/projects/creative-stuff/task-manager",
+    icon: LayoutDashboard,
+    color: "from-rose-500 to-pink-500"
+  },
+  {
+    title: "File Encryptor",
+    description: "Encrypt any file with a password using AES-256-GCM directly in your browser. Files never leave your device — pure SubtleCrypto API.",
+    link: "/projects/creative-stuff/file-encryptor",
+    icon: LockKeyhole,
+    color: "from-green-500 to-teal-600"
+  },
+  {
+    title: "Internet Speed Test",
+    description: "Test your download, upload, ping, and jitter. History stored locally with date-wise charts to track performance over time.",
+    link: "/projects/creative-stuff/internet-speed-test",
+    icon: Gauge,
+    color: "from-cyan-500 to-blue-500"
   }
 ];
 
@@ -67,23 +101,12 @@ export default function CreativeStuffPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
             >
-              {project.external ? (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative block h-full p-8 rounded-[2.5rem] border border-border bg-card/40 backdrop-blur-xl hover:border-primary/20 transition-all duration-500"
-                >
-                  <ProjectCardContent project={project} />
-                </a>
-              ) : (
-                <Link
-                  href={project.link}
-                  className="group relative block h-full p-8 rounded-[2.5rem] border border-border bg-card/40 backdrop-blur-xl hover:border-primary/20 transition-all duration-500"
-                >
-                  <ProjectCardContent project={project} />
-                </Link>
-              )}
+              <Link
+                href={project.link}
+                className="group relative block h-full p-8 rounded-[2.5rem] border border-border bg-card/40 backdrop-blur-xl hover:border-primary/20 transition-all duration-500"
+              >
+                <ProjectCardContent project={project} />
+              </Link>
             </motion.div>
           ))}
         </div>
