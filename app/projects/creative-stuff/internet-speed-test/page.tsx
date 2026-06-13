@@ -69,9 +69,6 @@ const STORAGE_KEY = "speed_test_history";
 const THEME_KEY   = "speed_test_theme";
 const MAX_MBPS    = 500;
 const MAX_MS      = 300;
-const DL_STREAMS  = 4;           // parallel continuous-loop streams
-const DL_SECS     = 8;           // measurement window in seconds
-const UL_BYTES    = 20 * 1024 * 1024; // 20 MB upload
 
 // Fill buffer with truly random data in 65536-byte chunks (crypto API limit)
 function randomPayload(bytes: number): Uint8Array {
@@ -294,20 +291,40 @@ export default function SpeedTestPage() {
 
   // ── Ping ──────────────────────────────────────────────────────────────────
   const measurePing = async (): Promise<{ ping: number | null; jitter: number | null }> => {
-    const rtts: number[] = [];
-    for (let i = 0; i < 7; i++) {
-      try {
-        const t0 = performance.now();
-        await fetch("https://1.1.1.1/cdn-cgi/trace", { cache: "no-store", mode: "cors" });
-        const rtt = performance.now() - t0;
-        rtts.push(rtt);
-        if (i > 0) setLiveSpeed(Math.round(rtt));
-      } catch { break; }
+    const targets = [
+      "https://1.1.1.1/cdn-cgi/trace",
+      "https://cloudflare.com/cdn-cgi/trace",
+      "https://dns.google/resolve?name=google.com",
+    ];
+
+    let bestRtts: number[] = [];
+    let minMean = Infinity;
+
+    for (const url of targets) {
+      const rtts: number[] = [];
+      for (let i = 0; i < 5; i++) {
+        try {
+          const t0 = performance.now();
+          await fetch(url, { cache: "no-store", mode: "no-cors" });
+          const rtt = performance.now() - t0;
+          rtts.push(rtt);
+          setLiveSpeed(Math.round(rtt));
+        } catch { continue; }
+      }
+
+      if (rtts.length >= 3) {
+        const valid = rtts.slice(1); // discard first
+        const mean = valid.reduce((a, b) => a + b, 0) / valid.length;
+        if (mean < minMean) {
+          minMean = mean;
+          bestRtts = valid;
+        }
+      }
     }
-    if (rtts.length < 2) return { ping: null, jitter: null };
-    const valid = rtts.slice(1); // discard first (cold connection)
-    const mean  = valid.reduce((a, b) => a + b, 0) / valid.length;
-    const jitter = Math.sqrt(valid.reduce((a, b) => a + (b - mean) ** 2, 0) / valid.length);
+
+    if (bestRtts.length < 2) return { ping: null, jitter: null };
+    const mean = bestRtts.reduce((a, b) => a + b, 0) / bestRtts.length;
+    const jitter = Math.sqrt(bestRtts.reduce((a, b) => a + (b - mean) ** 2, 0) / bestRtts.length);
     return { ping: Math.round(mean), jitter: Math.round(jitter) };
   };
 
@@ -363,31 +380,33 @@ export default function SpeedTestPage() {
     } catch { return null; }
   };
 
-  // ── Upload — XHR for upload.onprogress + fully random payload ────────────
-  const measureUpload = (): Promise<number | null> => {
-    return new Promise(resolve => {
-      try {
-        // Fully random payload prevents HTTP/2 send-buffer compression
-        const payload = randomPayload(UL_BYTES);
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://speed.cloudflare.com/__up");
-        const t0 = performance.now();
+  // ── Upload — no-cors fetch + chunked measurement ───────────────────────
+  const measureUpload = async (): Promise<number | null> => {
+    try {
+      const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB chunks
+      const NUM_CHUNKS = 4;
+      let totalLoaded = 0;
+      const t0 = performance.now();
 
-        xhr.upload.onprogress = (e) => {
-          const secs = (performance.now() - t0) / 1000;
-          if (secs > 0.3 && e.loaded > 0)
-            setLiveSpeed(r1((e.loaded * 8) / (secs * 1e6)) ?? 0);
-        };
-        xhr.onload = () => {
-          const secs = (performance.now() - t0) / 1000;
-          resolve(r1((UL_BYTES * 8) / (secs * 1e6)));
-        };
-        xhr.onerror = () => resolve(null);
-        xhr.ontimeout = () => resolve(null);
-        xhr.timeout = 30000;
-        xhr.send(payload.buffer as ArrayBuffer);
-      } catch { resolve(null); }
-    });
+      for (let i = 0; i < NUM_CHUNKS; i++) {
+        const payload = randomPayload(CHUNK_SIZE);
+        const blob = new Blob([payload as any], { type: "text/plain" });
+
+        await fetch("https://speed.cloudflare.com/__up", {
+          method: "POST",
+          body: blob,
+          mode: "no-cors",
+          cache: "no-store",
+        });
+
+        totalLoaded += CHUNK_SIZE;
+        const secs = (performance.now() - t0) / 1000;
+        if (secs > 0) setLiveSpeed(r1((totalLoaded * 8) / (secs * 1e6)) ?? 0);
+      }
+
+      const totalSecs = (performance.now() - t0) / 1000;
+      return r1((totalLoaded * 8) / (totalSecs * 1e6));
+    } catch { return null; }
   };
 
   // ── Run test ──────────────────────────────────────────────────────────────
@@ -585,7 +604,7 @@ export default function SpeedTestPage() {
                 </BarChart>
               ) : (
                 <LineChart data={chartData} margin={{ left: -20, right: 8 }} style={{ cursor: "pointer" }}
-                  onClick={e => { if (e?.activePayload?.[0]?.payload?.date) setSelectedDay(e.activePayload[0].payload.date); }}>
+                  onClick={e => { if (e?.activeLabel) setSelectedDay(String(e.activeLabel)); }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={tk.grid} />
                   <XAxis dataKey="date" tick={{ fill: tk.axis, fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: tk.axis, fontSize: 10 }} axisLine={false} tickLine={false} />

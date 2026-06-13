@@ -26,8 +26,8 @@ const creativeProjects = [
     color: "from-amber-500 to-orange-500"
   },
   {
-    title: "Open Chat",
-    description: "Join a global real-time network where anyone can jump in and start chatting instantly. No signup required—just pick a name and say hello.",
+    title: "Global Chat Hub",
+    description: "A real-time communication node. Join the global network instantly to broadcast messages and connect with active peers in an ephemeral space.",
     link: "/projects/creative-stuff/chat-application",
     icon: Wifi,
     color: "from-blue-500 to-cyan-500"

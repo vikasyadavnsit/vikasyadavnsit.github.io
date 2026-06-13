@@ -195,7 +195,7 @@ export default function QRLoginPage() {
     setQrUrl(url);
 
     try {
-      await set(ref(db, `qr-sessions/${id}`), {
+      await set(ref(db, `projects/qr-login/sessions/${id}`), {
         createdAt: now,
         expiresAt: now + SESSION_DURATION * 1000,
         status: "waiting",
@@ -204,7 +204,7 @@ export default function QRLoginPage() {
       setOfflineMode(false);
 
       // Listen for scan in real-time
-      unsubRef.current = onValue(ref(db, `qr-sessions/${id}/scanner`), (snap) => {
+      unsubRef.current = onValue(ref(db, `projects/qr-login/sessions/${id}/scanner`), (snap) => {
         if (snap.exists()) {
           setScannedDevice(snap.val() as DeviceInfo);
           setSessionStatus("scanned");
@@ -250,7 +250,7 @@ export default function QRLoginPage() {
         setDeviceInfo(info);
 
         try {
-          const snap = await get(ref(db, `qr-sessions/${session}`));
+          const snap = await get(ref(db, `projects/qr-login/sessions/${session}`));
           if (!snap.exists()) {
             setResultStatus("error");
             setResultError("Session not found. The QR may have already been used.");
@@ -262,7 +262,7 @@ export default function QRLoginPage() {
             setResultError("This QR code has expired. Ask the host to refresh it.");
             return;
           }
-          await update(ref(db, `qr-sessions/${session}`), { status: "scanned", scanner: info });
+          await update(ref(db, `projects/qr-login/sessions/${session}`), { status: "scanned", scanner: info });
           setResultStatus("success");
         } catch {
           // Offline fallback: show info locally without Firebase write

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Script from "next/script";
 import {
   LockKeyhole,
   UnlockKeyhole,
@@ -29,6 +30,12 @@ import "./themes.css";
 
 type Tab = "encrypt" | "decrypt";
 type Status = "idle" | "processing" | "done" | "error";
+
+declare global {
+  interface Window {
+    JSZip: any;
+  }
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -132,8 +139,8 @@ function formatBytes(n: number): string {
   return `${(n / 1024 ** 3).toFixed(2)} GB`;
 }
 
-function downloadBlob(bytes: Uint8Array, filename: string, mimeType: string) {
-  const blob = new Blob([bytes.buffer as ArrayBuffer], { type: mimeType });
+function downloadBlob(bytes: Uint8Array | Blob, filename: string, mimeType: string) {
+  const blob = bytes instanceof Blob ? bytes : new Blob([bytes as any], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -162,7 +169,7 @@ export default function FileEncryptorPage() {
   const [tab, setTab] = useState<Tab>("encrypt");
 
   // ── Encrypt state ──────────────────────────────────────────────────────────
-  const [encFile, setEncFile] = useState<File | null>(null);
+  const [encFiles, setEncFiles] = useState<File[]>([]);
   const [encPassword, setEncPassword] = useState("");
   const [encConfirm, setEncConfirm] = useState("");
   const [encShowPw, setEncShowPw] = useState(false);
@@ -173,7 +180,7 @@ export default function FileEncryptorPage() {
   const [encDragging, setEncDragging] = useState(false);
 
   // ── Decrypt state ──────────────────────────────────────────────────────────
-  const [decFile, setDecFile] = useState<File | null>(null);
+  const [decFiles, setDecFiles] = useState<File[]>([]);
   const [decPassword, setDecPassword] = useState("");
   const [decShowPw, setDecShowPw] = useState(false);
   const [decStatus, setDecStatus] = useState<Status>("idle");
@@ -196,26 +203,59 @@ export default function FileEncryptorPage() {
   // ── Drag-and-drop helpers ──────────────────────────────────────────────────
   const handleDrop = useCallback((e: React.DragEvent, target: "enc" | "dec") => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    if (target === "enc") { setEncFile(file); setEncStatus("idle"); setEncError(""); setEncOutput(""); setEncDragging(false); }
-    else { setDecFile(file); setDecStatus("idle"); setDecError(""); setDecOutput(""); setDecDragging(false); }
+    const files = Array.from(e.dataTransfer.files);
+    if (!files.length) return;
+    if (target === "enc") {
+      setEncFiles(prev => [...prev, ...files]);
+      setEncStatus("idle"); setEncError(""); setEncOutput(""); setEncDragging(false);
+    }
+    else {
+      setDecFiles(prev => [...prev, ...files]);
+      setDecStatus("idle"); setDecError(""); setDecOutput(""); setDecDragging(false);
+    }
   }, []);
 
   // ── Encrypt ────────────────────────────────────────────────────────────────
   const handleEncrypt = async () => {
-    if (!encFile || !encPassword) return;
+    if (!encFiles.length || !encPassword) return;
     if (encPassword !== encConfirm) { setEncError("Passwords do not match."); return; }
-    if (encPassword.length < 4) { setEncError("Password must be at least 4 characters."); return; }
+    if (encPassword.length < 8) { setEncError("Password must be at least 8 characters."); return; }
+    if (encPassword.length > 64) { setEncError("Password must be no more than 64 characters."); return; }
 
     setEncStatus("processing");
     setEncError("");
     try {
-      const encrypted = await encryptFile(encFile, encPassword);
-      const outName = `${encFile.name}.enc`;
-      downloadBlob(encrypted, outName, "application/octet-stream");
-      setEncOutput(outName);
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10);
+      const timeStr = now.getHours().toString().padStart(2, "0") + "-" + now.getMinutes().toString().padStart(2, "0");
+
+      if (encFiles.length === 1) {
+        const file = encFiles[0];
+        const encrypted = await encryptFile(file, encPassword);
+        const outName = `${file.name}.enc`;
+        downloadBlob(encrypted, outName, "application/octet-stream");
+        setEncOutput(outName);
+      } else {
+        if (!window.JSZip) throw new Error("ZIP library not loaded.");
+        const zip = new window.JSZip();
+        for (const file of encFiles) {
+          const encrypted = await encryptFile(file, encPassword);
+          zip.file(`${file.name}.enc`, encrypted);
+        }
+        const content = await zip.generateAsync({ type: "blob" });
+        const outName = `encrypted_files_${dateStr}_${timeStr}.zip`;
+        downloadBlob(content, outName, "application/zip");
+        setEncOutput(outName);
+      }
+
       setEncStatus("done");
+
+      // Auto-clear sensitive data after success
+      setTimeout(() => {
+        setEncFiles([]);
+        setEncPassword("");
+        setEncConfirm("");
+      }, 2000);
     } catch (err) {
       setEncError(err instanceof Error ? err.message : "Encryption failed.");
       setEncStatus("error");
@@ -224,16 +264,61 @@ export default function FileEncryptorPage() {
 
   // ── Decrypt ────────────────────────────────────────────────────────────────
   const handleDecrypt = async () => {
-    if (!decFile || !decPassword) return;
+    if (!decFiles.length || !decPassword) return;
 
     setDecStatus("processing");
     setDecError("");
     try {
-      const data = await decFile.arrayBuffer();
-      const { bytes, name, type } = await decryptFile(data, decPassword);
-      downloadBlob(bytes, name, type);
-      setDecOutput(name);
+      const now = new Date();
+      const dateStr = now.toISOString().slice(0, 10);
+      const timeStr = now.getHours().toString().padStart(2, "0") + "-" + now.getMinutes().toString().padStart(2, "0");
+
+      const decryptedResults: { bytes: Uint8Array; name: string; type: string }[] = [];
+
+      for (const file of decFiles) {
+        if (file.name.endsWith(".zip")) {
+          if (!window.JSZip) throw new Error("ZIP library not loaded.");
+          const zip = await window.JSZip.loadAsync(file);
+          const entries = Object.keys(zip.files).filter(k => k.endsWith(".enc"));
+          for (const key of entries) {
+            const data = await zip.file(key)?.async("arraybuffer");
+            if (data) {
+              const result = await decryptFile(data, decPassword);
+              decryptedResults.push(result);
+            }
+          }
+        } else {
+          const data = await file.arrayBuffer();
+          const result = await decryptFile(data, decPassword);
+          decryptedResults.push(result);
+        }
+      }
+
+      if (decryptedResults.length === 0) throw new Error("No valid .enc files found to decrypt.");
+
+      if (decryptedResults.length === 1) {
+        const { bytes, name, type } = decryptedResults[0];
+        downloadBlob(bytes, name, type);
+        setDecOutput(name);
+      } else {
+        if (!window.JSZip) throw new Error("ZIP library not loaded.");
+        const zip = new window.JSZip();
+        for (const res of decryptedResults) {
+          zip.file(res.name, res.bytes);
+        }
+        const content = await zip.generateAsync({ type: "blob" });
+        const outName = `decrypted_files_${dateStr}_${timeStr}.zip`;
+        downloadBlob(content, outName, "application/zip");
+        setDecOutput(outName);
+      }
+
       setDecStatus("done");
+
+      // Auto-clear sensitive data after success
+      setTimeout(() => {
+        setDecFiles([]);
+        setDecPassword("");
+      }, 2000);
     } catch (err) {
       setDecError(err instanceof Error ? err.message : "Decryption failed.");
       setDecStatus("error");
@@ -245,8 +330,8 @@ export default function FileEncryptorPage() {
   const accentGlow = theme === "dark" ? "rgba(45,212,191,0.15)" : "rgba(13,148,136,0.10)";
   const accentRing = theme === "dark" ? "rgba(45,212,191,0.30)" : "rgba(13,148,136,0.25)";
 
-  const encReady = !!encFile && !!encPassword && encPassword === encConfirm && encPassword.length >= 4;
-  const decReady = !!decFile && !!decPassword;
+  const encReady = encFiles.length > 0 && !!encPassword && encPassword === encConfirm && encPassword.length >= 8 && encPassword.length <= 64;
+  const decReady = decFiles.length > 0 && !!decPassword;
 
   const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "encrypt", label: "Encrypt", icon: <LockKeyhole className="w-4 h-4" /> },
@@ -255,7 +340,12 @@ export default function FileEncryptorPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className={`fe-theme-${theme} min-h-screen bg-[#0a0a0a] text-foreground`}>
+    <>
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+        strategy="afterInteractive"
+      />
+      <div className={`fe-theme-${theme} min-h-screen bg-[#0a0a0a] text-foreground`}>
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-32 pb-20">
 
         {/* Header */}
@@ -341,59 +431,67 @@ export default function FileEncryptorPage() {
                 onDragOver={(e) => { e.preventDefault(); setEncDragging(true); }}
                 onDragLeave={() => setEncDragging(false)}
                 onDrop={(e) => handleDrop(e, "enc")}
-                onClick={() => !encFile && encFileInputRef.current?.click()}
+                onClick={() => encFiles.length === 0 && encFileInputRef.current?.click()}
                 className="relative rounded-3xl border-2 border-dashed transition-all duration-200 overflow-hidden"
                 style={{
-                  borderColor: encDragging ? accent : encFile ? accentRing : "hsl(var(--border))",
+                  borderColor: encDragging ? accent : encFiles.length > 0 ? accentRing : "hsl(var(--border))",
                   background: encDragging ? accentGlow : "hsl(var(--card) / 0.3)",
-                  cursor: encFile ? "default" : "pointer",
+                  cursor: encFiles.length > 0 ? "default" : "pointer",
                 }}
               >
                 <input
                   ref={encFileInputRef}
                   type="file"
+                  multiple
                   className="hidden"
                   onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) { setEncFile(f); setEncStatus("idle"); setEncError(""); setEncOutput(""); }
+                    const files = Array.from(e.target.files || []);
+                    if (files.length) { setEncFiles(prev => [...prev, ...files]); setEncStatus("idle"); setEncError(""); setEncOutput(""); }
                     e.target.value = "";
                   }}
                 />
 
-                {!encFile ? (
+                {encFiles.length === 0 ? (
                   <div className="flex flex-col items-center justify-center gap-3 py-14 px-6 text-center">
                     <div className="p-4 rounded-2xl border border-dashed border-border" style={{ background: accentGlow }}>
                       <Upload className="w-8 h-8" style={{ color: accent }} />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Drop any file here</p>
-                      <p className="text-sm text-muted-foreground mt-1">or click to browse · PDF, image, video, ZIP, anything</p>
+                      <p className="font-semibold text-foreground">Drop files here</p>
+                      <p className="text-sm text-muted-foreground mt-1">or click to browse · select multiple files</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4 px-6 py-5">
-                    <div className="p-3 rounded-2xl border border-border shrink-0" style={{ background: accentGlow }}>
-                      <FileTypeIcon mimeType={encFile.type} className="w-6 h-6" style={{ color: accent } as React.CSSProperties} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground truncate">{encFile.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{formatBytes(encFile.size)}</p>
-                    </div>
+                  <div className="p-2 space-y-1 max-h-60 overflow-y-auto">
+                    {encFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-3 px-4 py-2 rounded-xl bg-card/50 border border-border">
+                        <FileTypeIcon mimeType={file.type} className="w-4 h-4 shrink-0" style={{ color: accent } as React.CSSProperties} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{file.name}</p>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setEncFiles(prev => prev.filter((_, i) => i !== idx)); }}
+                          className="p-1 hover:bg-card rounded-lg transition-colors shrink-0"
+                        >
+                          <X className="w-3.5 h-3.5 text-muted-foreground" />
+                        </button>
+                      </div>
+                    ))}
                     <button
-                      onClick={(e) => { e.stopPropagation(); setEncFile(null); setEncStatus("idle"); setEncError(""); setEncOutput(""); }}
-                      className="p-2 rounded-xl border border-border bg-card/60 hover:bg-card transition-all shrink-0"
+                      onClick={(e) => { e.stopPropagation(); encFileInputRef.current?.click(); }}
+                      className="w-full py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <X className="w-4 h-4 text-muted-foreground" />
+                      + Add More Files
                     </button>
                   </div>
                 )}
               </div>
 
               {/* Large file warning */}
-              {encFile && encFile.size > LARGE_FILE_THRESHOLD && (
+              {encFiles.some(f => f.size > LARGE_FILE_THRESHOLD) && (
                 <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">
                   <Info className="w-4 h-4 shrink-0" />
-                  Large file ({formatBytes(encFile.size)}) — encryption may take a few seconds.
+                  Large files detected — encryption may take a few seconds.
                 </div>
               )}
 
@@ -407,6 +505,7 @@ export default function FileEncryptorPage() {
                 accent={accent}
                 accentRing={accentRing}
                 placeholder="Enter a strong password"
+                showStrength
               />
               <PasswordInput
                 label="Confirm Password"
@@ -479,60 +578,70 @@ export default function FileEncryptorPage() {
                 onDragOver={(e) => { e.preventDefault(); setDecDragging(true); }}
                 onDragLeave={() => setDecDragging(false)}
                 onDrop={(e) => handleDrop(e, "dec")}
-                onClick={() => !decFile && decFileInputRef.current?.click()}
+                onClick={() => decFiles.length === 0 && decFileInputRef.current?.click()}
                 className="relative rounded-3xl border-2 border-dashed transition-all duration-200 overflow-hidden"
                 style={{
-                  borderColor: decDragging ? accent : decFile ? accentRing : "hsl(var(--border))",
+                  borderColor: decDragging ? accent : decFiles.length > 0 ? accentRing : "hsl(var(--border))",
                   background: decDragging ? accentGlow : "hsl(var(--card) / 0.3)",
-                  cursor: decFile ? "default" : "pointer",
+                  cursor: decFiles.length > 0 ? "default" : "pointer",
                 }}
               >
                 <input
                   ref={decFileInputRef}
                   type="file"
-                  accept=".enc"
+                  multiple
+                  accept=".enc,.zip"
                   className="hidden"
                   onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) { setDecFile(f); setDecStatus("idle"); setDecError(""); setDecOutput(""); }
+                    const files = Array.from(e.target.files || []);
+                    if (files.length) { setDecFiles(prev => [...prev, ...files]); setDecStatus("idle"); setDecError(""); setDecOutput(""); }
                     e.target.value = "";
                   }}
                 />
 
-                {!decFile ? (
+                {decFiles.length === 0 ? (
                   <div className="flex flex-col items-center justify-center gap-3 py-14 px-6 text-center">
                     <div className="p-4 rounded-2xl border border-dashed border-border" style={{ background: accentGlow }}>
                       <UnlockKeyhole className="w-8 h-8" style={{ color: accent }} />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground">Drop a .enc file here</p>
+                      <p className="font-semibold text-foreground">Drop .enc or .zip files here</p>
                       <p className="text-sm text-muted-foreground mt-1">or click to browse</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4 px-6 py-5">
-                    <div className="p-3 rounded-2xl border border-border shrink-0" style={{ background: accentGlow }}>
-                      <LockKeyhole className="w-6 h-6" style={{ color: accent }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-foreground truncate">{decFile.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{formatBytes(decFile.size)}</p>
-                    </div>
+                  <div className="p-2 space-y-1 max-h-60 overflow-y-auto">
+                    {decFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-3 px-4 py-2 rounded-xl bg-card/50 border border-border">
+                        <div className="p-1.5 rounded-lg border border-border shrink-0" style={{ background: accentGlow }}>
+                          <LockKeyhole className="w-3.5 h-3.5" style={{ color: accent }} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-foreground truncate">{file.name}</p>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDecFiles(prev => prev.filter((_, i) => i !== idx)); }}
+                          className="p-1 hover:bg-card rounded-lg transition-colors shrink-0"
+                        >
+                          <X className="w-3.5 h-3.5 text-muted-foreground" />
+                        </button>
+                      </div>
+                    ))}
                     <button
-                      onClick={(e) => { e.stopPropagation(); setDecFile(null); setDecStatus("idle"); setDecError(""); setDecOutput(""); }}
-                      className="p-2 rounded-xl border border-border bg-card/60 hover:bg-card transition-all shrink-0"
+                      onClick={(e) => { e.stopPropagation(); decFileInputRef.current?.click(); }}
+                      className="w-full py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <X className="w-4 h-4 text-muted-foreground" />
+                      + Add More Files
                     </button>
                   </div>
                 )}
               </div>
 
               {/* Large file warning */}
-              {decFile && decFile.size > LARGE_FILE_THRESHOLD && (
+              {decFiles.some(f => f.size > LARGE_FILE_THRESHOLD) && (
                 <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-sm">
                   <Info className="w-4 h-4 shrink-0" />
-                  Large file ({formatBytes(decFile.size)}) — decryption may take a few seconds.
+                  Large files detected — decryption may take a few seconds.
                 </div>
               )}
 
@@ -627,10 +736,26 @@ export default function FileEncryptorPage() {
 
       </div>
     </div>
+  </>
   );
 }
 
 // ─── PasswordInput subcomponent ───────────────────────────────────────────────
+
+function calculateStrength(password: string): { label: string; color: string; percent: number } {
+  if (!password) return { label: "", color: "", percent: 0 };
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 2) return { label: "Weak", color: "bg-red-500", percent: 25 };
+  if (score === 3) return { label: "Fair", color: "bg-yellow-500", percent: 50 };
+  if (score === 4) return { label: "Strong", color: "bg-emerald-500", percent: 75 };
+  return { label: "Excellent", color: "bg-blue-500", percent: 100 };
+}
 
 function PasswordInput({
   label,
@@ -642,6 +767,7 @@ function PasswordInput({
   accentRing,
   placeholder,
   error,
+  showStrength,
 }: {
   label: string;
   value: string;
@@ -652,18 +778,27 @@ function PasswordInput({
   accentRing: string;
   placeholder?: string;
   error?: string;
+  showStrength?: boolean;
 }) {
+  const strength = useMemo(() => calculateStrength(value), [value]);
+
   return (
     <div className="space-y-1.5">
-      <label className="block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        {label}
-      </label>
+      <div className="flex items-center justify-between">
+        <label className="block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          {label}
+        </label>
+        {showStrength && (
+          <span className="text-[10px] text-muted-foreground font-medium">Min 8, Max 64 chars</span>
+        )}
+      </div>
       <div className="relative">
         <input
           type={show ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
+          maxLength={64}
           className="w-full bg-background/60 border border-border rounded-2xl px-4 py-3 pr-12 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none transition-all"
           style={value ? { boxShadow: `0 0 0 2px ${accentRing}` } : undefined}
         />
@@ -675,6 +810,25 @@ function PasswordInput({
           {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
         </button>
       </div>
+
+      {showStrength && value.length > 0 && (
+        <div className="space-y-1.5 px-1">
+          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider">
+            <span className="text-muted-foreground">Strength</span>
+            <span style={{ color: strength.color.replace("bg-", "") }} className={strength.color.replace("bg-", "text-")}>
+              {strength.label}
+            </span>
+          </div>
+          <div className="h-1 w-full bg-border rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${strength.percent}%` }}
+              className={`h-full ${strength.color}`}
+            />
+          </div>
+        </div>
+      )}
+
       {error && (
         <p className="text-xs text-red-400 flex items-center gap-1.5 pl-1">
           <AlertCircle className="w-3 h-3" /> {error}
