@@ -11,11 +11,11 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/ThemeContext";
 import {
-  IoTApplet, IoTLog, SensorData, WebhookEvent,
+  IoTApplet, IoTLog, SensorData,
   SENSOR_FIELDS, SENSOR_OPS,
   subscribeToApplets, subscribeToLogs, deleteApplet, saveApplet,
   evaluateApplet, checkSensorCondition, executeAction,
-  subscribeToWebhookEvents, clearWebhookEvent,
+  clearWebhookTrigger,
 } from "./lib/iot-logic";
 import AppletEditor from "./components/AppletEditor";
 import "./themes.css";
@@ -95,8 +95,9 @@ export default function IoTBridgePage() {
   const [editingApplet, setEditingApplet] = useState<IoTApplet | null>(null);
   const [isLiveMode, setIsLiveMode]       = useState(false);
 
-  // Throttle
-  const lastLocalRun = useRef<Record<string, number>>({});
+  // Throttle / dedup
+  const lastLocalRun      = useRef<Record<string, number>>({});
+  const processedWebhooks = useRef<Record<string, number>>({});
 
   // Sensors
   const [temp, setTemp]         = useState(24);
@@ -188,35 +189,46 @@ export default function IoTBridgePage() {
       appletsRef.current = a;
     });
     const unsubLogs = subscribeToLogs(setLogs);
-
-    const unsubWebhook = subscribeToWebhookEvents(async (events: Record<string, WebhookEvent>) => {
-      for (const [appletId, event] of Object.entries(events)) {
-        const applet = appletsRef.current.find(
-          a => a.id === appletId && a.trigger.type === "webhook" && a.enabled
-        );
-        if (!applet) continue;
-        await clearWebhookEvent(appletId);
-        const result = await executeAction(applet, true);
-        if (result) {
-          setSimLogs(prev => [{ ...result, id: `wh_${Date.now()}` }, ...prev].slice(0, 20));
-          handleActionEffect(applet, false, result.fetchResponse);
-          addToast(
-            applet.name,
-            `Webhook received · ${JSON.stringify(event.params).slice(0, 60)}`,
-            "webhook"
-          );
-        }
-      }
-    });
-
     return () => {
       unsubApplets();
       unsubLogs();
-      unsubWebhook();
       if (simulationInterval.current) clearInterval(simulationInterval.current);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ── webhook trigger handler (watches applets for webhookTrigger field) ──
+  useEffect(() => {
+    applets.forEach(async (applet) => {
+      if (!applet.webhookTrigger) return;
+      if (!applet.enabled || applet.trigger.type !== "webhook") return;
+
+      const { params, timestamp } = applet.webhookTrigger;
+
+      // Prevent double-processing — subscription fires again after we clear the field
+      if (processedWebhooks.current[applet.id] === timestamp) return;
+      processedWebhooks.current[applet.id] = timestamp;
+
+      // Clear from Firebase first so stale events don't re-fire on page reload
+      await clearWebhookTrigger(applet.id);
+
+      const result = await executeAction(applet, true);
+      if (result) {
+        const paramsStr = Object.keys(params).length
+          ? `Webhook → ${JSON.stringify(params).slice(0, 60)} · `
+          : "Webhook received · ";
+        const enrichedLog = { ...result, id: `wh_${Date.now()}`, message: paramsStr + result.message };
+        setSimLogs(prev => [enrichedLog, ...prev].slice(0, 20));
+        handleActionEffect(applet, false, result.fetchResponse);
+        addToast(
+          applet.name,
+          Object.keys(params).length ? `Received · ${JSON.stringify(params).slice(0, 50)}` : "Webhook received",
+          "webhook"
+        );
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applets]);
 
   // ── simulation drift ──
 
@@ -408,12 +420,14 @@ export default function IoTBridgePage() {
                             : "bg-muted/10 border-transparent opacity-60"
                         )}
                       >
-                        {/* Active state dot */}
+                        {/* Active state dot: green=sensor active, blue=webhook listening, gray=idle */}
                         <div className={cn(
                           "absolute top-5 left-5 w-2.5 h-2.5 rounded-full transition-all duration-500",
                           isActive
                             ? "bg-emerald-500 shadow-[0_0_8px_2px_rgba(16,185,129,0.5)] animate-pulse"
-                            : "bg-muted"
+                            : applet.trigger.type === "webhook" && applet.enabled
+                              ? "bg-blue-500 shadow-[0_0_6px_2px_rgba(59,130,246,0.4)] animate-pulse"
+                              : "bg-muted"
                         )} />
 
                         {/* Action buttons */}
@@ -469,24 +483,33 @@ export default function IoTBridgePage() {
                           </p>
                         </div>
 
-                        {/* Webhook URL chip — Firebase REST API PUT endpoint */}
+                        {/* Webhook curl chip */}
                         {applet.trigger.type === "webhook" && (
-                          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-blue-500/5 border border-blue-500/20 mb-3">
-                            <code className="text-[9px] font-mono text-blue-400/80 truncate flex-1">
-                              PUT rtdb/webhook_events/{applet.id.slice(0, 8)}…
+                          <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 mb-3 overflow-hidden">
+                            <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-blue-400/70">
+                                Fires: {formatActionText(applet)}
+                              </span>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  const ts = Date.now();
+                                  navigator.clipboard.writeText(
+`curl -X PUT \\
+  "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" \\
+  -H "Content-Type: application/json" \\
+  -d '{"params":{"key":"value"},"timestamp":${ts}}'`
+                                  );
+                                }}
+                                className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-blue-400 hover:text-blue-300 transition-colors shrink-0 px-1.5 py-0.5 rounded-lg hover:bg-blue-500/10"
+                                title="Copy full curl command"
+                              >
+                                <Copy className="w-2.5 h-2.5" /> Copy curl
+                              </button>
+                            </div>
+                            <code className="block text-[9px] font-mono text-blue-400/60 px-3 pb-2.5 leading-relaxed break-all">
+                              PUT …/applets/{applet.id.slice(0, 10)}…/webhookTrigger.json
                             </code>
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                navigator.clipboard.writeText(
-                                  `https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/webhook_events/${applet.id}.json`
-                                );
-                              }}
-                              className="shrink-0 p-1 rounded-lg hover:bg-muted transition-colors"
-                              title="Copy Firebase REST webhook URL"
-                            >
-                              <Copy className="w-3 h-3 text-blue-400" />
-                            </button>
                           </div>
                         )}
 

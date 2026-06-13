@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Zap, Bell, Lightbulb, Globe, Clock, Thermometer, AlertCircle,
-  Droplets, Wind, Gauge, Activity, Sun, MoonStar,
+  Droplets, Wind, Gauge, Activity, Sun, MoonStar, Copy,
 } from "lucide-react";
 import {
   IoTApplet, saveApplet, SENSOR_FIELDS, SENSOR_OPS,
@@ -562,30 +562,40 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                                   A label for this webhook trigger (used in logs)
                                 </p>
                               )}
-                              {/* Webhook endpoint — Firebase REST API (works with static site) */}
+                              {/* Webhook curl command — shown when editing an existing applet */}
                               {applet?.id && (
-                                <div className="space-y-1.5">
-                                  <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 pl-1">
-                                    Trigger URL (PUT request)
-                                  </p>
-                                  <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted/40 border border-border/60">
-                                    <code className="text-[10px] flex-1 font-mono text-muted-foreground truncate">
-                                      rtdb: /iot_bridge/webhook_events/{applet.id}
-                                    </code>
+                                <div className="space-y-2 mt-1">
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+                                      Trigger via HTTP (fires action on page)
+                                    </p>
                                     <button
                                       type="button"
                                       onClick={() => {
+                                        const ts = Date.now();
                                         navigator.clipboard.writeText(
-                                          `https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/webhook_events/${applet.id}.json`
+`curl -X PUT \\
+  "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" \\
+  -H "Content-Type: application/json" \\
+  -d '{"params":{"key":"value"},"timestamp":${ts}}'`
                                         );
                                       }}
-                                      className="text-[9px] font-black uppercase tracking-wider text-primary hover:text-primary/70 transition-colors shrink-0 px-2 py-1 rounded-lg hover:bg-primary/10"
+                                      className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-primary hover:text-primary/70 transition-colors px-2 py-0.5 rounded-lg hover:bg-primary/10"
                                     >
-                                      Copy URL
+                                      <Copy className="w-2.5 h-2.5" /> Copy
                                     </button>
                                   </div>
-                                  <p className="text-[10px] text-muted-foreground/50 pl-1">
-                                    PUT with JSON body: {`{"appletId":"${applet.id}","params":{},"timestamp":0}`}
+                                  <div className="bg-muted/50 border border-border/60 rounded-2xl p-3 overflow-x-auto">
+                                    <pre className="text-[10px] font-mono text-muted-foreground leading-relaxed whitespace-pre-wrap break-all">{
+`curl -X PUT \\
+  "…/applets/${applet.id.slice(0, 14)}…/webhookTrigger.json" \\
+  -H "Content-Type: application/json" \\
+  -d '{"params":{"key":"value"},"timestamp":…}'`
+                                    }</pre>
+                                  </div>
+                                  <p className="text-[10px] text-muted-foreground/50 pl-1 leading-relaxed">
+                                    Replace <code className="font-mono bg-muted/50 px-1 rounded text-[9px]">key/value</code> with your sensor data.
+                                    The page receives the trigger in real-time via Firebase and fires the configured action.
                                   </p>
                                 </div>
                               )}

@@ -110,16 +110,9 @@ export const subscribeToLogs = (callback: (logs: IoTLog[]) => void) => {
   return () => off(logsRef, "value", listener);
 };
 
-export const subscribeToWebhookEvents = (
-  callback: (events: Record<string, WebhookEvent>) => void
-) => {
-  const eventsRef = ref(db, WEBHOOK_EVENTS_PATH);
-  const listener  = onValue(eventsRef, (snap) => callback(snap.val() ?? {}));
-  return () => off(eventsRef, "value", listener);
-};
-
-export const clearWebhookEvent = async (appletId: string) => {
-  await remove(ref(db, `${WEBHOOK_EVENTS_PATH}/${appletId}`));
+// Setting webhookTrigger to null removes the key from Firebase (self-cleaning under applet node)
+export const clearWebhookTrigger = async (appletId: string) => {
+  await set(ref(db, `${APPLET_PATH}/${appletId}/webhookTrigger`), null);
 };
 
 // Pure condition check — no side effects, used for hysteresis in page.tsx
