@@ -35,12 +35,16 @@ export interface IoTApplet {
   trigger: {
     type: "time" | "sensor" | "webhook";
     value: string; // "08:00", "temp > 30", or webhook ID
+    condition?: string; // For webhook filtering, e.g., "key1 > 30"
+    timeWindow?: { start: string; end: string; enabled: boolean };
   };
   action: {
     type: "notification" | "light" | "fetch";
-    value: string; // message, "on/off", or URL
+    value: string; // message, "on/off/toggle", or URL
     fetchMethod?: "GET" | "POST";
     target?: string;  // for "light": named device, e.g. "Bedroom Light"
+    icon?: string;    // for "light": custom icon name
+    customResponse?: string; // For webhooks: what to return
   };
   enabled: boolean;
   lastRun?: number;
@@ -53,7 +57,7 @@ export interface IoTLog {
   appletId: string;
   appletName: string;
   timestamp: number;
-  status: "success" | "failure" | "auto-reset";
+  status: "success" | "failure" | "auto-reset" | "skipped";
   message: string;
   actionType?: IoTApplet["action"]["type"];
   fetchResponse?: { status: number; body: string };
@@ -102,7 +106,7 @@ export const subscribeToLogs = (callback: (logs: IoTLog[]) => void) => {
     if (data) {
       const list = Object.values(data) as IoTLog[];
       list.sort((a, b) => b.timestamp - a.timestamp);
-      callback(list.slice(0, 50));
+      callback(list);
     } else {
       callback([]);
     }
@@ -110,9 +114,74 @@ export const subscribeToLogs = (callback: (logs: IoTLog[]) => void) => {
   return () => off(logsRef, "value", listener);
 };
 
+export const clearLogs = async () => {
+  await remove(ref(db, LOG_PATH));
+};
+
 // Setting webhookTrigger to null removes the key from Firebase (self-cleaning under applet node)
 export const clearWebhookTrigger = async (appletId: string) => {
   await set(ref(db, `${APPLET_PATH}/${appletId}/webhookTrigger`), null);
+};
+
+export const injectVariables = (text: string, params?: Record<string, string>, sensorData?: Partial<SensorData>) => {
+  let result = text;
+  if (sensorData) {
+    result = result
+      .replace(/{temp}/g,     String(sensorData.temp ?? ""))
+      .replace(/{humidity}/g, String(sensorData.humidity ?? ""))
+      .replace(/{pressure}/g, String(sensorData.pressure ?? ""))
+      .replace(/{co2}/g,      String(sensorData.co2 ?? ""))
+      .replace(/{motion}/g,   sensorData.motion === 1 ? "Detected" : "None");
+  }
+  if (params) {
+    Object.entries(params).forEach(([key, val]) => {
+      const regex = new RegExp(`{${key}}`, "g");
+      result = result.replace(regex, String(val));
+    });
+  }
+  return result;
+};
+
+export const checkWebhookCondition = (condition: string, params: Record<string, string>): boolean => {
+  if (!condition) return true;
+  const parts = condition.trim().split(/\s+/);
+  if (parts.length < 3) return true;
+  const [key, op, val] = parts;
+  const paramValue = params[key];
+  if (paramValue === undefined) return false;
+
+  const n1 = parseFloat(paramValue);
+  const n2 = parseFloat(val);
+  const v1 = isNaN(n1) ? paramValue : n1;
+  const v2 = isNaN(n2) ? val : n2;
+
+  if (op === ">")  return (v1 as any) > (v2 as any);
+  if (op === "<")  return (v1 as any) < (v2 as any);
+  if (op === "==") return (v1 as any) == (v2 as any);
+  if (op === ">=") return (v1 as any) >= (v2 as any);
+  if (op === "<=") return (v1 as any) <= (v2 as any);
+  if (op === "!=") return (v1 as any) !== (v2 as any);
+  return false;
+};
+
+export const isInTimeWindow = (window?: IoTApplet["trigger"]["timeWindow"]): boolean => {
+  if (!window || !window.enabled || !window.start || !window.end) return true;
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const [startH, startM] = window.start.split(":").map(Number);
+  const [endH, endM] = window.end.split(":").map(Number);
+
+  const startMinutes = startH * 60 + startM;
+  const endMinutes = endH * 60 + endM;
+
+  if (startMinutes <= endMinutes) {
+    return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+  } else {
+    // Overnight window (e.g., 22:00 to 06:00)
+    return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
+  }
 };
 
 // Pure condition check — no side effects, used for hysteresis in page.tsx
@@ -139,6 +208,7 @@ export const evaluateApplet = async (
   persist: boolean = true
 ) => {
   if (!applet.enabled) return null;
+  if (!isInTimeWindow(applet.trigger.timeWindow)) return null;
 
   let shouldTrigger = false;
 
@@ -154,7 +224,7 @@ export const evaluateApplet = async (
   return null;
 };
 
-export const executeAction = async (applet: IoTApplet, persist: boolean = true) => {
+export const executeAction = async (applet: IoTApplet, persist: boolean = true, params?: Record<string, string>, sensorData?: Partial<SensorData>) => {
   if (applet.lastRun && Date.now() - applet.lastRun < 10000) return null;
 
   if (persist) {
@@ -165,11 +235,12 @@ export const executeAction = async (applet: IoTApplet, persist: boolean = true) 
 
   if (applet.action.type === "fetch") {
     const method = applet.action.fetchMethod ?? "POST";
+    const url = injectVariables(applet.action.value, params, sensorData);
     try {
-      const res  = await fetch(applet.action.value, {
+      const res  = await fetch(url, {
         method,
         ...(method === "POST"
-          ? { body: JSON.stringify({ triggeredBy: "IoT Bridge" }), headers: { "Content-Type": "application/json" } }
+          ? { body: JSON.stringify({ triggeredBy: "IoT Bridge", params }), headers: { "Content-Type": "application/json" } }
           : {}),
       });
       const text = await res.text().catch(() => "");

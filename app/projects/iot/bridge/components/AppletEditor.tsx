@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X, Zap, Bell, Lightbulb, Globe, Clock, Thermometer, AlertCircle,
-  Droplets, Wind, Gauge, Activity, Sun, MoonStar, Copy,
+  Droplets, Wind, Gauge, Activity, Sun, MoonStar, Copy, RotateCcw,
+  Fan, Power, Radio, Camera, Lock,
 } from "lucide-react";
 import {
   IoTApplet, saveApplet, SENSOR_FIELDS, SENSOR_OPS,
@@ -16,6 +17,15 @@ import { cn } from "@/lib/utils";
 const FIELD_ICONS: Record<string, React.ElementType> = {
   temp: Thermometer, humidity: Droplets, pressure: Gauge, co2: Wind, motion: Activity,
 };
+
+const DEVICE_ICONS = [
+  { id: "lightbulb", icon: Lightbulb, label: "Light" },
+  { id: "fan",       icon: Fan,       label: "Fan"   },
+  { id: "plug",      icon: Power,     label: "Plug"  },
+  { id: "radio",     icon: Radio,     label: "Media" },
+  { id: "camera",    icon: Camera,    label: "Cam"   },
+  { id: "lock",      icon: Lock,      label: "Lock"  },
+];
 
 // Step increment per sensor field for the +/- stepper
 const FIELD_STEP: Record<string, number> = {
@@ -37,6 +47,99 @@ function parseSensorTrigger(value: string) {
 }
 
 // ─── sub-builders ────────────────────────────────────────────────────────────
+
+function WebhookConditionBuilder({
+  condition, onChange
+}: { condition: string; onChange: (v: string) => void }) {
+  const parts = condition ? condition.trim().split(/\s+/) : ["", "==", ""];
+  const [key, setKey] = useState(parts[0] || "");
+  const [op, setOp]   = useState(parts[1] || "==");
+  const [val, setVal] = useState(parts[2] || "");
+
+  useEffect(() => {
+    if (key.trim()) {
+      onChange(`${key} ${op} ${val}`);
+    } else {
+      onChange("");
+    }
+  }, [key, op, val]);
+
+  return (
+    <div className="space-y-2 pt-2 border-t border-border/50">
+      <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+        Optional Filter (e.g. status == active)
+      </p>
+      <div className="flex items-center gap-2">
+        <input
+          type="text" value={key} onChange={(e) => setKey(e.target.value)}
+          placeholder="key"
+          className="w-20 bg-muted/50 border border-border rounded-xl px-2.5 py-2 text-[10px] font-mono focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+        />
+        <div className="relative group">
+          <select
+            value={op} onChange={(e) => setOp(e.target.value)}
+            className="appearance-none bg-primary/10 border border-primary/20 rounded-xl px-3 py-2 text-[10px] font-bold text-primary focus:outline-none cursor-pointer pr-7"
+          >
+            {SENSOR_OPS.map(o => <option key={o.id} value={o.id}>{o.label.split(" ").pop()?.toUpperCase() || o.id}</option>)}
+          </select>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
+            <RotateCcw className="w-2.5 h-2.5 rotate-45" />
+          </div>
+        </div>
+        <input
+          type="text" value={val} onChange={(e) => setVal(e.target.value)}
+          placeholder="value"
+          className="flex-1 bg-muted/50 border border-border rounded-xl px-3 py-2 text-[10px] font-mono focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all"
+        />
+      </div>
+    </div>
+  );
+}
+
+function TimeWindowBuilder({
+  window, onChange
+}: { window: IoTApplet["trigger"]["timeWindow"]; onChange: (w: IoTApplet["trigger"]["timeWindow"]) => void }) {
+  const enabled = window?.enabled ?? false;
+
+  return (
+    <div className="space-y-3 pt-3 border-t border-border/50">
+      <div className="flex items-center justify-between">
+        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+          Active Time Window
+        </p>
+        <button
+          type="button"
+          onClick={() => onChange({ ...window, enabled: !enabled } as any)}
+          className={cn(
+            "w-8 h-4 rounded-full transition-all relative",
+            enabled ? "bg-primary" : "bg-muted"
+          )}
+        >
+          <div className={cn(
+            "absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all",
+            enabled ? "left-4.5" : "left-0.5"
+          )} />
+        </button>
+      </div>
+
+      {enabled && (
+        <div className="flex items-center gap-2">
+          <input
+            type="time" value={window?.start || "22:00"}
+            onChange={(e) => onChange({ ...window, start: e.target.value } as any)}
+            className="flex-1 bg-muted/50 border border-border rounded-xl px-2 py-2 text-[10px] focus:outline-none"
+          />
+          <span className="text-[10px] text-muted-foreground font-bold">to</span>
+          <input
+            type="time" value={window?.end || "06:00"}
+            onChange={(e) => onChange({ ...window, end: e.target.value } as any)}
+            className="flex-1 bg-muted/50 border border-border rounded-xl px-2 py-2 text-[10px] focus:outline-none"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SensorTriggerBuilder({
   value, onChange, showError,
@@ -177,39 +280,54 @@ function TimeTriggerBuilder({ value, onChange }: { value: string; onChange: (v: 
 }
 
 function LightActionBuilder({
-  value, onChange, target, onTargetChange,
+  value, onChange, target, onTargetChange, icon, onIconChange
 }: {
   value: string; onChange: (v: string) => void;
   target: string; onTargetChange: (t: string) => void;
+  icon: string; onIconChange: (i: string) => void;
 }) {
   return (
-    <div className="space-y-3">
-      <div className="flex gap-3">
-        <button
-          type="button"
-          onClick={() => onChange("on")}
-          className={cn(
-            "flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl border font-bold text-sm transition-all",
-            value === "on"
-              ? "bg-yellow-400/20 border-yellow-400 text-yellow-400 shadow-lg shadow-yellow-400/10"
-              : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted/50"
-          )}
-        >
-          <Sun className="w-5 h-5" /> Turn ON
-        </button>
-        <button
-          type="button"
-          onClick={() => onChange("off")}
-          className={cn(
-            "flex-1 flex items-center justify-center gap-2 py-5 rounded-2xl border font-bold text-sm transition-all",
-            value === "off"
-              ? "bg-blue-400/10 border-blue-400/50 text-blue-300 shadow-lg shadow-blue-400/10"
-              : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted/50"
-          )}
-        >
-          <MoonStar className="w-5 h-5" /> Turn OFF
-        </button>
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        {[
+          { v: "on", label: "ON", icon: Sun, color: "text-yellow-400" },
+          { v: "off", label: "OFF", icon: MoonStar, color: "text-blue-300" },
+          { v: "toggle", label: "TOGGLE", icon: RotateCcw, color: "text-emerald-400" },
+        ].map(opt => (
+          <button
+            key={opt.v}
+            type="button"
+            onClick={() => onChange(opt.v)}
+            className={cn(
+              "flex-1 flex flex-col items-center gap-2 py-4 rounded-2xl border font-bold text-[10px] transition-all",
+              value === opt.v
+                ? `bg-primary/10 border-primary ${opt.color} shadow-lg`
+                : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted/50"
+            )}
+          >
+            <opt.icon className="w-4 h-4" /> {opt.label}
+          </button>
+        ))}
       </div>
+
+      <div className="space-y-2">
+        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Device Icon</p>
+        <div className="flex flex-wrap gap-2">
+          {DEVICE_ICONS.map(i => (
+            <button
+              key={i.id} type="button" onClick={() => onIconChange(i.id)}
+              className={cn(
+                "p-2.5 rounded-xl border transition-all",
+                icon === i.id ? "bg-primary/10 border-primary text-primary" : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted/50"
+              )}
+              title={i.label}
+            >
+              <i.icon className="w-4 h-4" />
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-1.5">
         <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Device Name</label>
         <input
@@ -219,9 +337,6 @@ function LightActionBuilder({
           placeholder="Main Light"
           className="w-full bg-muted/50 border border-border rounded-2xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
         />
-        <p className="text-[10px] text-muted-foreground/60 pl-1">
-          Name the device to control multiple lights independently
-        </p>
       </div>
     </div>
   );
@@ -268,16 +383,17 @@ function NotificationActionBuilder({
 }
 
 function FetchActionBuilder({
-  value, onChange, method, onMethodChange,
+  value, onChange, method, onMethodChange, customRes, onCustomResChange
 }: {
   value: string; onChange: (v: string) => void;
   method: "GET" | "POST"; onMethodChange: (m: "GET" | "POST") => void;
+  customRes: string; onCustomResChange: (r: string) => void;
 }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <input
         type="url" value={value} onChange={(e) => onChange(e.target.value)}
-        placeholder="https://hooks.example.com/trigger"
+        placeholder="https://api.com/status/{id}"
         className="w-full bg-muted/50 border border-border rounded-2xl px-4 py-3 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
       />
       <div className="flex gap-2">
@@ -290,6 +406,14 @@ function FetchActionBuilder({
             {m}
           </button>
         ))}
+      </div>
+      <div className="space-y-1.5">
+        <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Response to Caller (JSON)</label>
+        <input
+          type="text" value={customRes} onChange={(e) => onCustomResChange(e.target.value)}
+          placeholder='{"status": "ok"}'
+          className="w-full bg-muted/50 border border-border rounded-2xl px-4 py-2.5 text-xs font-mono focus:outline-none"
+        />
       </div>
     </div>
   );
@@ -308,10 +432,16 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
   const [name, setName]                   = useState("");
   const [triggerType, setTriggerType]     = useState<IoTApplet["trigger"]["type"]>("sensor");
   const [triggerValue, setTriggerValue]   = useState("temp > 30");
+  const [triggerCondition, setTriggerCondition] = useState("");
+  const [timeWindow, setTimeWindow]       = useState<IoTApplet["trigger"]["timeWindow"]>({ start: "22:00", end: "06:00", enabled: false });
+
   const [actionType, setActionType]       = useState<IoTApplet["action"]["type"]>("notification");
   const [actionValue, setActionValue]     = useState("");
   const [fetchMethod, setFetchMethod]     = useState<"GET" | "POST">("POST");
   const [lightTarget, setLightTarget]     = useState("Main Light");
+  const [lightIcon, setLightIcon]         = useState("lightbulb");
+  const [customResponse, setCustomResponse] = useState("");
+
   const [isSaving, setIsSaving]           = useState(false);
   const [showErrors, setShowErrors]       = useState(false);
 
@@ -320,18 +450,28 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
       setName(applet.name);
       setTriggerType(applet.trigger.type);
       setTriggerValue(applet.trigger.value);
+      setTriggerCondition(applet.trigger.condition || "");
+      setTimeWindow(applet.trigger.timeWindow || { start: "22:00", end: "06:00", enabled: false });
+
       setActionType(applet.action.type);
       setActionValue(applet.action.value);
       setFetchMethod(applet.action.fetchMethod ?? "POST");
       setLightTarget(applet.action.target ?? "Main Light");
+      setLightIcon(applet.action.icon ?? "lightbulb");
+      setCustomResponse(applet.action.customResponse || "");
     } else {
       setName("");
       setTriggerType("sensor");
       setTriggerValue("temp > 30");
+      setTriggerCondition("");
+      setTimeWindow({ start: "22:00", end: "06:00", enabled: false });
+
       setActionType("notification");
       setActionValue("");
       setFetchMethod("POST");
       setLightTarget("Main Light");
+      setLightIcon("lightbulb");
+      setCustomResponse("");
     }
     setStep(1);
     setShowErrors(false);
@@ -363,12 +503,17 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
       await saveApplet({
         id:      applet?.id,
         name,
-        trigger: { type: triggerType, value: triggerValue },
+        trigger: {
+          type: triggerType,
+          value: triggerValue,
+          condition: triggerCondition,
+          timeWindow
+        },
         action:  {
           type:  actionType,
           value: actionValue,
-          ...(actionType === "fetch" ? { fetchMethod } : {}),
-          ...(actionType === "light" ? { target: lightTarget || "Main Light" } : {}),
+          ...(actionType === "fetch" ? { fetchMethod, customResponse } : {}),
+          ...(actionType === "light" ? { target: lightTarget || "Main Light", icon: lightIcon } : {}),
         },
         enabled: applet ? applet.enabled : true,
       });
@@ -391,7 +536,7 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
 
   const ACTION_TYPES = [
     { id: "notification", label: "Notify",       icon: Bell      },
-    { id: "light",        label: "Toggle Light", icon: Lightbulb },
+    { id: "light",        label: "Control",      icon: Lightbulb },
     { id: "fetch",        label: "Webhook",      icon: Globe     },
   ] as const;
 
@@ -482,11 +627,6 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                             showErrors && !name.trim() ? "border-red-500/60" : "border-border"
                           )}
                         />
-                        {showErrors && !name.trim() && (
-                          <p className="flex items-center gap-1.5 text-xs text-red-400">
-                            <AlertCircle className="w-3.5 h-3.5" /> Please fill this value
-                          </p>
-                        )}
                       </div>
 
                       {/* Trigger */}
@@ -494,9 +634,6 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                         <div>
                           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">
                             When this happens…
-                          </p>
-                          <p className="text-xs text-muted-foreground/60">
-                            Choose what triggers the applet
                           </p>
                         </div>
 
@@ -518,7 +655,7 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                           ))}
                         </div>
 
-                        <div>
+                        <div className="space-y-4">
                           {triggerType === "sensor" && (
                             <SensorTriggerBuilder
                               value={triggerValue}
@@ -527,23 +664,13 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                             />
                           )}
                           {triggerType === "time" && (
-                            <div className="space-y-1.5">
-                              <TimeTriggerBuilder
-                                value={triggerValue}
-                                onChange={(v) => { setTriggerValue(v); setShowErrors(false); }}
-                              />
-                              <p className="text-[10px] text-muted-foreground/60 pl-1">
-                                Applet fires when the clock matches (24-hour)
-                              </p>
-                              {showErrors && !triggerValue.trim() && (
-                                <p className="flex items-center gap-1.5 text-xs text-red-400">
-                                  <AlertCircle className="w-3.5 h-3.5" /> Please fill this value
-                                </p>
-                              )}
-                            </div>
+                            <TimeTriggerBuilder
+                              value={triggerValue}
+                              onChange={(v) => { setTriggerValue(v); setShowErrors(false); }}
+                            />
                           )}
                           {triggerType === "webhook" && (
-                            <div className="space-y-2">
+                            <div className="space-y-3">
                               <input
                                 type="text" value={triggerValue}
                                 onChange={(e) => { setTriggerValue(e.target.value); setShowErrors(false); }}
@@ -553,32 +680,19 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                                   showErrors && !triggerValue.trim() ? "border-red-500/60" : "border-border"
                                 )}
                               />
-                              {showErrors && !triggerValue.trim() ? (
-                                <p className="flex items-center gap-1.5 text-xs text-red-400">
-                                  <AlertCircle className="w-3.5 h-3.5" /> Please fill this value
-                                </p>
-                              ) : (
-                                <p className="text-[10px] text-muted-foreground/60 pl-1">
-                                  A label for this webhook trigger (used in logs)
-                                </p>
-                              )}
-                              {/* Webhook curl command — shown when editing an existing applet */}
+                              {/* Webhook Trigger Info */}
                               {applet?.id && (
                                 <div className="space-y-2 mt-1">
                                   <div className="flex items-center justify-between">
                                     <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
-                                      Trigger via HTTP (fires action on page)
+                                      Trigger Link (fires action on page)
                                     </p>
                                     <button
                                       type="button"
                                       onClick={() => {
                                         const ts = Date.now();
-                                        navigator.clipboard.writeText(
-`curl -X PUT \\
-  "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" \\
-  -H "Content-Type: application/json" \\
-  -d '{"params":{"key":"value"},"timestamp":${ts}}'`
-                                        );
+                                        const curl = `curl -X PUT "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" -H "Content-Type: application/json" -d "{\\"params\\":{\\"key\\":\\"value\\"},\\"timestamp\\":${ts}}"`;
+                                        navigator.clipboard.writeText(curl);
                                       }}
                                       className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-primary hover:text-primary/70 transition-colors px-2 py-0.5 rounded-lg hover:bg-primary/10"
                                     >
@@ -587,20 +701,22 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                                   </div>
                                   <div className="bg-muted/50 border border-border/60 rounded-2xl p-3 overflow-x-auto">
                                     <pre className="text-[10px] font-mono text-muted-foreground leading-relaxed whitespace-pre-wrap break-all">{
-`curl -X PUT \\
-  "…/applets/${applet.id.slice(0, 14)}…/webhookTrigger.json" \\
-  -H "Content-Type: application/json" \\
-  -d '{"params":{"key":"value"},"timestamp":…}'`
+`curl -X PUT "…/applets/${applet.id.slice(0, 14)}…/webhookTrigger.json" -H "Content-Type: application/json" -d "{\\"params\\":{\\"key\\":\\"value\\"},\\"timestamp\\":…}"`
                                     }</pre>
                                   </div>
-                                  <p className="text-[10px] text-muted-foreground/50 pl-1 leading-relaxed">
-                                    Replace <code className="font-mono bg-muted/50 px-1 rounded text-[9px]">key/value</code> with your sensor data.
-                                    The page receives the trigger in real-time via Firebase and fires the configured action.
-                                  </p>
                                 </div>
                               )}
+                              <WebhookConditionBuilder
+                                condition={triggerCondition}
+                                onChange={setTriggerCondition}
+                              />
                             </div>
                           )}
+
+                          <TimeWindowBuilder
+                            window={timeWindow}
+                            onChange={setTimeWindow}
+                          />
                         </div>
                       </div>
                     </motion.div>
@@ -628,14 +744,9 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
 
                       {/* Action */}
                       <div className="space-y-4">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                            Do this action…
-                          </p>
-                          <p className="text-xs text-muted-foreground/60">
-                            What should happen when triggered
-                          </p>
-                        </div>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">
+                          Do this action…
+                        </p>
 
                         <div className="flex gap-2">
                           {ACTION_TYPES.map((t) => (
@@ -662,35 +773,25 @@ export default function AppletEditor({ applet, isOpen, onClose }: AppletEditorPr
                               onChange={(v) => { setActionValue(v); setShowErrors(false); }}
                               target={lightTarget}
                               onTargetChange={setLightTarget}
+                              icon={lightIcon}
+                              onIconChange={setLightIcon}
                             />
                           )}
                           {actionType === "notification" && (
-                            <div className="space-y-1.5">
-                              <NotificationActionBuilder
-                                value={actionValue}
-                                onChange={(v) => { setActionValue(v); setShowErrors(false); }}
-                              />
-                              {showErrors && !actionValue.trim() && (
-                                <p className="flex items-center gap-1.5 text-xs text-red-400">
-                                  <AlertCircle className="w-3.5 h-3.5" /> Please fill this value
-                                </p>
-                              )}
-                            </div>
+                            <NotificationActionBuilder
+                              value={actionValue}
+                              onChange={(v) => { setActionValue(v); setShowErrors(false); }}
+                            />
                           )}
                           {actionType === "fetch" && (
-                            <div className="space-y-1.5">
-                              <FetchActionBuilder
-                                value={actionValue}
-                                onChange={(v) => { setActionValue(v); setShowErrors(false); }}
-                                method={fetchMethod}
-                                onMethodChange={setFetchMethod}
-                              />
-                              {showErrors && !actionValue.trim() && (
-                                <p className="flex items-center gap-1.5 text-xs text-red-400">
-                                  <AlertCircle className="w-3.5 h-3.5" /> Please fill this value
-                                </p>
-                              )}
-                            </div>
+                            <FetchActionBuilder
+                              value={actionValue}
+                              onChange={(v) => { setActionValue(v); setShowErrors(false); }}
+                              method={fetchMethod}
+                              onMethodChange={setFetchMethod}
+                              customRes={customResponse}
+                              onCustomResChange={setCustomResponse}
+                            />
                           )}
                         </div>
                       </div>

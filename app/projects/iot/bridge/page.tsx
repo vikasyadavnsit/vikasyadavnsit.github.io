@@ -6,6 +6,7 @@ import {
   Settings, Plus, Trash2, History,
   Play, Pause, Sliders, Info, Activity, Thermometer,
   Droplets, Wind, Gauge, RotateCcw, ArrowRight, Clock, Copy,
+  Search, Fan, Power, Radio, Camera, Lock, CheckCircle2, AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -15,16 +16,29 @@ import {
   SENSOR_FIELDS, SENSOR_OPS,
   subscribeToApplets, subscribeToLogs, deleteApplet, saveApplet,
   evaluateApplet, checkSensorCondition, executeAction,
-  clearWebhookTrigger,
+  clearWebhookTrigger, clearLogs, checkWebhookCondition, injectVariables,
 } from "./lib/iot-logic";
 import AppletEditor from "./components/AppletEditor";
 import "./themes.css";
 
 // ─── pure helpers ────────────────────────────────────────────────────────────
 
+const ICON_MAP: Record<string, React.ElementType> = {
+  lightbulb: Lightbulb,
+  fan:       Fan,
+  plug:      Power,
+  radio:     Radio,
+  camera:    Camera,
+  lock:      Lock,
+};
+
 function formatTriggerText(applet: IoTApplet): string {
   if (applet.trigger.type === "time")    return `At ${applet.trigger.value}`;
-  if (applet.trigger.type === "webhook") return `Webhook: ${applet.trigger.value.slice(0, 20)}`;
+  if (applet.trigger.type === "webhook") {
+    let text = `Webhook: ${applet.trigger.value.slice(0, 15)}`;
+    if (applet.trigger.condition) text += ` (if ${applet.trigger.condition})`;
+    return text;
+  }
   const parts = applet.trigger.value.split(" ");
   if (parts.length < 3) return applet.trigger.value;
   const [field, op, val] = parts;
@@ -36,7 +50,8 @@ function formatTriggerText(applet: IoTApplet): string {
 function formatActionText(applet: IoTApplet): string {
   if (applet.action.type === "light") {
     const dev = applet.action.target || "Main Light";
-    return `${dev}: ${applet.action.value.toUpperCase()}`;
+    const val = applet.action.value.toUpperCase();
+    return `${dev}: ${val}`;
   }
   if (applet.action.type === "notification")
     return `Notify: "${applet.action.value.slice(0, 28)}${applet.action.value.length > 28 ? "…" : ""}"`;
@@ -55,6 +70,11 @@ function formatRelativeTime(ts?: number): string {
   return `${Math.floor(diff / 3600000)}h ago`;
 }
 
+function formatFullDateTime(ts: number): string {
+  const d = new Date(ts);
+  return `${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} · ${d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+}
+
 const TRIGGER_ICONS: Record<string, React.ElementType> = {
   sensor: Thermometer, time: Clock, webhook: Globe,
 };
@@ -65,16 +85,6 @@ const ACTION_COLORS: Record<string, string> = {
   notification: "from-primary/30 to-primary/10",
   light:        "from-yellow-400/30 to-amber-400/10",
   fetch:        "from-emerald-400/30 to-teal-400/10",
-};
-const LOG_STATUS_CLASSES: Record<string, string> = {
-  success:      "bg-emerald-500/10 border-emerald-500/20",
-  failure:      "bg-red-500/10 border-red-500/20",
-  "auto-reset": "bg-amber-500/10 border-amber-500/20",
-};
-const LOG_NAME_CLASSES: Record<string, string> = {
-  success:      "text-emerald-400",
-  failure:      "text-red-400",
-  "auto-reset": "text-amber-400",
 };
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -87,17 +97,11 @@ export default function IoTBridgePage() {
   const [logs, setLogs]       = useState<IoTLog[]>([]);
   const [simLogs, setSimLogs] = useState<IoTLog[]>([]);
 
-  // Keep a ref in sync so webhook callback never reads stale applets
-  const appletsRef = useRef<IoTApplet[]>([]);
-
   // UI
   const [isEditorOpen, setIsEditorOpen]   = useState(false);
   const [editingApplet, setEditingApplet] = useState<IoTApplet | null>(null);
   const [isLiveMode, setIsLiveMode]       = useState(false);
-
-  // Throttle / dedup
-  const lastLocalRun      = useRef<Record<string, number>>({});
-  const processedWebhooks = useRef<Record<string, number>>({});
+  const [logFilter, setLogFilter]         = useState("");
 
   // Sensors
   const [temp, setTemp]         = useState(24);
@@ -115,26 +119,49 @@ export default function IoTBridgePage() {
   const sensorDataRef = useRef<SensorData>(sensorData);
   useEffect(() => { sensorDataRef.current = sensorData; }, [sensorData]);
 
-  // Action feedback — named virtual devices
+  // Action feedback
   const [virtualDevices, setVirtualDevices]         = useState<Record<string, boolean>>({});
   const [deviceControlledBy, setDeviceControlledBy] = useState<Record<string, string>>({});
   const [fetchResponses, setFetchResponses]          = useState<Record<string, { status: number; body: string; ts: number }>>({});
   const [toasts, setToasts]                         = useState<{ id: string; message: string; appletName: string; actionType: string }[]>([]);
 
-  // Derive unique light device names from current applets
-  const lightDevices = useMemo(() => {
-    const seen = new Set<string>();
-    applets.forEach(a => {
-      if (a.action.type === "light") seen.add(a.action.target || "Main Light");
-    });
-    if (seen.size === 0) seen.add("Main Light");
-    return Array.from(seen);
-  }, [applets]);
-
-  // Applet active state (for IFTTT green dot + hysteresis)
+  // Applet active state (for hysteresis)
   const [appletActiveStates, setAppletActiveStates] = useState<Record<string, boolean>>({});
   const appletActiveStatesRef = useRef<Record<string, boolean>>({});
   useEffect(() => { appletActiveStatesRef.current = appletActiveStates; }, [appletActiveStates]);
+
+  // Derive light devices with icons
+  const lightDevices = useMemo(() => {
+    const devices: Record<string, { name: string; icon: string }> = {};
+    applets.forEach(a => {
+      if (a.action.type === "light") {
+        const name = a.action.target || "Main Light";
+        devices[name] = { name, icon: a.action.icon || "lightbulb" };
+      }
+    });
+    if (Object.keys(devices).length === 0) devices["Main Light"] = { name: "Main Light", icon: "lightbulb" };
+    return Object.values(devices);
+  }, [applets]);
+
+  // Success rates
+  const appletStats = useMemo(() => {
+    const stats: Record<string, { total: number; success: number }> = {};
+    logs.slice(0, 100).forEach(log => {
+      if (!stats[log.appletId]) stats[log.appletId] = { total: 0, success: 0 };
+      stats[log.appletId].total++;
+      if (log.status === "success") stats[log.appletId].success++;
+    });
+    return stats;
+  }, [logs]);
+
+  // Filtered logs
+  const filteredLogs = useMemo(() => {
+    const combined = [...simLogs, ...logs];
+    return combined.filter(l =>
+      l.appletName.toLowerCase().includes(logFilter.toLowerCase()) ||
+      l.message.toLowerCase().includes(logFilter.toLowerCase())
+    ).slice(0, 50);
+  }, [logs, simLogs, logFilter]);
 
   // ── helpers ──
 
@@ -147,24 +174,28 @@ export default function IoTBridgePage() {
   const handleActionEffect = (
     applet: IoTApplet,
     isAutoReset = false,
-    fetchResponse?: { status: number; body: string }
+    fetchResponse?: { status: number; body: string },
+    params?: Record<string, string>
   ) => {
     if (applet.action.type === "light") {
       const deviceName = applet.action.target || "Main Light";
-      const isOn       = applet.action.value.toLowerCase() === "on";
-      setVirtualDevices(prev => ({ ...prev, [deviceName]: isOn }));
+      const val = applet.action.value.toLowerCase();
+
+      setVirtualDevices(prev => {
+        const current = prev[deviceName] ?? false;
+        let next = current;
+        if (val === "on") next = true;
+        else if (val === "off") next = false;
+        else if (val === "toggle") next = !current;
+        return { ...prev, [deviceName]: next };
+      });
+
       setDeviceControlledBy(prev => ({
         ...prev,
         [deviceName]: isAutoReset ? `Auto-reset (${applet.name})` : applet.name,
       }));
     } else if (applet.action.type === "notification") {
-      const sd = sensorDataRef.current;
-      const message = applet.action.value
-        .replace(/{temp}/g,     String(sd.temp))
-        .replace(/{humidity}/g, String(sd.humidity))
-        .replace(/{pressure}/g, String(sd.pressure))
-        .replace(/{co2}/g,      String(sd.co2))
-        .replace(/{motion}/g,   sd.motion === 1 ? "Detected" : "None");
+      const message = injectVariables(applet.action.value, params, sensorDataRef.current);
       addToast(applet.name, message, "notification");
     } else if (applet.action.type === "fetch") {
       if (fetchResponse) {
@@ -181,23 +212,24 @@ export default function IoTBridgePage() {
     }
   };
 
-  // ── load data + webhook subscription ──
+  const handleManualTrigger = async (applet: IoTApplet) => {
+    const result = await executeAction(applet, isLiveMode, {}, sensorDataRef.current);
+    if (result) {
+      if (!isLiveMode) setSimLogs(prev => [{ ...result, id: `man_${Date.now()}` }, ...prev].slice(0, 20));
+      handleActionEffect(applet, false, result.fetchResponse);
+      addToast(applet.name, "Manually triggered", applet.action.type);
+    }
+  };
+
+  // ── subscriptions ──
 
   useEffect(() => {
-    const unsubApplets = subscribeToApplets(a => {
-      setApplets(a);
-      appletsRef.current = a;
-    });
+    const unsubApplets = subscribeToApplets(setApplets);
     const unsubLogs = subscribeToLogs(setLogs);
-    return () => {
-      unsubApplets();
-      unsubLogs();
-      if (simulationInterval.current) clearInterval(simulationInterval.current);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => { unsubApplets(); unsubLogs(); };
   }, []);
 
-  // ── webhook trigger handler (watches applets for webhookTrigger field) ──
+  // ── webhook trigger handler ──
   useEffect(() => {
     applets.forEach(async (applet) => {
       if (!applet.webhookTrigger) return;
@@ -205,50 +237,38 @@ export default function IoTBridgePage() {
 
       const { params, timestamp } = applet.webhookTrigger;
 
-      // Prevent double-processing — subscription fires again after we clear the field
-      if (processedWebhooks.current[applet.id] === timestamp) return;
-      processedWebhooks.current[applet.id] = timestamp;
-
-      // Clear from Firebase first so stale events don't re-fire on page reload
+      // Clear from Firebase immediately
       await clearWebhookTrigger(applet.id);
 
-      const result = await executeAction(applet, true);
+      // 1. Condition check
+      if (applet.trigger.condition) {
+        const ok = checkWebhookCondition(applet.trigger.condition, params);
+        if (!ok) {
+           addToast(applet.name, "Webhook filtered (condition not met)", "skipped");
+           const skipLog: IoTLog = {
+             id: `skip_${Date.now()}`,
+             appletId: applet.id,
+             appletName: applet.name,
+             timestamp: Date.now(),
+             status: "skipped",
+             message: `Webhook skipped: Condition (${applet.trigger.condition}) not met by ${JSON.stringify(params)}`
+           };
+           setSimLogs(prev => [skipLog, ...prev].slice(0, 20));
+           return;
+        }
+      }
+
+      // 2. Execute
+      const result = await executeAction(applet, isLiveMode, params, sensorDataRef.current);
       if (result) {
-        const paramsStr = Object.keys(params).length
-          ? `Webhook → ${JSON.stringify(params).slice(0, 60)} · `
-          : "Webhook received · ";
-        const enrichedLog = { ...result, id: `wh_${Date.now()}`, message: paramsStr + result.message };
-        setSimLogs(prev => [enrichedLog, ...prev].slice(0, 20));
-        handleActionEffect(applet, false, result.fetchResponse);
-        addToast(
-          applet.name,
-          Object.keys(params).length ? `Received · ${JSON.stringify(params).slice(0, 50)}` : "Webhook received",
-          "webhook"
-        );
+        if (!isLiveMode) setSimLogs(prev => [{ ...result, id: `wh_${Date.now()}` }, ...prev].slice(0, 20));
+        handleActionEffect(applet, false, result.fetchResponse, params);
+        addToast(applet.name, "Webhook received", "webhook");
       }
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applets]);
+  }, [applets, isLiveMode]);
 
-  // ── simulation drift ──
-
-  useEffect(() => {
-    if (isSimulationRunning && !isLiveMode) {
-      simulationInterval.current = setInterval(() => {
-        setTemp(t     => parseFloat(Math.min(50,   Math.max(0,   t + (Math.random() - 0.5) * 2)).toFixed(1)));
-        setHumidity(h => parseFloat(Math.min(100,  Math.max(0,   h + (Math.random() - 0.5) * 5)).toFixed(1)));
-        setPressure(p => parseFloat(Math.min(1050, Math.max(950, p + (Math.random() - 0.5) * 1)).toFixed(1)));
-        setCo2(c      => parseFloat(Math.min(2000, Math.max(400, c + (Math.random() - 0.3) * 15)).toFixed(0)));
-        if (Math.random() < 0.05) setMotionVal(mv => mv === 0 ? 1 : 0);
-      }, 3000);
-    } else if (simulationInterval.current) {
-      clearInterval(simulationInterval.current);
-    }
-    return () => { if (simulationInterval.current) clearInterval(simulationInterval.current); };
-  }, [isSimulationRunning, isLiveMode]);
-
-  // ── evaluate sensor rules (rising/falling edge with hysteresis) ──
-
+  // ── evaluation ──
   useEffect(() => {
     applets.forEach(async (applet) => {
       if (!applet.enabled || applet.trigger.type !== "sensor") return;
@@ -258,53 +278,47 @@ export default function IoTBridgePage() {
 
       if (isActive !== wasActive) {
         setAppletActiveStates(prev => ({ ...prev, [applet.id]: isActive }));
+
+        // Falling edge -> Auto reset (Inverse action)
+        if (!isActive && wasActive && applet.action.type === "light" && applet.action.value !== "toggle") {
+           const inverseValue = applet.action.value.toLowerCase() === "on" ? "off" : "on";
+           const inverseApplet = { ...applet, action: { ...applet.action, value: inverseValue } };
+           const result = await executeAction(inverseApplet, isLiveMode, {}, sensorDataRef.current);
+           if (result) {
+              const resetLog = { ...result, status: "auto-reset" as const, message: `Auto-reset: ${applet.action.target || "Main Light"} → ${inverseValue.toUpperCase()} (Condition cleared)` };
+              if (!isLiveMode) setSimLogs(prev => [resetLog, ...prev].slice(0, 20));
+              handleActionEffect(inverseApplet, true);
+              addToast(applet.name, `Auto-reset to ${inverseValue.toUpperCase()}`, "auto-reset");
+           }
+        }
       }
 
-      // Rising edge → fire action (debounced)
+      // Rising edge
       if (isActive && !wasActive) {
-        const last = lastLocalRun.current[applet.id] ?? 0;
-        if (Date.now() - last < 10000) return;
-        lastLocalRun.current[applet.id] = Date.now();
-        const result = await executeAction(applet, isLiveMode);
+        const result = await evaluateApplet(applet, sensorData, isLiveMode);
         if (result) {
           if (!isLiveMode) setSimLogs(prev => [{ ...result, id: `sim_${Date.now()}` }, ...prev].slice(0, 20));
           handleActionEffect(applet, false, result.fetchResponse);
         }
       }
-
-      // Falling edge → auto-reset light
-      if (!isActive && wasActive && applet.action.type === "light") {
-        const inverse     = applet.action.value.toLowerCase() === "on" ? "off" : "on";
-        const resetApplet = { ...applet, action: { ...applet.action, value: inverse } };
-        const result      = await executeAction(resetApplet, isLiveMode);
-        if (result) {
-          const resetLog = {
-            ...result,
-            status:  "auto-reset" as const,
-            message: `Auto-reset: Light → ${inverse.toUpperCase()} (condition cleared)`,
-          };
-          if (!isLiveMode) setSimLogs(prev => [{ ...resetLog, id: `sim_r_${Date.now()}` }, ...prev].slice(0, 20));
-          handleActionEffect(resetApplet, true);
-          addToast(applet.name, `Condition cleared → Light auto-reset to ${inverse.toUpperCase()}`, "auto-reset");
-        }
-      }
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sensorData, applets]);
+  }, [sensorData, applets, isLiveMode]);
 
-  const handleManualTrigger = async (applet: IoTApplet) => {
-    const result = await executeAction(applet, true);
-    if (result) {
-      if (!isLiveMode) setSimLogs(prev => [{ ...result, id: `sim_${Date.now()}` }, ...prev].slice(0, 20));
-      handleActionEffect(applet, false, result.fetchResponse);
+  // ── simulation ──
+  useEffect(() => {
+    if (isSimulationRunning && !isLiveMode) {
+      simulationInterval.current = setInterval(() => {
+        setTemp(t     => parseFloat(Math.min(50,   Math.max(0,   t + (Math.random() - 0.5) * 2)).toFixed(1)));
+        setHumidity(h => parseFloat(Math.min(100,  Math.max(0,   h + (Math.random() - 0.5) * 5)).toFixed(1)));
+        setPressure(p => parseFloat(Math.min(1050, Math.max(950, p + (Math.random() - 0.5) * 1)).toFixed(1)));
+        setCo2(c      => parseFloat(Math.min(2000, Math.max(400, c + (Math.random() - 0.3) * 15)).toFixed(0)));
+        if (Math.random() < 0.05) setMotionVal(mv => mv === 0 ? 1 : 0);
+      }, 3000);
+    } else {
+      clearInterval(simulationInterval.current!);
     }
-  };
-
-  const toggleApplet = async (applet: IoTApplet) => {
-    await saveApplet({ ...applet, enabled: !applet.enabled });
-  };
-
-  // ── JSX ──
+    return () => clearInterval(simulationInterval.current!);
+  }, [isSimulationRunning, isLiveMode]);
 
   return (
     <main className={cn(
@@ -324,15 +338,15 @@ export default function IoTBridgePage() {
           </Link>
 
           <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="inline-flex p-4 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl shadow-blue-500/20">
-                <Cpu className="w-8 h-8 text-white" />
+            <div className="flex items-center gap-4">
+              <div className="p-4 rounded-3xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl shadow-blue-500/20 text-white">
+                <Cpu className="w-8 h-8" />
               </div>
               <div>
                 <h1 className="text-4xl sm:text-6xl font-bold tracking-tighter">
                   IoT <span className="text-muted-foreground">Bridge</span>
                 </h1>
-                <p className="text-muted-foreground mt-2 text-sm sm:text-base flex items-center gap-2">
+                <p className="text-muted-foreground text-sm flex items-center gap-2 mt-1">
                   Personal automation hub.{" "}
                   <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
                     Powered by Firebase
@@ -365,10 +379,9 @@ export default function IoTBridgePage() {
 
               <button
                 onClick={() => { setEditingApplet(null); setIsEditorOpen(true); }}
-                className="flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-300 hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
+                className="flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95"
               >
-                <Plus className="w-4 h-4" />
-                New Applet
+                <Plus className="w-4 h-4" /> New Applet
               </button>
             </div>
           </div>
@@ -389,117 +402,69 @@ export default function IoTBridgePage() {
             </div>
 
             {applets.length === 0 ? (
-              <div className="py-20 text-center border-2 border-dashed border-border rounded-[2.5rem]">
-                <Zap className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-20" />
-                <p className="text-muted-foreground mb-2">No applets yet.</p>
-                <p className="text-xs text-muted-foreground/60">Create an applet to automate your virtual devices.</p>
-              </div>
+               <div className="py-20 text-center border-2 border-dashed border-border rounded-[2.5rem]">
+                 <Zap className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-20" />
+                 <p className="text-muted-foreground">No applets yet.</p>
+               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <AnimatePresence>
                   {applets.map((applet) => {
-                    const isSensor  = applet.trigger.type === "sensor";
-                    const isActive  = isSensor && (appletActiveStates[applet.id] ?? false);
                     const TrigIcon  = TRIGGER_ICONS[applet.trigger.type] ?? Zap;
                     const ActIcon   = ACTION_ICONS[applet.action.type]   ?? Zap;
-                    const fetchRes  = fetchResponses[applet.id];
+                    const stats     = appletStats[applet.id];
+                    const rate      = stats ? Math.round((stats.success / stats.total) * 100) : null;
+                    const isActive  = applet.trigger.type === "sensor" && (appletActiveStates[applet.id] ?? false);
+                    const isWebhookListening = applet.trigger.type === "webhook" && applet.enabled;
 
                     return (
                       <motion.div
-                        key={applet.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
+                        key={applet.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                         className={cn(
-                          "relative group p-6 rounded-[2.5rem] border transition-all duration-500",
-                          applet.enabled
-                            ? isActive
-                              ? "bg-emerald-500/5 border-emerald-500/40 shadow-lg shadow-emerald-500/5"
-                              : "bg-card/40 border-border hover:border-primary/20 shadow-lg"
-                            : "bg-muted/10 border-transparent opacity-60"
+                          "relative group p-6 rounded-[2.5rem] border bg-card/40 transition-all duration-500",
+                          applet.enabled ? (isActive ? "border-emerald-500/40 shadow-lg shadow-emerald-500/5" : "border-border hover:border-primary/20 shadow-lg") : "opacity-60 grayscale-[0.5]"
                         )}
                       >
-                        {/* Active state dot: green=sensor active, blue=webhook listening, gray=idle */}
                         <div className={cn(
                           "absolute top-5 left-5 w-2.5 h-2.5 rounded-full transition-all duration-500",
-                          isActive
-                            ? "bg-emerald-500 shadow-[0_0_8px_2px_rgba(16,185,129,0.5)] animate-pulse"
-                            : applet.trigger.type === "webhook" && applet.enabled
-                              ? "bg-blue-500 shadow-[0_0_6px_2px_rgba(59,130,246,0.4)] animate-pulse"
-                              : "bg-muted"
+                          isActive ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_2px_rgba(16,185,129,0.5)]" :
+                          isWebhookListening ? "bg-blue-500 animate-pulse shadow-[0_0_6px_2px_rgba(59,130,246,0.4)]" : "bg-muted"
                         )} />
 
-                        {/* Action buttons */}
-                        <div className="absolute top-4 right-4 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => handleManualTrigger(applet)}
-                            className="p-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
-                            title="Test — force-fires the action"
-                          >
-                            <Play className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => { setEditingApplet(applet); setIsEditorOpen(true); }}
-                            className="p-2 rounded-xl hover:bg-muted transition-colors"
-                          >
-                            <Settings className="w-3.5 h-3.5 text-muted-foreground" />
-                          </button>
-                          <button
-                            onClick={() => deleteApplet(applet.id)}
-                            className="p-2 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-colors"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                        <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => handleManualTrigger(applet)} className="p-2 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors" title="Manual Trigger"><Play className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => { setEditingApplet(applet); setIsEditorOpen(true); }} className="p-2 rounded-xl hover:bg-muted" title="Edit"><Settings className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => deleteApplet(applet.id)} className="p-2 rounded-xl hover:bg-destructive/10 text-destructive" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
                         </div>
 
-                        {/* Icon pair */}
                         <div className="flex items-center gap-3 mt-2 mb-5">
-                          <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10">
-                            <TrigIcon className="w-5 h-5 text-blue-400" />
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-muted-foreground/40 shrink-0" />
+                          <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-400"><TrigIcon className="w-5 h-5" /></div>
+                          <ArrowRight className="w-4 h-4 text-muted-foreground/20 shrink-0" />
                           <div className={cn("p-3 rounded-2xl bg-gradient-to-br", ACTION_COLORS[applet.action.type] ?? "from-muted to-muted/50")}>
-                            <ActIcon className={cn(
-                              "w-5 h-5",
-                              applet.action.type === "light" ? "text-yellow-400" :
-                              applet.action.type === "fetch" ? "text-emerald-400" : "text-primary"
-                            )} />
+                             <ActIcon className={cn("w-5 h-5", applet.action.type === "light" ? "text-yellow-400" : "text-primary")} />
                           </div>
                         </div>
 
-                        {/* Name */}
-                        <h3 className="text-base font-bold mb-3 truncate pr-20">{applet.name}</h3>
-
-                        {/* IF / THEN */}
+                        <h3 className="text-base font-bold mb-3 truncate">{applet.name}</h3>
                         <div className="space-y-1 mb-4">
-                          <p className="text-xs text-muted-foreground">
-                            <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/50 mr-1.5">IF</span>
-                            {formatTriggerText(applet)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/50 mr-1.5">THEN</span>
-                            {formatActionText(applet)}
-                          </p>
+                           <p className="text-[10px] text-muted-foreground"><span className="text-[8px] font-black uppercase opacity-40 mr-1.5">IF</span> {formatTriggerText(applet)}</p>
+                           <p className="text-[10px] text-muted-foreground"><span className="text-[8px] font-black uppercase opacity-40 mr-1.5">THEN</span> {formatActionText(applet)}</p>
                         </div>
 
-                        {/* Webhook curl chip */}
+                        {/* Webhook Curl Chip */}
                         {applet.trigger.type === "webhook" && (
                           <div className="rounded-xl bg-blue-500/5 border border-blue-500/20 mb-3 overflow-hidden">
                             <div className="flex items-center justify-between px-3 pt-2.5 pb-1">
                               <span className="text-[9px] font-black uppercase tracking-widest text-blue-400/70">
-                                Fires: {formatActionText(applet)}
+                                Trigger Link
                               </span>
                               <button
                                 onClick={(e) => {
                                   e.preventDefault();
                                   const ts = Date.now();
-                                  navigator.clipboard.writeText(
-`curl -X PUT \\
-  "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" \\
-  -H "Content-Type: application/json" \\
-  -d '{"params":{"key":"value"},"timestamp":${ts}}'`
-                                  );
+                                  const curl = `curl -X PUT "https://portfolio-projects-773a3-default-rtdb.firebaseio.com/iot_bridge/applets/${applet.id}/webhookTrigger.json" -H "Content-Type: application/json" -d "{\\"params\\":{\\"key\\":\\"value\\"},\\"timestamp\\":${ts}}"`;
+                                  navigator.clipboard.writeText(curl);
+                                  addToast("System", "Universal Curl copied!", "webhook");
                                 }}
                                 className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-blue-400 hover:text-blue-300 transition-colors shrink-0 px-1.5 py-0.5 rounded-lg hover:bg-blue-500/10"
                                 title="Copy full curl command"
@@ -513,36 +478,20 @@ export default function IoTBridgePage() {
                           </div>
                         )}
 
-                        {/* Fetch response badge */}
-                        {applet.action.type === "fetch" && fetchRes && (
-                          <div className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-xl border mb-3 text-[9px] font-mono",
-                            fetchRes.status >= 200 && fetchRes.status < 300
-                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-                              : "bg-red-500/10 border-red-500/20 text-red-400"
-                          )}>
-                            <span className="font-black shrink-0">{fetchRes.status}</span>
-                            <span className="text-muted-foreground truncate">{fetchRes.body.slice(0, 40)}</span>
-                          </div>
-                        )}
-
-                        {/* Footer */}
                         <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                          <span className="text-[9px] text-muted-foreground/50 font-mono">
-                            {formatRelativeTime(applet.lastRun)}
-                          </span>
+                          <div className="flex items-center gap-2">
+                             <span className="text-[9px] text-muted-foreground/50 font-mono">{formatRelativeTime(applet.lastRun)}</span>
+                             {rate !== null && (
+                               <span className={cn("text-[9px] font-black px-1.5 py-0.5 rounded-lg bg-emerald-500/10", rate > 80 ? "text-emerald-400" : "text-amber-400")}>
+                                 {rate}% Success
+                               </span>
+                             )}
+                          </div>
                           <button
-                            onClick={() => toggleApplet(applet)}
-                            className={cn(
-                              "w-10 h-5 rounded-full transition-all relative shrink-0",
-                              applet.enabled ? "bg-primary" : "bg-muted"
-                            )}
-                            title={applet.enabled ? "Disable" : "Enable"}
+                            onClick={() => saveApplet({ ...applet, enabled: !applet.enabled })}
+                            className={cn("w-10 h-5 rounded-full transition-all relative", applet.enabled ? "bg-primary" : "bg-muted")}
                           >
-                            <div className={cn(
-                              "absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all",
-                              applet.enabled ? "left-5" : "left-0.5"
-                            )} />
+                            <div className={cn("absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all shadow", applet.enabled ? "left-5" : "left-0.5")} />
                           </button>
                         </div>
                       </motion.div>
@@ -568,11 +517,9 @@ export default function IoTBridgePage() {
                 </h2>
                 <button
                   onClick={() => !isLiveMode && setIsSimulationRunning(!isSimulationRunning)}
-                  disabled={isLiveMode}
                   className={cn(
                     "p-2.5 rounded-xl transition-all",
-                    isSimulationRunning ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500",
-                    isLiveMode && "cursor-not-allowed"
+                    isSimulationRunning ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-500"
                   )}
                 >
                   {isSimulationRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -582,7 +529,7 @@ export default function IoTBridgePage() {
               {isLiveMode ? (
                 <div className="py-10 text-center space-y-3">
                   <Activity className="w-8 h-8 mx-auto text-muted-foreground opacity-20 animate-pulse" />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">No Live Data Currently</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Waiting for Live Data</p>
                 </div>
               ) : (
                 <div className="space-y-5">
@@ -591,69 +538,39 @@ export default function IoTBridgePage() {
                   <SensorSlider label="Pressure"    value={pressure} unit=" hPa" min={950} max={1050} step={0.5} icon={<Gauge       className="w-3.5 h-3.5" />} onChange={setPressure} displayValue={pressure.toFixed(1)} />
                   <SensorSlider label="CO₂"         value={co2}      unit=" ppm" min={400} max={2000} step={10}  icon={<Wind        className="w-3.5 h-3.5" />} onChange={setCo2} displayValue={Math.round(co2).toString()} />
 
-                  {/* Motion toggle */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                       <span className="flex items-center gap-2"><Activity className="w-3.5 h-3.5" /> Motion</span>
-                      <span className={cn("transition-colors", motionVal === 1 ? "text-emerald-400" : "text-foreground")}>
-                        {motionVal === 1 ? "Detected" : "None"}
-                      </span>
+                      <span className={motionVal === 1 ? "text-emerald-400" : ""}>{motionVal === 1 ? "Detected" : "None"}</span>
                     </div>
                     <div className="flex gap-2">
-                      {[{ v: 0, label: "No Motion" }, { v: 1, label: "Motion Detected" }].map((m) => (
-                        <button key={m.v} onClick={() => setMotionVal(m.v)}
-                          className={cn(
-                            "flex-1 py-2 rounded-2xl border text-[10px] font-bold transition-all",
-                            motionVal === m.v
-                              ? m.v === 1
-                                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
-                                : "bg-muted/60 border-border text-foreground"
-                              : "bg-muted/30 border-transparent text-muted-foreground hover:bg-muted/50"
-                          )}>
-                          {m.label}
-                        </button>
-                      ))}
+                       <button onClick={() => setMotionVal(0)} className={cn("flex-1 py-2 rounded-xl border text-[10px] font-bold transition-all", motionVal === 0 ? "bg-muted text-foreground" : "text-muted-foreground")}>None</button>
+                       <button onClick={() => setMotionVal(1)} className={cn("flex-1 py-2 rounded-xl border text-[10px] font-bold transition-all", motionVal === 1 ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400" : "text-muted-foreground")}>Detected</button>
                     </div>
                   </div>
 
-                  {/* Virtual Devices — dynamic per named device */}
                   <div className="pt-4 border-t border-border">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">
-                      Virtual Devices
-                    </p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">Virtual Devices</p>
                     <div className="space-y-2">
-                      {lightDevices.map((deviceName) => {
-                        const isOn = virtualDevices[deviceName] ?? false;
-                        const ctrl = deviceControlledBy[deviceName];
+                      {lightDevices.map(dev => {
+                        const isOn = virtualDevices[dev.name] ?? false;
+                        const Icon = ICON_MAP[dev.icon] || Lightbulb;
                         return (
-                          <div key={deviceName} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border/50">
-                            <button
-                              onClick={() => {
-                                setVirtualDevices(prev => ({ ...prev, [deviceName]: !isOn }));
-                                setDeviceControlledBy(prev => ({ ...prev, [deviceName]: "Manual" }));
-                              }}
-                              title="Click to manually toggle"
-                              className={cn(
-                                "p-2.5 rounded-xl transition-all duration-500 shrink-0",
-                                isOn
-                                  ? "bg-yellow-400/20 text-yellow-400 shadow-lg shadow-yellow-400/20"
-                                  : "bg-muted/50 text-muted-foreground"
-                              )}
-                            >
-                              <Lightbulb className={cn("w-5 h-5 transition-all duration-500", isOn ? "fill-yellow-400/40" : "")} />
-                            </button>
-                            <div className="flex-1 min-w-0">
-                              <p className={cn("text-sm font-bold truncate transition-colors duration-500", isOn ? "text-yellow-400" : "text-muted-foreground")}>
-                                {deviceName} · {isOn ? "ON" : "OFF"}
-                              </p>
-                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate">
-                                {ctrl ? `Last: ${ctrl}` : "Click or use an applet"}
-                              </p>
-                            </div>
-                            <div className={cn(
-                              "w-2 h-2 rounded-full shrink-0 transition-all duration-500",
-                              isOn ? "bg-yellow-400 shadow-[0_0_6px_2px_rgba(250,204,21,0.5)]" : "bg-muted"
-                            )} />
+                          <div key={dev.name} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/30 border border-border/50 transition-all duration-500">
+                             <button
+                               onClick={() => {
+                                 setVirtualDevices(p => ({ ...p, [dev.name]: !isOn }));
+                                 setDeviceControlledBy(p => ({ ...p, [dev.name]: "Manual" }));
+                               }}
+                               className={cn("p-2.5 rounded-xl transition-all duration-500", isOn ? "bg-yellow-400/20 text-yellow-400 shadow-lg" : "bg-muted/50 text-muted-foreground")}
+                             >
+                                <Icon className={cn("w-5 h-5", isOn && "fill-yellow-400/40")} />
+                             </button>
+                             <div className="flex-1 min-w-0">
+                               <p className={cn("text-sm font-bold truncate transition-colors", isOn ? "text-yellow-400" : "text-muted-foreground")}>{dev.name}</p>
+                               <p className="text-[9px] text-muted-foreground/60 truncate">{isOn ? "ON" : "OFF"} · {deviceControlledBy[dev.name] || "Ready"}</p>
+                             </div>
+                             <div className={cn("w-1.5 h-1.5 rounded-full transition-all", isOn ? "bg-yellow-400 shadow-[0_0_6px_rgba(250,204,21,0.5)]" : "bg-muted")} />
                           </div>
                         );
                       })}
@@ -661,141 +578,127 @@ export default function IoTBridgePage() {
                   </div>
                 </div>
               )}
-
-              <div className="mt-6 p-4 rounded-2xl bg-primary/5 border border-primary/10">
-                <div className="flex gap-3">
-                  <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                  <p className="text-[10px] leading-relaxed text-muted-foreground">
-                    {isLiveMode
-                      ? "Live mode active. Waiting for real events or webhook calls."
-                      : "Adjust sensors to trigger applets. Webhook applets fire via /api/iot/webhook/{id}. Light auto-resets when conditions clear."}
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Activity Log */}
-            <div className="flex flex-col h-[500px] p-6 rounded-[2.5rem] bg-card/40 border border-border backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold flex items-center gap-2">
-                  <History className="w-5 h-5 text-primary" />
-                  Activity Log
-                </h2>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="flex flex-col h-[550px] p-6 rounded-[2.5rem] bg-card/40 border border-border backdrop-blur-xl shadow-2xl">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                   <div className="p-2 bg-primary/10 rounded-xl">
+                      <History className="w-5 h-5 text-primary" />
+                   </div>
+                   <h2 className="text-lg font-bold">Activity Log</h2>
+                </div>
+                <button
+                   onClick={() => confirm("Clear all logs?") && clearLogs()}
+                   className="px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all"
+                >
+                   Clear
+                </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-3 pr-1 scrollbar-hide">
-                {!isLiveMode && simLogs.length > 0 && (
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-primary/60">
-                      <div className="h-px flex-1 bg-primary/20" />
-                      Simulation Logs
-                      <div className="h-px flex-1 bg-primary/20" />
+              <div className="relative mb-5">
+                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                 <input
+                   type="text" placeholder="Search logs..." value={logFilter} onChange={e => setLogFilter(e.target.value)}
+                   className="w-full bg-muted/20 border border-border/50 rounded-2xl pl-10 pr-4 py-3 text-[11px] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                 />
+              </div>
+
+              <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-hide">
+                <AnimatePresence initial={false}>
+                  {filteredLogs.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center opacity-20 py-10">
+                       <Activity className="w-10 h-10 mb-2" />
+                       <p className="text-xs font-bold uppercase tracking-widest">No matching activity</p>
                     </div>
-                    {simLogs.map((log) => {
-                      const ActIcon = log.actionType ? (ACTION_ICONS[log.actionType] ?? Zap) : log.status === "auto-reset" ? RotateCcw : Zap;
-                      return (
-                        <motion.div key={log.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                          className={cn("p-3 rounded-2xl border text-xs", LOG_STATUS_CLASSES[log.status] ?? "bg-muted/30 border-border/50")}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className={cn("font-bold flex items-center gap-1.5", LOG_NAME_CLASSES[log.status] ?? "text-primary")}>
-                              <ActIcon className="w-3 h-3" /> {log.appletName}
-                            </span>
-                            <span className="text-[9px] opacity-40">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                          </div>
-                          <p className="text-muted-foreground leading-relaxed">{log.message}</p>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                )}
+                  ) : (
+                    filteredLogs.map((log) => {
+                       const isSuccess = log.status === "success";
+                       const isReset   = log.status === "auto-reset";
+                       const isSkipped = log.status === "skipped";
+                       const ActIcon   = log.actionType ? (ACTION_ICONS[log.actionType] ?? Zap) : isReset ? RotateCcw : Zap;
 
-                <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 mb-3">
-                  <div className="h-px flex-1 bg-border" />
-                  {isLiveMode ? "Live Logs (Firebase)" : "Saved History (Firebase)"}
-                  <div className="h-px flex-1 bg-border" />
-                </div>
-
-                {logs.length === 0 && simLogs.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center opacity-20">
-                    <History className="w-8 h-8 mb-2" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest">No activity yet</p>
-                  </div>
-                ) : (
-                  <AnimatePresence>
-                    {logs.map((log) => {
-                      const ActIcon = log.actionType ? (ACTION_ICONS[log.actionType] ?? Zap) : log.status === "auto-reset" ? RotateCcw : Zap;
-                      return (
-                        <motion.div key={log.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
-                          className={cn("p-3 rounded-2xl border text-xs mb-3", LOG_STATUS_CLASSES[log.status] ?? "bg-muted/30 border-border/50")}
+                       return (
+                        <motion.div
+                           key={log.id} layout initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                           className={cn(
+                              "group p-4 rounded-[1.75rem] border transition-all duration-300",
+                              isSuccess ? "bg-emerald-500/[0.03] border-emerald-500/10 hover:border-emerald-500/30 shadow-sm" :
+                              isReset   ? "bg-amber-500/[0.03] border-amber-500/10 hover:border-amber-500/30" :
+                              isSkipped ? "bg-muted/10 border-border/40 opacity-60" :
+                                          "bg-red-500/[0.03] border-red-500/10 hover:border-red-500/30"
+                           )}
                         >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className={cn("font-bold flex items-center gap-1.5", LOG_NAME_CLASSES[log.status] ?? "text-primary")}>
-                              <ActIcon className="w-3 h-3" /> {log.appletName}
-                            </span>
-                            <span className="text-[9px] opacity-40">{new Date(log.timestamp).toLocaleTimeString()}</span>
-                          </div>
-                          <p className="text-muted-foreground leading-relaxed">{log.message}</p>
+                           <div className="flex items-start justify-between gap-3 mb-2">
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                 <div className={cn(
+                                    "p-2 rounded-xl shrink-0",
+                                    isSuccess ? "bg-emerald-500/10 text-emerald-500" :
+                                    isReset   ? "bg-amber-500/10 text-amber-500" :
+                                    isSkipped ? "bg-muted text-muted-foreground" : "bg-red-500/10 text-red-500"
+                                 )}>
+                                    <ActIcon className="w-3.5 h-3.5" />
+                                 </div>
+                                 <div className="min-w-0">
+                                    <h4 className={cn(
+                                       "text-xs font-bold truncate",
+                                       isSuccess ? "text-emerald-400" :
+                                       isReset   ? "text-amber-400" :
+                                       isSkipped ? "text-muted-foreground" : "text-red-400"
+                                    )}>
+                                       {log.appletName}
+                                    </h4>
+                                    <p className="text-[9px] text-muted-foreground/60 font-medium">
+                                       {isReset ? "Auto-Reset" : isSkipped ? "Filtered" : "Execution"}
+                                    </p>
+                                 </div>
+                              </div>
+                              <span className="text-[8px] font-bold text-muted-foreground/40 whitespace-nowrap mt-1 uppercase tracking-tighter">
+                                 {formatFullDateTime(log.timestamp)}
+                              </span>
+                           </div>
+
+                           <div className="pl-11 pr-2">
+                              <p className="text-[10px] leading-relaxed text-muted-foreground group-hover:text-foreground transition-colors break-words">
+                                 {log.message}
+                              </p>
+                              {log.fetchResponse && (
+                                 <div className="mt-2 p-2 rounded-xl bg-muted/40 border border-border/40 text-[9px] font-mono text-muted-foreground/80 break-all">
+                                    <span className="font-black text-primary mr-1">{log.fetchResponse.status}</span>
+                                    {log.fetchResponse.body.slice(0, 100)}
+                                 </div>
+                              )}
+                           </div>
                         </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                )}
+                       );
+                    })
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
           </div>
         </div>
       </div>
+      <AppletEditor isOpen={isEditorOpen} onClose={() => setIsEditorOpen(false)} applet={editingApplet} />
 
-      <AppletEditor
-        isOpen={isEditorOpen}
-        onClose={() => setIsEditorOpen(false)}
-        applet={editingApplet}
-      />
-
-      {/* Toast overlay */}
-      <div className="fixed top-4 right-4 z-[200] flex flex-col gap-3 w-80 pointer-events-none">
+      {/* Toast Overlay */}
+      <div className="fixed top-4 right-4 z-[200] flex flex-col gap-2 w-72 pointer-events-none">
         <AnimatePresence>
           {toasts.map((toast) => (
-            <motion.div
-              key={toast.id}
-              initial={{ opacity: 0, x: 60, scale: 0.92 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 60, scale: 0.92 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className={cn(
-                "pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border shadow-2xl backdrop-blur-xl",
-                toast.actionType === "auto-reset"
-                  ? "bg-amber-500/10 border-amber-500/30"
-                  : "bg-card border-border"
-              )}
+            <motion.div key={toast.id} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-card border border-border p-4 rounded-2xl shadow-2xl pointer-events-auto flex items-start gap-3 backdrop-blur-xl"
             >
-              <div className={cn(
-                "p-2 rounded-xl shrink-0",
-                toast.actionType === "notification" ? "bg-primary/10"   :
-                toast.actionType === "auto-reset"   ? "bg-amber-500/20" :
-                toast.actionType === "webhook"      ? "bg-blue-500/10"  :
-                                                      "bg-emerald-500/10"
-              )}>
-                {toast.actionType === "notification" ? <Bell      className="w-4 h-4 text-primary"      /> :
-                 toast.actionType === "auto-reset"   ? <RotateCcw className="w-4 h-4 text-amber-400"    /> :
-                 toast.actionType === "webhook"      ? <Globe     className="w-4 h-4 text-blue-400"     /> :
-                                                       <Globe     className="w-4 h-4 text-emerald-400"  />}
+              <div className={cn("p-2 rounded-xl text-primary", toast.actionType === "webhook" ? "bg-blue-500/10 text-blue-400" : "bg-primary/10")}>
+                 {toast.actionType === "notification" ? <Bell className="w-3.5 h-3.5" /> :
+                  toast.actionType === "webhook" ? <Globe className="w-3.5 h-3.5" /> : <Zap className="w-3.5 h-3.5" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground mb-0.5 truncate">
-                  {toast.appletName}
-                </p>
-                <p className="text-xs font-medium text-foreground break-words">{toast.message}</p>
+                <p className="text-[8px] font-black uppercase text-muted-foreground mb-0.5">{toast.appletName}</p>
+                <p className="text-[11px] font-medium leading-tight">{toast.message}</p>
               </div>
-              <button
-                onClick={() => setToasts(prev => prev.filter(t => t.id !== toast.id))}
-                className="p-1 hover:bg-muted rounded-lg transition-colors shrink-0"
-              >
-                <X className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
+              <button onClick={() => setToasts(p => p.filter(t => t.id !== toast.id))} className="p-1 hover:bg-muted rounded-lg"><X className="w-3 h-3" /></button>
             </motion.div>
           ))}
         </AnimatePresence>
@@ -809,17 +712,7 @@ export default function IoTBridgePage() {
   );
 }
 
-// ─── SensorSlider ────────────────────────────────────────────────────────────
-
-function SensorSlider({
-  label, value, unit, min, max, step, icon, onChange, displayValue,
-}: {
-  label: string; value: number; unit: string;
-  min: number; max: number; step: number;
-  icon: React.ReactNode;
-  onChange: (v: number) => void;
-  displayValue?: string;
-}) {
+function SensorSlider({ label, value, unit, min, max, step, icon, onChange, displayValue }: any) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
