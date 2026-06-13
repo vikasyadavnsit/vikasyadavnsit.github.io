@@ -1,0 +1,54 @@
+/* Password Vault — page-local theme overrides (whiteboard/task-manager pattern) */
+
+.pv-theme-light {
+  --background:           220 20% 94%;
+  --foreground:           220 20%  8%;
+  --card:                 0   0% 100%;
+  --card-foreground:      220 20%  8%;
+  --popover:              0   0% 100%;
+  --popover-foreground:   220 20%  8%;
+  --primary:              221.2 83.2% 53.3%;
+  --primary-foreground:   210 40% 98%;
+  --secondary:            220 15% 84%;
+  --secondary-foreground: 220 15% 12%;
+  --muted:                220 15% 88%;
+  --muted-foreground:     220 12% 28%;
+  --accent:               220 15% 84%;
+  --accent-foreground:    220 15% 12%;
+  --border:               220 15% 68%;
+  --input:                220 15% 68%;
+  --ring:                 220 20% 20%;
+
+  --pv-accent:      #d97706;
+  --pv-accent-glow: rgba(217, 119, 6, 0.12);
+  --pv-accent-ring: rgba(217, 119, 6, 0.38);
+}
+
+.pv-theme-dark {
+  --background:           240 10%  2.5%;
+  --foreground:           0   0%  98%;
+  --card:                 240 10%  5%;
+  --card-foreground:      0   0%  98%;
+  --popover:              240 10%  5%;
+  --popover-foreground:   0   0%  98%;
+  --primary:              217.2 91.2% 59.8%;
+  --primary-foreground:   222.2 47.4% 11.2%;
+  --secondary:            240  4%  12%;
+  --secondary-foreground: 0   0%  98%;
+  --muted:                240  4%  10%;
+  --muted-foreground:     240  5%  60%;
+  --accent:               240  4%  15%;
+  --accent-foreground:    0   0%  98%;
+  --border:               240  4%  15%;
+  --input:                240  4%  15%;
+  --ring:                 240  5%  84%;
+
+  --pv-accent:      #fbbf24;
+  --pv-accent-glow: rgba(251, 191, 36, 0.13);
+  --pv-accent-ring: rgba(251, 191, 36, 0.32);
+}
+
+.pv-theme-light .rounded-2xl,
+.pv-theme-light .rounded-3xl {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
+}

@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Code2, Cpu } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, Code2, Cpu } from "lucide-react";
 import Link from "next/link";
 
 const categories = [
@@ -12,12 +12,11 @@ const categories = [
     color: "from-pink-500 to-rose-500"
   },
   {
-    title: "Angular Projects",
-    description: "A collection of projects built using the Angular framework, now being migrated.",
-    link: "#",
+    title: "Fun Stuff",
+    description: "Quirky, offline-first interactive toys and experiments built for the browser.",
+    link: "/projects/fun-stuff",
     icon: Code2,
-    color: "from-red-500 to-orange-500",
-    disabled: true
+    color: "from-red-500 to-orange-500"
   },
   {
     title: "IOT",
@@ -32,6 +31,21 @@ export default function ProjectsPage() {
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-7xl mx-auto px-6 pt-32 pb-20">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-12"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Back to Home
+          </Link>
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,8 +68,8 @@ export default function ProjectsPage() {
               transition={{ delay: i * 0.1 }}
             >
               <Link
-                href={category.disabled ? "#" : category.link}
-                className={`group relative block h-full p-8 rounded-[2.5rem] border border-border bg-card/40 backdrop-blur-xl hover:border-primary/20 transition-all duration-500 ${category.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                href={category.link}
+                className="group relative block h-full p-8 rounded-[2.5rem] border border-border bg-card/40 backdrop-blur-xl hover:border-primary/20 transition-all duration-500"
               >
                 <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-br ${category.color} mb-8 group-hover:scale-110 transition-transform duration-500`}>
                   <category.icon className="w-8 h-8 text-white" />
@@ -66,14 +80,9 @@ export default function ProjectsPage() {
                 <p className="text-muted-foreground mb-8 line-clamp-3">
                   {category.description}
                 </p>
-                {!category.disabled && (
-                  <div className="flex items-center text-primary font-bold uppercase tracking-widest text-xs gap-2">
-                    Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                )}
-                {category.disabled && (
-                  <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">Coming Soon</span>
-                )}
+                <div className="flex items-center text-primary font-bold uppercase tracking-widest text-xs gap-2">
+                  Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
               </Link>
             </motion.div>
           ))}

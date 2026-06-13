@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -66,6 +66,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/internet-speed-test",
     icon: Gauge,
     color: "from-cyan-500 to-blue-500"
+  },
+  {
+    title: "Password Vault",
+    description: "AES-256 encrypted password manager. Master password never stored — only used to derive the key. Export encrypted backup. Fully local.",
+    link: "/projects/creative-stuff/password-vault",
+    icon: KeyRound,
+    color: "from-yellow-400 to-amber-500"
   }
 ];
 
