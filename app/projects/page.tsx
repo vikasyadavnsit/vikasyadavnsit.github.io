@@ -22,10 +22,9 @@ const categories = [
   {
     title: "IOT",
     description: "Internet of Things projects exploring the interconnected world of possibilities.",
-    link: "#",
+    link: "/projects/iot",
     icon: Cpu,
-    color: "from-blue-500 to-cyan-500",
-    disabled: true
+    color: "from-blue-500 to-cyan-500"
   }
 ];
 
