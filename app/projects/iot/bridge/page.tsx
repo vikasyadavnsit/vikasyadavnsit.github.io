@@ -285,7 +285,12 @@ export default function IoTBridgePage() {
            const inverseApplet = { ...applet, action: { ...applet.action, value: inverseValue } };
            const result = await executeAction(inverseApplet, isLiveMode, {}, sensorDataRef.current);
            if (result) {
-              const resetLog = { ...result, status: "auto-reset" as const, message: `Auto-reset: ${applet.action.target || "Main Light"} → ${inverseValue.toUpperCase()} (Condition cleared)` };
+              const resetLog: IoTLog = {
+                ...result,
+                id: `reset_${Date.now()}_${applet.id}`,
+                status: "auto-reset" as const,
+                message: `Auto-reset: ${applet.action.target || "Main Light"} → ${inverseValue.toUpperCase()} (Condition cleared)`
+              };
               if (!isLiveMode) setSimLogs(prev => [resetLog, ...prev].slice(0, 20));
               handleActionEffect(inverseApplet, true);
               addToast(applet.name, `Auto-reset to ${inverseValue.toUpperCase()}`, "auto-reset");

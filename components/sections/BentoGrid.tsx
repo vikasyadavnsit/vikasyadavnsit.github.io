@@ -57,7 +57,7 @@ const FeatureCard = ({ card, index }: { card: any; index: number }) => {
       <div className="relative z-10 flex flex-col h-full">
         <div className="flex justify-between items-start mb-8">
           <div className="p-4 rounded-2xl bg-muted border border-border text-foreground shadow-sm group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500">
-            {React.cloneElement(card.icon as React.ReactElement, { className: "w-6 h-6" })}
+            {React.createElement(card.icon, { className: "w-6 h-6" })}
           </div>
           <div className="flex flex-col items-end gap-2">
             {card.stats && (
@@ -283,7 +283,7 @@ const cards = [
     subtitle: "Distributed Architectures",
     description: "Architecting mission-critical systems processing 10B+ monthly transactions. Expert in high-performance Java ecosystems and orchestration.",
     skills: ["Java 21", "Spring Boot 3", "Netflix Conductor", "Microservices", "GRPC"],
-    icon: <Code2 />,
+    icon: Code2,
     className: "md:col-span-2 md:row-span-2",
     diagram: <BackendMesh />,
     stats: "SLA 99.99% • 10B+ Txns"
@@ -293,7 +293,7 @@ const cards = [
     subtitle: "Real-time Messaging",
     description: "Engineering decoupled, highly resilient asynchronous pipelines for massive scale.",
     skills: ["Apache Kafka", "RQueue", "Pub/Sub", "Event-Driven"],
-    icon: <Zap />,
+    icon: Zap,
     className: "md:col-span-1 md:row-span-1",
     diagram: <KafkaStream />
   },
@@ -302,7 +302,7 @@ const cards = [
     subtitle: "Identity & Governance",
     description: "Hardening enterprise platforms with mTLS, OAuth2, and Keycloak integration at global scale.",
     skills: ["OAuth2", "Keycloak", "mTLS", "Kong", "RBAC", "PCI DSS"],
-    icon: <ShieldCheck />,
+    icon: ShieldCheck,
     className: "md:col-span-1 md:row-span-2",
     diagram: <SecurityDefense />,
     stats: "Zero-Trust Ready"
@@ -312,7 +312,7 @@ const cards = [
     subtitle: "Cluster Orchestration",
     description: "Modernizing deployments with AWS, EKS, and fully automated CI/CD GitOps pipelines.",
     skills: ["AWS", "Kubernetes", "Docker", "Terraform", "Helm", "GitOps"],
-    icon: <Cloud />,
+    icon: Cloud,
     className: "md:col-span-1 md:row-span-1",
     diagram: <CloudCluster />
   },
@@ -321,7 +321,7 @@ const cards = [
     subtitle: "High-Speed Analytics",
     description: "Sub-second insights leveraging Trino and Redis for complex financial data processing.",
     skills: ["Trino", "Redis", "PostgreSQL", "NoSQL", "MapReduce"],
-    icon: <Database />,
+    icon: Database,
     className: "md:col-span-1 md:row-span-1",
     diagram: <DataVisualizer />
   },
@@ -330,7 +330,7 @@ const cards = [
     subtitle: "SRE & Health",
     description: "Reducing incident resolution by 60% through deep telemetry and automated monitoring.",
     skills: ["Prometheus", "Grafana", "Loki", "Jaeger", "ELK Stack"],
-    icon: <Eye />,
+    icon: Eye,
     className: "md:col-span-1 md:row-span-1",
     diagram: <ObsDashboard />
   },
@@ -339,7 +339,7 @@ const cards = [
     subtitle: "Payments & Wallets",
     description: "Building mission-critical wallet systems, P2P engines, and cross-border settlement frameworks (ISO8583).",
     skills: ["Wallets", "Settlements", "ISO8583", "P2P", "Bulk Transfers", "KYC/AML"],
-    icon: <CreditCard />,
+    icon: CreditCard,
     className: "md:col-span-2 md:row-span-1",
     diagram: <WalletFlow />
   }
