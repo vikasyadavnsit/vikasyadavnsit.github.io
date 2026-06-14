@@ -1,0 +1,57 @@
+.rl-theme-light {
+  --background: 220 20% 94%;
+  --foreground: 220 20% 8%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 8%;
+  --primary: 239 84% 67%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 220 15% 84%;
+  --secondary-foreground: 220 15% 12%;
+  --muted: 220 15% 88%;
+  --muted-foreground: 220 12% 40%;
+  --accent: 220 15% 84%;
+  --accent-foreground: 220 15% 12%;
+  --border: 220 15% 78%;
+  --input: 220 15% 78%;
+  --ring: 220 20% 20%;
+}
+
+.rl-theme-dark {
+  --background: 240 10% 3%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 5%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 5%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 239 84% 67%;
+  --primary-foreground: 222 47% 11%;
+  --secondary: 240 4% 12%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 4% 10%;
+  --muted-foreground: 240 5% 55%;
+  --accent: 240 4% 15%;
+  --accent-foreground: 0 0% 98%;
+  --border: 240 4% 16%;
+  --input: 240 4% 16%;
+  --ring: 240 5% 84%;
+}
+
+.rl-theme-light .rounded-2xl,
+.rl-theme-light .rounded-3xl {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* JSON syntax highlighting */
+.rl-theme-dark .rl-json-key     { color: #93c5fd; }
+.rl-theme-dark .rl-json-string  { color: #86efac; }
+.rl-theme-dark .rl-json-number  { color: #fca5a5; }
+.rl-theme-dark .rl-json-boolean { color: #c4b5fd; }
+.rl-theme-dark .rl-json-null    { color: #94a3b8; }
+
+.rl-theme-light .rl-json-key     { color: #1d4ed8; }
+.rl-theme-light .rl-json-string  { color: #15803d; }
+.rl-theme-light .rl-json-number  { color: #b91c1c; }
+.rl-theme-light .rl-json-boolean { color: #7c3aed; }
+.rl-theme-light .rl-json-null    { color: #64748b; }

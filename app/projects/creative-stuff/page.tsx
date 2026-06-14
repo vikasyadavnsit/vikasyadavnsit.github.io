@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -73,6 +73,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/password-vault",
     icon: KeyRound,
     color: "from-yellow-400 to-amber-500"
+  },
+  {
+    title: "RequestLab",
+    description: "Browser-based API client. Send HTTP requests, inspect responses, manage collections with folders, import cURL commands, and export collections. Fully local.",
+    link: "/projects/creative-stuff/request-lab",
+    icon: FlaskConical,
+    color: "from-indigo-500 to-violet-500"
   }
 ];
 
