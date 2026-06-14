@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -10,6 +10,13 @@ const funProjects = [
     link: "/projects/fun-stuff/talking-characters",
     icon: MessageCircle,
     color: "from-indigo-500 to-purple-500"
+  },
+  {
+    title: "AI Baby Monitor",
+    description: "Browser-based baby monitoring using your webcam and on-device AI. Real-time detection, safe zones, cry detection, sleep tracking, and a full analytics dashboard. 100% private — nothing leaves your device.",
+    link: "/projects/fun-stuff/baby-monitor",
+    icon: Baby,
+    color: "from-blue-500 to-cyan-500"
   }
 ];
 

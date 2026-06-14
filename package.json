@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.35",
+    "@tensorflow/tfjs": "^4.22.0",
     "@types/p5": "^1.7.7",
     "clsx": "^2.1.0",
     "firebase": "^12.14.0",
