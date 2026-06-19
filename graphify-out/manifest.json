@@ -1,0 +1,254 @@
+{
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/next.config.mjs": {
+    "mtime": 1781803473.2029915,
+    "hash": "018e242bdd914e8c81fc2f5e0c3ce995"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/next-env.d.ts": {
+    "mtime": 1781804076.4748714,
+    "hash": "d0f8375ae1199dc7acd3977fc33b78b8"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/tailwind.config.ts": {
+    "mtime": 1781284393.51676,
+    "hash": "559d16181124fefc4b46fe7e3531a12f"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/postcss.config.js": {
+    "mtime": 1781284393.5164683,
+    "hash": "8640f9b2e6475cc3f5b1ff4548925765"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/layout.tsx": {
+    "mtime": 1781284393.5135808,
+    "hash": "86a30fff0451e990f3fd98326bc5ed09"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/page.tsx": {
+    "mtime": 1781284393.513648,
+    "hash": "4fce1efcbc1dd8cb3cc3e2689bcfb93e"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/not-found.tsx": {
+    "mtime": 1781349419.1462717,
+    "hash": "b191f0d3d4f9961c02da518268930f25"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/unauthorised/page.tsx": {
+    "mtime": 1781284393.5147355,
+    "hash": "353d396689f3ff628e71abe8a5dff918"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/page.tsx": {
+    "mtime": 1781353498.9629714,
+    "hash": "16deea3e151b90e568ffa37af4bd09dc"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/iot/page.tsx": {
+    "mtime": 1781347907.5748653,
+    "hash": "2efaed60e68ced0eef1a1fc4d3bb4213"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/iot/bridge/page.tsx": {
+    "mtime": 1781421043.3850026,
+    "hash": "e715aaf7428a2701f82ffa74a312c50e"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/iot/bridge/components/AppletEditor.tsx": {
+    "mtime": 1781418258.050184,
+    "hash": "3fb8df418b72b2f4c327ffbf70c4db1f"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/iot/bridge/lib/iot-logic.ts": {
+    "mtime": 1781418258.0508413,
+    "hash": "f9ee58b3cb115f49022dcb7af9ae14dc"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/page.tsx": {
+    "mtime": 1781422443.5682354,
+    "hash": "b2a1ed7faeeb4f1655035c80edf39c9d"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/qr-login/page.tsx": {
+    "mtime": 1781346364.579355,
+    "hash": "fa85fbf3aa9cec614a5f08de4cba525d"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/password-vault/page.tsx": {
+    "mtime": 1781348860.5692978,
+    "hash": "994531d03c607092a293d849c586cc1c"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/task-manager/page.tsx": {
+    "mtime": 1781334637.778863,
+    "hash": "1a864b5eeae77ffbaa6df72df08acfd9"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/whiteboard/page.tsx": {
+    "mtime": 1781332295.5977046,
+    "hash": "2cf38ef787e581f0c496d7d2c0650f4e"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/request-lab/page.tsx": {
+    "mtime": 1781423766.439936,
+    "hash": "ce9e1fb89e0d66f1575d467cd4922dac"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/scratchpad/page.tsx": {
+    "mtime": 1781285459.7666109,
+    "hash": "80696fe09df48664eb597136e80a52cc"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/totp-authenticator/page.tsx": {
+    "mtime": 1781334644.1899037,
+    "hash": "83c2a54cb975011958b1a1fcbcc40e5f"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/file-encryptor/page.tsx": {
+    "mtime": 1781346364.5779302,
+    "hash": "ee086ee2daa5fdc8c87807e62cdb0c79"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/internet-speed-test/page.tsx": {
+    "mtime": 1781346364.5784032,
+    "hash": "045df658665954424095de7c0c96866a"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/url-shortener/page.tsx": {
+    "mtime": 1781334643.022477,
+    "hash": "baf2fc83754c24910ae70de5c6c1e627"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/chat-application/layout.tsx": {
+    "mtime": 1781346364.5758817,
+    "hash": "949c1c7c69970ff8efa5f4b481c03d21"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/creative-stuff/chat-application/page.tsx": {
+    "mtime": 1781346364.5774243,
+    "hash": "ceaf5635962590fee981b49aded1a005"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/page.tsx": {
+    "mtime": 1781803473.20256,
+    "hash": "5caab090ce851c04a46bd34b38146bd9"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/types.ts": {
+    "mtime": 1781803473.2019935,
+    "hash": "a6cba3f4f1c97f43d99fcba0dcb202b5"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/page.tsx": {
+    "mtime": 1781803473.2017386,
+    "hash": "a0892551134e3002bad7eb6a0c07ff9a"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/HeatmapCanvas.tsx": {
+    "mtime": 1781803473.1987178,
+    "hash": "39313f5783af608733f74be6c0463d44"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/Dashboard.tsx": {
+    "mtime": 1781803473.1982317,
+    "hash": "c5450f826c0d29ab9706e6bf250219bb"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/AnalyticsPanel.tsx": {
+    "mtime": 1781803473.197733,
+    "hash": "aa698c7e6b8fca3355d30bec40c14702"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/DailySummary.tsx": {
+    "mtime": 1781803473.1979597,
+    "hash": "b1dd3c87a9b46898f73e0c954f14e1de"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/SettingsPanel.tsx": {
+    "mtime": 1781803473.1992707,
+    "hash": "fbcd976f2b1d2c0d747993f2f7f5883d"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/MonitorView.tsx": {
+    "mtime": 1781803473.1990051,
+    "hash": "1b42cd15f995ef86b60fad2a078277bf"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/ZoneEditor.tsx": {
+    "mtime": 1781803473.1995053,
+    "hash": "4d589d98519e3a9e5cd1dfdb1e9c35a1"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/AlertBanner.tsx": {
+    "mtime": 1781803473.1974573,
+    "hash": "a5e3cfd91837354d1c7eb5185392ade9"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/components/EventTimeline.tsx": {
+    "mtime": 1781803473.198477,
+    "hash": "e77f1b7de5a68cd2f372693a7aa507dd"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/hooks/useMediaPipe.ts": {
+    "mtime": 1781803473.200518,
+    "hash": "d24640c2e86b1e44e324f3a50c98f631"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/hooks/useEventLog.ts": {
+    "mtime": 1781803473.2002625,
+    "hash": "85357e1d2d4c3618f16b0081a040d310"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/hooks/useZoneDetection.ts": {
+    "mtime": 1781803473.2007484,
+    "hash": "ac5b6d130d14945a1c4251a11d48391f"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/hooks/useAnalytics.ts": {
+    "mtime": 1781803473.1997745,
+    "hash": "360cdd632b9628b41cd6735fe518efd8"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/hooks/useAudioDetection.ts": {
+    "mtime": 1781803473.2000296,
+    "hash": "977cbbbd6b1f3c487b6ab2a1183af8f3"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/lib/audioEngine.ts": {
+    "mtime": 1781803473.2012558,
+    "hash": "262db7a14a757813e0814e7c9e504e3e"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/lib/analytics.ts": {
+    "mtime": 1781803473.2010195,
+    "hash": "8aa3513c9a6e48bfef6276e264d68570"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/baby-monitor/lib/storage.ts": {
+    "mtime": 1781803473.2014797,
+    "hash": "890621d693a644442f134d4c5f35d820"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/projects/fun-stuff/talking-characters/page.tsx": {
+    "mtime": 1781422413.8613517,
+    "hash": "9aace31136b00cd6ee3218f318afbec3"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/app/error/page.tsx": {
+    "mtime": 1781284393.5134327,
+    "hash": "84f24e75ddd40d8cd08b90287070660a"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/ThemeContext.tsx": {
+    "mtime": 1781284393.5149286,
+    "hash": "dae4ab06793fea367bef22c3f58063b6"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/DevToolsProtection.tsx": {
+    "mtime": 1781284393.5148516,
+    "hash": "9c134e4ad371ae56822c149507000f5b"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/Projects.tsx": {
+    "mtime": 1781284393.5155752,
+    "hash": "2fe6b602769c669807fb6164d316916c"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/Hero.tsx": {
+    "mtime": 1781421043.3859608,
+    "hash": "adf4703e56659df7dad1e220c41fad7a"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/Navbar.tsx": {
+    "mtime": 1781349307.3412082,
+    "hash": "f63c63c2bcddafa2ac467a1fb04a287c"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/Experience.tsx": {
+    "mtime": 1781284393.5153375,
+    "hash": "98e1903d94c5ac8216d13feea8f71be6"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/BentoGrid.tsx": {
+    "mtime": 1781421043.385491,
+    "hash": "6b530b1bcf95af7ff6a49219e17be3c4"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/Contact.tsx": {
+    "mtime": 1781284393.5151658,
+    "hash": "c3ad2adacd4944e6d474326cb87f4b50"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/components/sections/EducationAndAwards.tsx": {
+    "mtime": 1781284393.5152545,
+    "hash": "ce037077e3ecb0c907e84fd3f2801976"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/lib/firebase.ts": {
+    "mtime": 1781284393.5156994,
+    "hash": "6ce240a0a8769d13f46aecd1f3b313a7"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/lib/utils.ts": {
+    "mtime": 1781284393.5157695,
+    "hash": "ea1c194ee828369e6fcdde84b4d8b8ba"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/README.md": {
+    "mtime": 1781284393.5132685,
+    "hash": "50e046b2cc7a3bc159b990bdc24f5c8a"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/CLAUDE.md": {
+    "mtime": 1781804803.9049544,
+    "hash": "da79aa9343cd2b362206f03762160abc"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/public/lottie/README.md": {
+    "mtime": 1781351808.0507262,
+    "hash": "ac7c9c4759c69d4ee45260773fec76f3"
+  },
+  "/Users/vikas.yadav/Desktop/vikasyadavnsit.github.io/public/assets/icons/favicon.svg": {
+    "mtime": 1781284393.5166886,
+    "hash": "b983e627e8b065c3311e3be3c123b61f"
+  }
+}

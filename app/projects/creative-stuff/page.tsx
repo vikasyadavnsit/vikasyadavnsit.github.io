@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -80,6 +80,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/request-lab",
     icon: FlaskConical,
     color: "from-indigo-500 to-violet-500"
+  },
+  {
+    title: "Flagbase",
+    description: "Feature flag management platform. Multi-environment flags, targeting strategies (rollout %, user allowlist), and a drop-in JS SDK. Like Unleash, but self-hosted.",
+    link: "/projects/creative-stuff/flagbase",
+    icon: ToggleLeft,
+    color: "from-violet-500 to-purple-600"
   }
 ];
 
