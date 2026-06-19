@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft, Workflow } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -87,6 +87,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/flagbase",
     icon: ToggleLeft,
     color: "from-violet-500 to-purple-600"
+  },
+  {
+    title: "Workflow Builder",
+    description: "Visual no-code automation platform. Connect Trigger, HTTP, Transform, Notify, and Code nodes to build real workflows — like n8n or Zapier, running entirely in your browser.",
+    link: "/projects/creative-stuff/workflow-builder",
+    icon: Workflow,
+    color: "from-emerald-500 to-cyan-500"
   }
 ];
 

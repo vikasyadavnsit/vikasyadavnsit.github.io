@@ -13,6 +13,7 @@
     "@tensorflow/tfjs": "^4.22.0",
     "@types/p5": "^1.7.7",
     "@types/three": "^0.184.1",
+    "@xyflow/react": "^12.11.0",
     "clsx": "^2.1.0",
     "firebase": "^12.14.0",
     "framer-motion": "^12.0.0",
