@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft, Workflow } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft, Workflow, Code2 } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -94,6 +94,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/workflow-builder",
     icon: Workflow,
     color: "from-emerald-500 to-cyan-500"
+  },
+  {
+    title: "Algorithm Arena",
+    description: "Interactive LeetCode-style IDE. Write and test solutions in JS, TS, Python, Java, C++, and Go. High-performance client-side execution with resizable panes.",
+    link: "/projects/creative-stuff/algorithm-arena",
+    icon: Code2,
+    color: "from-indigo-600 to-violet-600"
   }
 ];
 

@@ -31,6 +31,7 @@ Experimental toys that push the boundaries of browser-based interaction.
 
 ### 🎨 Creative Stuff: Productivity Engines
 Complex platforms for automation and visual expression.
+- **Algorithm Arena:** Interactive LeetCode-style platform supporting **JS, TS, Python, Java, C++, and Go**. Features a custom resizable IDE and client-side test runner.
 - **Workflow Builder:** A no-code visual engine powered by **React Flow**. Execute custom HTTP requests and sandboxed JS logic in a graph-based UI.
 - **Digital Whiteboard:** High-performance canvas built with **P5.js** featuring infinite undo/redo and real-time state syncing via **Firebase**.
 - **Request Lab:** A developer's API client (Postman alternative) running entirely in-browser with local collection management.
@@ -75,6 +76,16 @@ Zero-knowledge utilities using modern browser security APIs.
 - **Key Derivation:** Master Password + Salt → `PBKDF2` (100,000 iterations) → 256-bit AES Key.
 - **Encryption:** `crypto.subtle.encrypt` using AES-GCM mode for authenticated encryption.
 - **Storage:** Only the Initial Vector (IV), Salt, and Encrypted Blob are stored. This ensures the data is useless without the original master password.
+</details>
+
+<details>
+<summary><b>4. Algorithm Arena: Multi-Language Simulation</b></summary>
+<br>
+
+- **Execution Model:** Native `new Function()` execution for JS/TS.
+- **Logic Mapping:** Regex-based transpilation layers for Python, Java, C++, and Go map idiomatic constructs (e.g., `fmt.Println`, `vector<int>`) to JavaScript execution logic.
+- **UI Architecture:** Custom-built `ResizablePane` component manages a draggable 3-pane layout without external libraries.
+- **Persistence:** Real-time state syncing with `localStorage` ensures user code survives refreshes and language switches.
 </details>
 
 ---
