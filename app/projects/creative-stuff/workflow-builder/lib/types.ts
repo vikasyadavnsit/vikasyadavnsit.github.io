@@ -29,7 +29,25 @@ export interface CodeConfig {
   code: string;
 }
 
-export type NodeConfig = TriggerConfig | HttpConfig | TransformConfig | NotifyConfig | CodeConfig;
+export interface LLMConfig {
+  provider: 'openai' | 'anthropic' | 'ollama';
+  model: string;
+  systemPrompt: string;
+  temperature: number;
+  apiKey: string;
+  useInputAsMessage: boolean;
+  userMessage: string;
+}
+
+export interface ConditionConfig {
+  expression: string;
+}
+
+export interface DelayConfig {
+  seconds: number;
+}
+
+export type NodeConfig = TriggerConfig | HttpConfig | TransformConfig | NotifyConfig | CodeConfig | LLMConfig | ConditionConfig | DelayConfig;
 
 export interface FlowNodeData extends Record<string, unknown> {
   label: string;

@@ -4,11 +4,12 @@ import type { NodeProps, Node } from '@xyflow/react';
 import { BaseNode } from './BaseNode';
 import type { FlowNodeData, CodeConfig } from '../../lib/types';
 
-export function CodeNode({ data, selected }: NodeProps<Node<FlowNodeData>>) {
+export function CodeNode({ id, data, selected }: NodeProps<Node<FlowNodeData>>) {
   const d = data as unknown as FlowNodeData;
   const cfg = d.config as CodeConfig;
   return (
     <BaseNode
+      id={id}
       label={d.label}
       subtitle="JS snippet"
       icon={<Code2 className="w-3.5 h-3.5 text-pink-300" />}

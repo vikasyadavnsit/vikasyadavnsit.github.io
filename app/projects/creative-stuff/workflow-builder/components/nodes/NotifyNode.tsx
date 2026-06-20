@@ -4,11 +4,12 @@ import type { NodeProps, Node } from '@xyflow/react';
 import { BaseNode } from './BaseNode';
 import type { FlowNodeData, NotifyConfig } from '../../lib/types';
 
-export function NotifyNode({ data, selected }: NodeProps<Node<FlowNodeData>>) {
+export function NotifyNode({ id, data, selected }: NodeProps<Node<FlowNodeData>>) {
   const d = data as unknown as FlowNodeData;
   const cfg = d.config as NotifyConfig;
   return (
     <BaseNode
+      id={id}
       label={d.label}
       subtitle={cfg.channel || 'console'}
       icon={<Bell className="w-3.5 h-3.5 text-emerald-300" />}

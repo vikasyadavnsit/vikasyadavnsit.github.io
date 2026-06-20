@@ -1,9 +1,10 @@
 "use client";
-import { Handle, Position } from '@xyflow/react';
+import { Handle, Position, useReactFlow } from '@xyflow/react';
 import { cn } from '@/lib/utils';
 import type { NodeStatus } from '../../lib/types';
 
 interface BaseNodeProps {
+  id: string;
   label: string;
   icon: React.ReactNode;
   borderColor: string;
@@ -17,22 +18,35 @@ interface BaseNodeProps {
 }
 
 const statusDot: Record<string, string> = {
-  idle: 'bg-zinc-600',
+  idle:    'bg-zinc-600',
   running: 'bg-yellow-400 animate-pulse',
   success: 'bg-emerald-400',
-  error: 'bg-red-400',
+  error:   'bg-red-400',
 };
 
 export function BaseNode({
-  label, icon, borderColor, iconBg, status = 'idle',
+  id, label, icon, borderColor, iconBg, status = 'idle',
   hasInput = true, hasOutput = true, selected, children, subtitle,
 }: BaseNodeProps) {
+  const { deleteElements } = useReactFlow();
+
   return (
     <div className={cn(
       'relative min-w-[190px] rounded-xl bg-zinc-900 border border-zinc-700 shadow-xl transition-all duration-150',
       `border-l-[3px] ${borderColor}`,
       selected && 'ring-2 ring-white/20',
     )}>
+      {/* Delete button — visible when selected */}
+      {selected && (
+        <button
+          onClick={e => { e.stopPropagation(); deleteElements({ nodes: [{ id }] }); }}
+          title="Delete node"
+          className="absolute -top-2 -right-2 z-10 w-5 h-5 rounded-full bg-zinc-800 border border-zinc-600 text-zinc-400 hover:bg-red-500/20 hover:border-red-500 hover:text-red-400 flex items-center justify-center text-xs transition-all leading-none"
+        >
+          ×
+        </button>
+      )}
+
       {hasInput && (
         <Handle
           type="target"

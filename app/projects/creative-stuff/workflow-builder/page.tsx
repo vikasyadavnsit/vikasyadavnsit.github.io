@@ -16,7 +16,7 @@ export default function WorkflowBuilderPage() {
         </Link>
         <span className="text-zinc-700">/</span>
         <span className="text-xs font-semibold text-white">Workflow Builder</span>
-        <span className="ml-auto text-[10px] text-zinc-600">Drag nodes from the left panel · Click a node to configure · Press Delete to remove</span>
+        <span className="ml-auto text-[10px] text-zinc-600 hidden md:block">Drag nodes from the left panel · Click a node to configure · Press Delete to remove</span>
       </div>
       <div className="flex-1 min-h-0">
         <WorkflowBuilder />

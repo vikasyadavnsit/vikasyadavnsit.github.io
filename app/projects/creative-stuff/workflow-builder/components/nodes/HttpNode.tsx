@@ -4,11 +4,12 @@ import type { NodeProps, Node } from '@xyflow/react';
 import { BaseNode } from './BaseNode';
 import type { FlowNodeData, HttpConfig } from '../../lib/types';
 
-export function HttpNode({ data, selected }: NodeProps<Node<FlowNodeData>>) {
+export function HttpNode({ id, data, selected }: NodeProps<Node<FlowNodeData>>) {
   const d = data as unknown as FlowNodeData;
   const cfg = d.config as HttpConfig;
   return (
     <BaseNode
+      id={id}
       label={d.label}
       subtitle={cfg.method || 'GET'}
       icon={<Globe className="w-3.5 h-3.5 text-blue-300" />}

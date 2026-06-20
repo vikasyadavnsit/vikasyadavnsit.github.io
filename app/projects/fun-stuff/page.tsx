@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Baby } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby, Sword } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -17,6 +17,13 @@ const funProjects = [
     link: "/projects/fun-stuff/baby-monitor",
     icon: Baby,
     color: "from-blue-500 to-cyan-500"
+  },
+  {
+    title: "Fruit Ninja",
+    description: "Slash fruits with your hand using your webcam. MediaPipe hand tracking detects swipes in real time. Avoid the bombs — 3 lives, infinite fun. 100% offline.",
+    link: "/projects/fun-stuff/fruit-ninja",
+    icon: Sword,
+    color: "from-red-500 to-orange-500"
   }
 ];
 

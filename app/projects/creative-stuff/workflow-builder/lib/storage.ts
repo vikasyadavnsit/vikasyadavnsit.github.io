@@ -36,3 +36,20 @@ export function deleteWorkflow(id: string): void {
   const list = listWorkflows().filter(w => w.id !== id);
   localStorage.setItem(KEY, JSON.stringify(list));
 }
+
+const ACTIVE_KEY = 'wfb_active';
+
+export interface ActiveWorkflow {
+  name: string;
+  nodes: unknown[];
+  edges: unknown[];
+}
+
+export function getActiveWorkflow(): ActiveWorkflow | null {
+  if (typeof window === 'undefined') return null;
+  try { return JSON.parse(localStorage.getItem(ACTIVE_KEY) ?? 'null'); } catch { return null; }
+}
+
+export function setActiveWorkflow(name: string, nodes: unknown[], edges: unknown[]): void {
+  localStorage.setItem(ACTIVE_KEY, JSON.stringify({ name, nodes, edges }));
+}

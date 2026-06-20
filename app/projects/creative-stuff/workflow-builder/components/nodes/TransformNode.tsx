@@ -4,11 +4,12 @@ import type { NodeProps, Node } from '@xyflow/react';
 import { BaseNode } from './BaseNode';
 import type { FlowNodeData, TransformConfig } from '../../lib/types';
 
-export function TransformNode({ data, selected }: NodeProps<Node<FlowNodeData>>) {
+export function TransformNode({ id, data, selected }: NodeProps<Node<FlowNodeData>>) {
   const d = data as unknown as FlowNodeData;
   const cfg = d.config as TransformConfig;
   return (
     <BaseNode
+      id={id}
       label={d.label}
       subtitle={cfg.operation || 'custom'}
       icon={<Shuffle className="w-3.5 h-3.5 text-purple-300" />}

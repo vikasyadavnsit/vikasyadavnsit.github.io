@@ -1,14 +1,10 @@
 "use client";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, Volume2, ArrowRight, AlertCircle, X } from "lucide-react";
+import { Mic, MicOff, Volume2, ArrowRight, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
-import * as THREE from "three";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
-import { OutlinePass } from "three/examples/jsm/postprocessing/OutlinePass.js";
 
+// ─── Character config ─────────────────────────────────────────────────────────
 const characters = [
   {
     id: "tomcat",
@@ -18,9 +14,9 @@ const characters = [
     playbackRate: 1.4,
     filter: { type: "highshelf" as BiquadFilterType, frequency: 3000, gain: 8 },
     gradient: "from-orange-400 to-rose-500",
-    glow: "shadow-orange-500/30",
-    color: 0xff6d3a,
-    accentColor: 0xffb347,
+    glow: "shadow-orange-500/40",
+    accentColor: "#f97316",
+    barColor: "#fb923c",
   },
   {
     id: "dog",
@@ -30,9 +26,9 @@ const characters = [
     playbackRate: 0.62,
     filter: { type: "lowshelf" as BiquadFilterType, frequency: 400, gain: 10 },
     gradient: "from-yellow-400 to-amber-500",
-    glow: "shadow-yellow-500/30",
-    color: 0xc8860a,
-    accentColor: 0xffe0a0,
+    glow: "shadow-yellow-500/40",
+    accentColor: "#f59e0b",
+    barColor: "#fbbf24",
   },
   {
     id: "parrot",
@@ -42,9 +38,9 @@ const characters = [
     playbackRate: 1.9,
     filter: { type: "peaking" as BiquadFilterType, frequency: 5000, gain: 12 },
     gradient: "from-emerald-400 to-teal-500",
-    glow: "shadow-emerald-500/30",
-    color: 0x00897b,
-    accentColor: 0xff5722,
+    glow: "shadow-emerald-500/40",
+    accentColor: "#10b981",
+    barColor: "#34d399",
   },
   {
     id: "robot",
@@ -55,9 +51,9 @@ const characters = [
     filter: { type: "bandpass" as BiquadFilterType, frequency: 1000, gain: 0 },
     distortion: true,
     gradient: "from-sky-400 to-blue-600",
-    glow: "shadow-sky-500/30",
-    color: 0x1565c0,
-    accentColor: 0x00e5ff,
+    glow: "shadow-sky-500/40",
+    accentColor: "#0ea5e9",
+    barColor: "#38bdf8",
   },
   {
     id: "ghost",
@@ -67,17 +63,16 @@ const characters = [
     playbackRate: 0.45,
     reverb: true,
     gradient: "from-violet-400 to-purple-600",
-    glow: "shadow-violet-500/30",
-    color: 0x7b1fa2,
-    accentColor: 0xea80fc,
+    glow: "shadow-violet-500/40",
+    accentColor: "#8b5cf6",
+    barColor: "#a78bfa",
   },
 ] as const;
 
 type CharacterId = typeof characters[number]["id"];
 type Phase = "idle" | "listening" | "speech" | "processing" | "playing" | "error";
 
-// ─── Audio helpers ────────────────────────────────────────────────────────────
-
+// ─── Audio helpers ─────────────────────────────────────────────────────────────
 function createReverb(ctx: AudioContext): ConvolverNode {
   const len = ctx.sampleRate * 3;
   const buf = ctx.createBuffer(2, len, ctx.sampleRate);
@@ -113,666 +108,723 @@ function getRMS(data: Uint8Array): number {
   return Math.sqrt(sum / data.length);
 }
 
-// ─── Character builders ───────────────────────────────────────────────────────
-
-interface CharacterParts {
-  group: THREE.Group;
-  head: THREE.Object3D;
-  body: THREE.Object3D;
-  leftArm: THREE.Object3D;
-  rightArm: THREE.Object3D;
-  outlineMeshes: THREE.Object3D[];
-  robotScreen?: { ctx: CanvasRenderingContext2D; tex: THREE.CanvasTexture };
-  mouth?: THREE.Object3D;
-  eyeLidL?: THREE.Object3D;
-  eyeLidR?: THREE.Object3D;
-  tail?: THREE.Object3D;
-  extras?: THREE.Object3D[];
+// ─── SVG character props ──────────────────────────────────────────────────────
+interface CharSVGProps {
+  mouthOpen: number;
+  eyesBlink: boolean;
+  active: boolean;
+  bassLevel: number;
 }
 
-// ── Toon material — shared gradient for cel-shading ──────────────────────────
-function makeToonGradient(): THREE.DataTexture {
-  const tex = new THREE.DataTexture(new Uint8Array([28, 88, 168, 255]), 4, 1, THREE.RedFormat);
-  tex.magFilter = THREE.NearestFilter;
-  tex.minFilter = THREE.NearestFilter;
-  tex.needsUpdate = true;
-  return tex;
-}
-let _grad: THREE.DataTexture | null = null;
-const G = () => (_grad ??= makeToonGradient());
+// ─── Tomcat ───────────────────────────────────────────────────────────────────
+function TomcatSVG({ mouthOpen, eyesBlink, active, bassLevel }: CharSVGProps) {
+  return (
+    <motion.svg
+      viewBox="0 0 200 240"
+      className="w-full h-full"
+      animate={{ y: active ? -(bassLevel * 12) : [0, -6, 0] }}
+      transition={
+        active
+          ? { type: "spring", stiffness: 420, damping: 16 }
+          : { duration: 2.5, repeat: Infinity, ease: "easeInOut" }
+      }
+    >
+      <defs>
+        <linearGradient id="tc-b" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fb923c" />
+          <stop offset="100%" stopColor="#f43f5e" />
+        </linearGradient>
+        <radialGradient id="tc-sh" cx="32%" cy="28%" r="55%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.22)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
 
-const toon = (color: number, emissive = 0x000000, emissiveIntensity = 0) =>
-  new THREE.MeshToonMaterial({ color, emissive, emissiveIntensity, gradientMap: G() });
+      {/* Tail */}
+      <motion.path
+        d="M 148 190 Q 174 162 168 132 Q 163 112 150 118"
+        fill="none" stroke="#f97316" strokeWidth="13" strokeLinecap="round"
+        animate={{ rotate: active ? [-8, 8, -8] : [-4, 4, -4] }}
+        style={{ transformBox: "fill-box", transformOrigin: "148px 190px" }}
+        transition={{ duration: active ? 0.5 : 2.8, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-const toonT = (color: number, opacity: number) =>
-  new THREE.MeshToonMaterial({ color, gradientMap: G(), transparent: true, opacity });
+      {/* Body */}
+      <ellipse cx="100" cy="195" rx="53" ry="46" fill="url(#tc-b)" />
+      <ellipse cx="100" cy="195" rx="53" ry="46" fill="url(#tc-sh)" />
+      <ellipse cx="100" cy="192" rx="29" ry="33" fill="#fff7ed" opacity="0.88" />
 
-// Eye helper — returns [white, iris, pupil, glint] all added to parent
-function addEye(parent: THREE.Group, x: number, y: number, z: number, irisColor: number) {
-  const white = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 16), toon(0xffffff));
-  white.position.set(x, y, z);
-  const iris = new THREE.Mesh(new THREE.SphereGeometry(0.095, 14, 14), toon(irisColor, irisColor, 0.25));
-  iris.position.set(x, y, z + 0.04);
-  const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.058, 12, 12), toon(0x111111));
-  pupil.position.set(x, y, z + 0.075);
-  const glint = new THREE.Mesh(new THREE.SphereGeometry(0.026, 8, 8), toon(0xffffff, 0xffffff, 1));
-  glint.position.set(x - 0.03, y + 0.04, z + 0.09);
-  parent.add(white, iris, pupil, glint);
-}
+      {/* Arms */}
+      <ellipse cx="53" cy="200" rx="14" ry="28" fill="#f97316" transform="rotate(-14 53 200)" />
+      <ellipse cx="147" cy="200" rx="14" ry="28" fill="#f97316" transform="rotate(14 147 200)" />
+      <ellipse cx="49" cy="228" rx="16" ry="9" fill="#fbd38d" />
+      <ellipse cx="151" cy="228" rx="16" ry="9" fill="#fbd38d" />
 
-// Eyelid helper — thin box that sits on top of eye
-function makeLid(color: number, x: number, y: number, z: number): THREE.Mesh {
-  const lid = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.1, 0.04), toon(color));
-  lid.position.set(x, y, z);
-  return lid;
-}
+      {/* Ears */}
+      <polygon points="44,64 60,20 82,64" fill="#f97316" />
+      <polygon points="118,64 140,20 156,64" fill="#f97316" />
+      <polygon points="50,62 62,27 77,62" fill="#fda4b8" />
+      <polygon points="123,62 138,27 150,62" fill="#fda4b8" />
 
-// ── Tomcat ────────────────────────────────────────────────────────────────────
-function buildTomcat(_c: number, _a: number): CharacterParts {
-  const color = 0xff6d3a, accent = 0xffb347;
-  // ── TOMCAT body ───────────────────────────────────────────────────────────
-  const group = new THREE.Group();
+      {/* Head */}
+      <circle cx="100" cy="90" r="64" fill="url(#tc-b)" />
+      <circle cx="100" cy="90" r="64" fill="url(#tc-sh)" />
 
-  // Hair blob
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.44, 18, 16), toon(color));
-  hair.scale.set(1, 0.62, 1);
-  hair.position.set(0, 0.76, -0.06);
+      {/* Forehead stripes */}
+      <line x1="100" y1="30" x2="100" y2="52" stroke="#e8530a" strokeWidth="4.5" strokeLinecap="round" opacity="0.5" />
+      <line x1="86" y1="33" x2="83" y2="53" stroke="#e8530a" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+      <line x1="114" y1="33" x2="117" y2="53" stroke="#e8530a" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
 
-  // Head — giant chibi sphere
-  const head = new THREE.Group();
-  const headMesh = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), toon(color));
-  head.add(headMesh, hair);
-  head.position.y = 0.74;
+      {/* Cheeks */}
+      <ellipse cx="56" cy="103" rx="18" ry="12" fill="#fda4b8" opacity="0.5" />
+      <ellipse cx="144" cy="103" rx="18" ry="12" fill="#fda4b8" opacity="0.5" />
 
-  // Ears
-  for (const s of [-1, 1]) {
-    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.28, 5), toon(color));
-    ear.position.set(s * 0.33, 0.44, -0.08); ear.rotation.z = s * -0.28;
-    const earIn = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.18, 5), toon(0xffb3c1));
-    earIn.position.set(s * 0.33, 0.43, -0.02); earIn.rotation.z = s * -0.28;
-    head.add(ear, earIn);
-  }
+      {/* Left eye */}
+      <ellipse cx="76" cy="87" rx="18" ry="20" fill="white" />
+      <circle cx="76" cy="88" r="13" fill="#4ade80" />
+      <circle cx="76" cy="88" r="8" fill="#111" />
+      <circle cx="71" cy="83" r="4" fill="white" />
+      <motion.rect
+        x="58" y="67" width="36" rx="4"
+        fill="#f97316"
+        animate={{ height: eyesBlink ? 22 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  // Big anime eyes
-  addEye(head as unknown as THREE.Group, -0.17, 0.04, 0.46, 0x4caf50);
-  addEye(head as unknown as THREE.Group,  0.17, 0.04, 0.46, 0x4caf50);
-  const eyeLidL = makeLid(color, -0.17, 0.1, 0.47);
-  const eyeLidR = makeLid(color,  0.17, 0.1, 0.47);
-  head.add(eyeLidL, eyeLidR);
+      {/* Right eye */}
+      <ellipse cx="124" cy="87" rx="18" ry="20" fill="white" />
+      <circle cx="124" cy="88" r="13" fill="#4ade80" />
+      <circle cx="124" cy="88" r="8" fill="#111" />
+      <circle cx="119" cy="83" r="4" fill="white" />
+      <motion.rect
+        x="106" y="67" width="36" rx="4"
+        fill="#f97316"
+        animate={{ height: eyesBlink ? 22 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  // Tiny nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), toon(0xff8fab));
-  nose.scale.set(1.3, 0.7, 0.8); nose.position.set(0, -0.06, 0.5);
-  head.add(nose);
+      {/* Nose */}
+      <polygon points="100,108 95,116 105,116" fill="#fda4b8" />
+      <circle cx="100" cy="108" r="4" fill="#fda4b8" />
 
-  // Mouth (animated)
-  const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.055, 10, 8), toon(0x222222));
-  mouth.scale.set(1.1, 0.35, 0.7); mouth.position.set(0, -0.17, 0.49);
-  head.add(mouth);
+      {/* Mouth */}
+      <motion.ellipse
+        cx="100" cy="121" rx="11"
+        fill={mouthOpen > 0.12 ? "#111" : "none"}
+        stroke={mouthOpen > 0.12 ? "none" : "#884444"}
+        strokeWidth="2"
+        animate={{ ry: mouthOpen > 0.12 ? 2 + mouthOpen * 13 : 2 }}
+        transition={{ duration: 0.07 }}
+      />
+      {mouthOpen <= 0.12 && (
+        <path d="M 91 122 Q 100 128 109 122" fill="none" stroke="#884444" strokeWidth="2" strokeLinecap="round" />
+      )}
 
-  // Whiskers
-  const wPos: number[] = [];
-  for (const s of [-1, 1]) for (const r of [0.04, -0.03, -0.1])
-    wPos.push(s * 0.2, r, 0.5, s * 0.55, r + 0.01, 0.3);
-  const wGeo = new THREE.BufferGeometry();
-  wGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(wPos), 3));
-  head.add(new THREE.LineSegments(wGeo, new THREE.LineBasicMaterial({ color: 0xeeeeee, transparent: true, opacity: 0.8 })));
-
-  // Body — small chibi
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.24, 0.5, 16), toon(color));
-  body.position.y = 0;
-  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 10), toon(0xfff3e0));
-  belly.scale.set(0.9, 1.1, 0.5); belly.position.set(0, 0.04, 0.22);
-
-  // Arms
-  const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.42, 10), toon(color));
-  leftArm.position.set(-0.3, 0.08, 0); leftArm.geometry.translate(0, -0.21, 0);
-  const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.42, 10), toon(color));
-  rightArm.position.set(0.3, 0.08, 0); rightArm.geometry.translate(0, -0.21, 0);
-
-  // Paws
-  const pawL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), toon(color));
-  pawL.scale.set(1, 0.6, 1.1); pawL.position.set(-0.3, -0.2, 0.04);
-  const pawR = pawL.clone(); pawR.position.x = 0.3;
-
-  // Legs
-  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.38, 10), toon(color));
-  legL.position.set(-0.13, -0.44, 0);
-  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.38, 10), toon(color));
-  legR.position.set(0.13, -0.44, 0);
-
-  // Curling tail
-  const tailCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0.24, -0.22, 0.08),
-    new THREE.Vector3(0.5, -0.05, 0.14),
-    new THREE.Vector3(0.55, 0.28, 0.04),
-    new THREE.Vector3(0.32, 0.46, 0),
-  ]);
-  const tail = new THREE.Mesh(new THREE.TubeGeometry(tailCurve, 20, 0.05, 8, false), toon(accent));
-
-  group.add(body, belly, head, tail, leftArm, rightArm, pawL, pawR, legL, legR);
-  group.scale.setScalar(1.15); group.position.y = -0.1;
-
-  const outlineMeshes: THREE.Object3D[] = [];
-  group.traverse((o) => { if ((o as THREE.Mesh).isMesh) outlineMeshes.push(o); });
-  return { group, head, body, leftArm, rightArm, outlineMeshes, mouth, eyeLidL, eyeLidR, tail };
+      {/* Whiskers */}
+      <line x1="57" y1="110" x2="87" y2="114" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+      <line x1="55" y1="116" x2="86" y2="116" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+      <line x1="57" y1="122" x2="87" y2="118" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+      <line x1="143" y1="110" x2="113" y2="114" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+      <line x1="145" y1="116" x2="114" y2="116" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+      <line x1="143" y1="122" x2="113" y2="118" stroke="#e5e7eb" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+    </motion.svg>
+  );
 }
 
-// ── Dog ───────────────────────────────────────────────────────────────────────
-function buildDog(_c: number, _a: number): CharacterParts {
-  const color = 0xc8860a, accent = 0xffe0a0;
-  const group = new THREE.Group();
+// ─── Dog ──────────────────────────────────────────────────────────────────────
+function DogSVG({ mouthOpen, eyesBlink, active, bassLevel }: CharSVGProps) {
+  return (
+    <motion.svg
+      viewBox="0 0 200 240"
+      className="w-full h-full"
+      animate={{ y: active ? -(bassLevel * 12) : [0, -5, 0] }}
+      transition={
+        active
+          ? { type: "spring", stiffness: 420, damping: 16 }
+          : { duration: 2.8, repeat: Infinity, ease: "easeInOut" }
+      }
+    >
+      <defs>
+        <linearGradient id="dg-b" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#fbbf24" />
+          <stop offset="100%" stopColor="#d97706" />
+        </linearGradient>
+        <radialGradient id="dg-sh" cx="32%" cy="28%" r="55%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <linearGradient id="dg-ear" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#f59e0b" />
+          <stop offset="100%" stopColor="#92400e" />
+        </linearGradient>
+      </defs>
 
-  // Hair blob
-  const hair = new THREE.Mesh(new THREE.SphereGeometry(0.46, 18, 16), toon(color));
-  hair.scale.set(1.05, 0.6, 1); hair.position.set(0, 0.76, -0.08);
+      {/* Floppy ears */}
+      <ellipse cx="48" cy="110" rx="24" ry="44" fill="url(#dg-ear)" />
+      <ellipse cx="152" cy="110" rx="24" ry="44" fill="url(#dg-ear)" />
+      <ellipse cx="43" cy="97" rx="8" ry="24" fill="#fde68a" opacity="0.28" transform="rotate(-8 43 97)" />
+      <ellipse cx="157" cy="97" rx="8" ry="24" fill="#fde68a" opacity="0.28" transform="rotate(8 157 97)" />
 
-  const head = new THREE.Group();
-  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), toon(color)), hair);
-  head.position.y = 0.74;
+      {/* Body */}
+      <ellipse cx="100" cy="195" rx="52" ry="46" fill="url(#dg-b)" />
+      <ellipse cx="100" cy="195" rx="52" ry="46" fill="url(#dg-sh)" />
+      <ellipse cx="100" cy="192" rx="30" ry="33" fill="#fef3c7" opacity="0.88" />
 
-  // Floppy ears
-  for (const s of [-1, 1]) {
-    const curve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(s * 0.35, 0.28, 0.06),
-      new THREE.Vector3(s * 0.5, 0.04, 0.08),
-      new THREE.Vector3(s * 0.46, -0.26, 0.04),
-    ]);
-    head.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 12, 0.1, 8, false), toon(0x7a4a00)));
-  }
+      {/* Arms + paws */}
+      <ellipse cx="53" cy="200" rx="14" ry="28" fill="#f59e0b" transform="rotate(-12 53 200)" />
+      <ellipse cx="147" cy="200" rx="14" ry="28" fill="#f59e0b" transform="rotate(12 147 200)" />
+      <ellipse cx="49" cy="228" rx="16" ry="9" fill="#fde68a" />
+      <ellipse cx="151" cy="228" rx="16" ry="9" fill="#fde68a" />
 
-  // Muzzle
-  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.23, 18, 14), toon(accent));
-  muzzle.scale.set(1, 0.7, 0.85); muzzle.position.set(0, -0.1, 0.38);
-  head.add(muzzle);
+      {/* Head */}
+      <circle cx="100" cy="90" r="63" fill="url(#dg-b)" />
+      <circle cx="100" cy="90" r="63" fill="url(#dg-sh)" />
 
-  // Big puppy eyes
-  addEye(head as unknown as THREE.Group, -0.17, 0.1, 0.45, 0x5d3a1a);
-  addEye(head as unknown as THREE.Group,  0.17, 0.1, 0.45, 0x5d3a1a);
-  const eyeLidL = makeLid(color, -0.17, 0.17, 0.46);
-  const eyeLidR = makeLid(color,  0.17, 0.17, 0.46);
-  head.add(eyeLidL, eyeLidR);
+      {/* Snout */}
+      <ellipse cx="100" cy="109" rx="29" ry="22" fill="#fde68a" />
 
-  // Nose
-  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), toon(0x111111));
-  nose.scale.set(1.2, 0.7, 0.8); nose.position.set(0, -0.08, 0.5);
-  head.add(nose);
+      {/* Left eye */}
+      <ellipse cx="74" cy="85" rx="17" ry="19" fill="white" />
+      <circle cx="74" cy="86" r="12" fill="#7c2d12" />
+      <circle cx="74" cy="86" r="7.5" fill="#111" />
+      <circle cx="69" cy="81" r="4" fill="white" />
+      <motion.rect
+        x="57" y="66" width="34" rx="4"
+        fill="#f59e0b"
+        animate={{ height: eyesBlink ? 20 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  // Tongue
-  const tongue = new THREE.Mesh(new THREE.SphereGeometry(0.085, 10, 8), toon(0xff6e88));
-  tongue.scale.set(1, 0.5, 0.7); tongue.position.set(0, -0.22, 0.46);
-  head.add(tongue);
+      {/* Right eye */}
+      <ellipse cx="126" cy="85" rx="17" ry="19" fill="white" />
+      <circle cx="126" cy="86" r="12" fill="#7c2d12" />
+      <circle cx="126" cy="86" r="7.5" fill="#111" />
+      <circle cx="121" cy="81" r="4" fill="white" />
+      <motion.rect
+        x="109" y="66" width="34" rx="4"
+        fill="#f59e0b"
+        animate={{ height: eyesBlink ? 20 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  // Mouth
-  const mouth = new THREE.Mesh(new THREE.SphereGeometry(0.09, 10, 8), toon(0x111111));
-  mouth.scale.set(1, 0.3, 0.7); mouth.position.set(0, -0.17, 0.48);
-  head.add(mouth);
+      {/* Nose */}
+      <ellipse cx="100" cy="104" rx="14" ry="10" fill="#111" />
+      <ellipse cx="97" cy="101" rx="5" ry="3" fill="#444" />
+      <ellipse cx="99" cy="99" rx="3.5" ry="2.5" fill="white" opacity="0.4" />
 
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 20, 18), toon(color));
-  body.scale.set(1, 0.9, 0.88); body.position.y = 0;
-  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 10), toon(accent));
-  belly.scale.set(0.85, 1, 0.48); belly.position.set(0, -0.02, 0.24);
+      {/* Mouth */}
+      <line x1="100" y1="114" x2="100" y2="119" stroke="#92400e" strokeWidth="2" />
+      {mouthOpen > 0.08 ? (
+        <motion.path
+          animate={{ d: `M 84 119 Q 100 ${119 + mouthOpen * 15} 116 119` }}
+          fill="#111"
+          transition={{ duration: 0.07 }}
+        />
+      ) : (
+        <path d="M 87 119 Q 100 125 113 119" fill="none" stroke="#92400e" strokeWidth="2" strokeLinecap="round" />
+      )}
 
-  const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.44, 10), toon(color));
-  leftArm.position.set(-0.32, 0.06, 0); leftArm.geometry.translate(0, -0.22, 0);
-  const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.44, 10), toon(color));
-  rightArm.position.set(0.32, 0.06, 0); rightArm.geometry.translate(0, -0.22, 0);
+      {/* Tongue */}
+      <motion.ellipse
+        cx="100" cy="125"
+        rx="9"
+        fill="#f43f5e"
+        animate={{ ry: mouthOpen > 0.2 ? 4 + mouthOpen * 8 : 0, cy: 122 + mouthOpen * 6 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.38, 10), toon(color));
-  legL.position.set(-0.13, -0.44, 0);
-  const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.38, 10), toon(color));
-  legR.position.set(0.13, -0.44, 0);
-
-  const tailC = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-0.24, 0.08, -0.26),
-    new THREE.Vector3(-0.44, 0.36, -0.18),
-    new THREE.Vector3(-0.3, 0.58, -0.04),
-  ]);
-  const tail = new THREE.Mesh(new THREE.TubeGeometry(tailC, 12, 0.058, 8, false), toon(0x7a4a00));
-
-  group.add(body, belly, head, tail, leftArm, rightArm, legL, legR);
-  group.scale.setScalar(1.15); group.position.y = -0.1;
-
-  const outlineMeshes: THREE.Object3D[] = [];
-  group.traverse((o) => { if ((o as THREE.Mesh).isMesh) outlineMeshes.push(o); });
-  return { group, head, body, leftArm, rightArm, outlineMeshes, mouth, eyeLidL, eyeLidR, tail };
+      {/* Snout spots */}
+      <circle cx="86" cy="113" r="4" fill="#d97706" opacity="0.3" />
+      <circle cx="114" cy="113" r="4" fill="#d97706" opacity="0.3" />
+    </motion.svg>
+  );
 }
 
-// ── Parrot ────────────────────────────────────────────────────────────────────
-function buildParrot(_c: number, _a: number): CharacterParts {
-  const color = 0x00897b, accent = 0xff5722;
-  const group = new THREE.Group();
+// ─── Parrot ───────────────────────────────────────────────────────────────────
+function ParrotSVG({ mouthOpen, eyesBlink, active, bassLevel }: CharSVGProps) {
+  return (
+    <motion.svg
+      viewBox="0 0 200 240"
+      className="w-full h-full"
+      animate={{
+        y: active ? -(bassLevel * 12) : [0, -6, 0],
+        rotate: active ? bassLevel * 4 : 0,
+      }}
+      transition={
+        active
+          ? { type: "spring", stiffness: 400, damping: 16 }
+          : { duration: 2.2, repeat: Infinity, ease: "easeInOut" }
+      }
+    >
+      <defs>
+        <linearGradient id="pg-h" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#ef4444" />
+          <stop offset="100%" stopColor="#b91c1c" />
+        </linearGradient>
+        <linearGradient id="pg-b" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#10b981" />
+          <stop offset="100%" stopColor="#047857" />
+        </linearGradient>
+        <radialGradient id="pg-sh" cx="32%" cy="28%" r="55%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.22)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <linearGradient id="pg-tail" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#60a5fa" />
+          <stop offset="100%" stopColor="#1d4ed8" />
+        </linearGradient>
+      </defs>
 
-  const head = new THREE.Group();
-  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.48, 28, 28), toon(color)));
-  head.position.y = 0.72;
+      {/* Tail feathers */}
+      <ellipse cx="100" cy="232" rx="12" ry="18" fill="url(#pg-tail)" />
+      <ellipse cx="82" cy="228" rx="9" ry="14" fill="#3b82f6" transform="rotate(-16 82 228)" />
+      <ellipse cx="118" cy="228" rx="9" ry="14" fill="#3b82f6" transform="rotate(16 118 228)" />
+      <ellipse cx="68" cy="220" rx="7" ry="11" fill="#60a5fa" transform="rotate(-28 68 220)" />
+      <ellipse cx="132" cy="220" rx="7" ry="11" fill="#60a5fa" transform="rotate(28 132 220)" />
 
-  // Crest plumes
-  for (let i = -1; i <= 1; i++) {
-    const p = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.32, 6), toon(accent));
-    p.position.set(i * 0.12, 0.46, -0.04); p.rotation.z = i * 0.28;
-    head.add(p);
-  }
+      {/* Wings */}
+      <ellipse cx="42" cy="168" rx="32" ry="52" fill="url(#pg-b)" transform="rotate(-22 42 168)" />
+      <ellipse cx="158" cy="168" rx="32" ry="52" fill="url(#pg-b)" transform="rotate(22 158 168)" />
+      <ellipse cx="36" cy="162" rx="16" ry="36" fill="#34d399" opacity="0.42" transform="rotate(-22 36 162)" />
+      <ellipse cx="164" cy="162" rx="16" ry="36" fill="#34d399" opacity="0.42" transform="rotate(22 164 162)" />
+      <line x1="56" y1="148" x2="36" y2="212" stroke="#059669" strokeWidth="1.5" opacity="0.38" />
+      <line x1="144" y1="148" x2="164" y2="212" stroke="#059669" strokeWidth="1.5" opacity="0.38" />
 
-  // Hook beak
-  const beakTop = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 6), toon(0xff8f00));
-  beakTop.rotation.x = Math.PI / 2 + 0.5; beakTop.position.set(0, -0.06, 0.42);
-  const mouth = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.15, 6), toon(0xff6f00));
-  mouth.rotation.x = -(Math.PI / 2 - 0.38); mouth.position.set(0, -0.18, 0.42);
-  head.add(beakTop, mouth);
+      {/* Body */}
+      <ellipse cx="100" cy="192" rx="48" ry="48" fill="url(#pg-b)" />
+      <ellipse cx="100" cy="192" rx="48" ry="48" fill="url(#pg-sh)" />
+      <ellipse cx="100" cy="190" rx="24" ry="26" fill="#fbbf24" opacity="0.88" />
+      <ellipse cx="100" cy="190" rx="14" ry="16" fill="#f97316" opacity="0.6" />
 
-  // Eye ring + big eye
-  const eyeLids: THREE.Mesh[] = [];
-  for (const s of [-1, 1]) {
-    head.add(new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.028, 8, 18), toon(0xffffff)));
-    const ring = head.children[head.children.length - 1];
-    ring.position.set(s * 0.22, 0.08, 0.38); (ring as THREE.Mesh).rotation.y = s * 0.42;
-    addEye(head as unknown as THREE.Group, s * 0.24, 0.08, 0.4, 0xfdd835);
-    const lid = makeLid(color, s * 0.24, 0.16, 0.41);
-    eyeLids.push(lid); head.add(lid);
-  }
-  const eyeLidL = eyeLids[0], eyeLidR = eyeLids[1];
+      {/* Head */}
+      <circle cx="100" cy="88" r="60" fill="url(#pg-h)" />
+      <circle cx="100" cy="88" r="60" fill="url(#pg-sh)" />
 
-  const body = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 18), toon(color));
-  body.scale.set(1, 1.28, 0.86); body.position.y = 0;
+      {/* Feather crest */}
+      <ellipse cx="100" cy="32" rx="10" ry="16" fill="#dc2626" transform="rotate(-5 100 32)" />
+      <ellipse cx="88" cy="35" rx="7" ry="12" fill="#b91c1c" transform="rotate(-18 88 35)" />
+      <ellipse cx="112" cy="35" rx="7" ry="12" fill="#b91c1c" transform="rotate(18 112 35)" />
+      <ellipse cx="78" cy="42" rx="5" ry="8" fill="#ef4444" opacity="0.55" transform="rotate(-30 78 42)" />
+      <ellipse cx="122" cy="42" rx="5" ry="8" fill="#ef4444" opacity="0.55" transform="rotate(30 122 42)" />
 
-  // Wings as arms
-  const leftArm = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 12), toon(accent));
-  leftArm.scale.set(0.32, 0.92, 0.16); leftArm.position.set(-0.46, 0.04, 0);
-  leftArm.geometry.translate(0, -0.18, 0);
-  const rightArm = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 12), toon(accent));
-  rightArm.scale.set(0.32, 0.92, 0.16); rightArm.position.set(0.46, 0.04, 0);
-  rightArm.geometry.translate(0, -0.18, 0);
+      {/* Cheek patches */}
+      <circle cx="62" cy="101" r="18" fill="#fbbf24" opacity="0.78" />
+      <circle cx="138" cy="101" r="18" fill="#fbbf24" opacity="0.78" />
 
-  // Tail feathers
-  for (let i = -1; i <= 1; i++) {
-    const f = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.018, 0.62, 6),
-      toon([color, accent, 0xff8a65][i + 1]));
-    f.position.set(i * 0.1, -0.6, -0.18); f.rotation.x = 0.44; f.rotation.z = i * 0.16;
-    group.add(f);
-  }
+      {/* Left eye */}
+      <circle cx="74" cy="85" r="19" fill="white" />
+      <circle cx="74" cy="86" r="13" fill="#1e40af" />
+      <circle cx="74" cy="86" r="8" fill="#111" />
+      <circle cx="69" cy="81" r="4.5" fill="white" />
+      <circle cx="74" cy="85" r="19" fill="none" stroke="#b91c1c" strokeWidth="3" />
+      <motion.rect
+        x="55" y="66" width="38" rx="4"
+        fill="#dc2626"
+        animate={{ height: eyesBlink ? 21 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  // Legs
-  for (const s of [-1, 1]) {
-    group.add(new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.035, 0.28, 8), toon(0x9e9e9e)));
-    group.children[group.children.length - 1].position.set(s * 0.11, -0.56, 0);
-  }
+      {/* Right eye */}
+      <circle cx="126" cy="85" r="19" fill="white" />
+      <circle cx="126" cy="86" r="13" fill="#1e40af" />
+      <circle cx="126" cy="86" r="8" fill="#111" />
+      <circle cx="121" cy="81" r="4.5" fill="white" />
+      <circle cx="126" cy="85" r="19" fill="none" stroke="#b91c1c" strokeWidth="3" />
+      <motion.rect
+        x="107" y="66" width="38" rx="4"
+        fill="#dc2626"
+        animate={{ height: eyesBlink ? 21 : 0 }}
+        transition={{ duration: 0.07 }}
+      />
 
-  group.add(body, head, leftArm, rightArm);
-  group.scale.setScalar(1.15); group.position.y = -0.1;
+      {/* Beak upper (static) */}
+      <path d="M 86 108 Q 100 104 114 108 Q 108 118 100 120 Q 92 118 86 108 Z" fill="#f97316" />
+      <line x1="90" y1="110" x2="110" y2="110" stroke="#fed7aa" strokeWidth="1.5" strokeLinecap="round" opacity="0.45" />
 
-  const outlineMeshes: THREE.Object3D[] = [];
-  group.traverse((o) => { if ((o as THREE.Mesh).isMesh) outlineMeshes.push(o); });
-  return { group, head, body, leftArm, rightArm, outlineMeshes, mouth, eyeLidL, eyeLidR };
+      {/* Beak lower (animated) */}
+      <motion.path
+        fill="#ea580c"
+        animate={{
+          d: mouthOpen > 0.1
+            ? `M 88 120 Q 100 ${120 + mouthOpen * 18} 112 120 Q 106 ${116 + mouthOpen * 10} 100 ${114 + mouthOpen * 8} Q 94 ${116 + mouthOpen * 10} 88 120 Z`
+            : "M 88 120 Q 100 124 112 120 Q 106 122 100 121 Q 94 122 88 120 Z",
+        }}
+        transition={{ duration: 0.08 }}
+      />
+    </motion.svg>
+  );
 }
 
-// ── Robot ─────────────────────────────────────────────────────────────────────
-function buildRobot(_c: number, _a: number): CharacterParts {
-  const color = 0x1565c0, accent = 0x00e5ff;
-  const group = new THREE.Group();
+// ─── Robot ────────────────────────────────────────────────────────────────────
+function RobotSVG({ mouthOpen, eyesBlink, active, bassLevel }: CharSVGProps) {
+  const bars = Array.from({ length: 10 }, (_, i) => i);
+  const chestBars = Array.from({ length: 8 }, (_, i) => i);
+  return (
+    <motion.svg
+      viewBox="0 0 200 240"
+      className="w-full h-full"
+      animate={{ y: active ? -(bassLevel * 9) : [0, -4, 0] }}
+      transition={
+        active
+          ? { type: "spring", stiffness: 320, damping: 18 }
+          : { duration: 3, repeat: Infinity, ease: "easeInOut" }
+      }
+    >
+      <defs>
+        <linearGradient id="rb-m" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#7dd3fc" />
+          <stop offset="100%" stopColor="#2563eb" />
+        </linearGradient>
+        <linearGradient id="rb-b" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#60a5fa" />
+          <stop offset="100%" stopColor="#1d4ed8" />
+        </linearGradient>
+        <radialGradient id="rb-gl" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#00e5ff" stopOpacity="0.9" />
+          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.25" />
+        </radialGradient>
+      </defs>
 
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.72, 0.44), toon(color));
-  const chestPanel = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.28, 0.45), toon(accent, accent, 0.5));
-  chestPanel.position.set(0, 0.08, 0);
-  group.add(body, chestPanel);
+      {/* Antenna */}
+      <line x1="100" y1="10" x2="100" y2="42" stroke="#94a3b8" strokeWidth="5" strokeLinecap="round" />
+      <motion.circle
+        cx="100" cy="8" r="8" fill="#00e5ff"
+        animate={{ opacity: [1, 0.35, 1], r: active ? [8, 11, 8] : [8, 8, 8] }}
+        transition={{ duration: active ? 0.35 : 1.6, repeat: Infinity }}
+      />
+      <circle cx="100" cy="8" r="4" fill="white" opacity="0.5" />
 
-  const head = new THREE.Group();
-  head.add(new THREE.Mesh(new THREE.BoxGeometry(0.64, 0.56, 0.5), toon(color)));
-  // Visor brow
-  const brow = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.1, 0.52), toon(0x0d3a7a));
-  brow.position.set(0, 0.26, 0); head.add(brow);
-  head.position.y = 0.69;
+      {/* Head */}
+      <rect x="32" y="42" width="136" height="106" rx="20" fill="url(#rb-m)" />
+      <rect x="38" y="48" width="58" height="36" rx="12" fill="white" opacity="0.09" />
+      <rect x="40" y="122" width="120" height="18" rx="9" fill="#1e3a8a" opacity="0.28" />
 
-  // Live audio screen
-  const screenCanvas = document.createElement("canvas");
-  screenCanvas.width = 160; screenCanvas.height = 120;
-  const screenCtx = screenCanvas.getContext("2d")!;
-  const screenTex = new THREE.CanvasTexture(screenCanvas);
-  const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.44, 0.33),
-    new THREE.MeshBasicMaterial({ map: screenTex }));
-  screenMesh.position.set(0, -0.02, 0.256); head.add(screenMesh);
+      {/* Side panels */}
+      <rect x="18" y="64" width="14" height="36" rx="7" fill="#3b82f6" />
+      <rect x="168" y="64" width="14" height="36" rx="7" fill="#3b82f6" />
+      {[70, 78, 86, 94].map((y) => (
+        <circle key={y} cx="25" cy={y} r="2" fill="#93c5fd" opacity="0.65" />
+      ))}
+      {[70, 78, 86, 94].map((y) => (
+        <circle key={y} cx="175" cy={y} r="2" fill="#93c5fd" opacity="0.65" />
+      ))}
 
-  // Antenna
-  const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.4, 8), toon(0x0d3a7a));
-  ant.position.set(0, 0.5, 0);
-  const antTip = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 12), toon(accent, accent, 1.0));
-  antTip.position.set(0, 0.7, 0);
-  head.add(ant, antTip);
+      {/* Corner bolts */}
+      {[[46, 56], [154, 56], [46, 134], [154, 134]].map(([cx, cy]) => (
+        <g key={`${cx}-${cy}`}>
+          <circle cx={cx} cy={cy} r="6" fill="#1e40af" />
+          <circle cx={cx} cy={cy} r="3" fill="#60a5fa" />
+        </g>
+      ))}
 
-  // Shoulder joints (glowing)
-  for (const s of [-1, 1]) {
-    const j = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.11, 12), toon(accent, accent, 0.6));
-    j.position.set(s * 0.4, 0.32, 0); j.rotation.z = Math.PI / 2;
-    group.add(j);
-  }
+      {/* LED eye sockets */}
+      <rect x="50" y="62" width="38" height="28" rx="8" fill="#0c1445" />
+      <rect x="112" y="62" width="38" height="28" rx="8" fill="#0c1445" />
+      <motion.rect
+        x="54" y="66" width="30" height="20" rx="5"
+        fill="url(#rb-gl)"
+        animate={{ opacity: eyesBlink ? 0 : [1, 0.55, 1] }}
+        transition={{ duration: 1.2, repeat: Infinity }}
+      />
+      <motion.rect
+        x="116" y="66" width="30" height="20" rx="5"
+        fill="url(#rb-gl)"
+        animate={{ opacity: eyesBlink ? 0 : [1, 0.55, 1] }}
+        transition={{ duration: 1.2, repeat: Infinity, delay: 0.3 }}
+      />
+      {/* Scanlines */}
+      <motion.line
+        x1="58" x2="80" stroke="#a5f3fc" strokeWidth="2" opacity="0.7"
+        animate={{ y1: eyesBlink ? 66 : [66, 86, 66], y2: eyesBlink ? 66 : [66, 86, 66] }}
+        transition={{ duration: 0.65, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.line
+        x1="120" x2="142" stroke="#a5f3fc" strokeWidth="2" opacity="0.7"
+        animate={{ y1: eyesBlink ? 66 : [66, 86, 66], y2: eyesBlink ? 66 : [66, 86, 66] }}
+        transition={{ duration: 0.65, repeat: Infinity, ease: "linear", delay: 0.3 }}
+      />
 
-  // Arms
-  const leftArm = new THREE.Group();
-  leftArm.add(new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.58, 0.18), toon(color)));
-  (leftArm.children[0] as THREE.Mesh).geometry.translate(0, -0.29, 0);
-  const lHand = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.14, 0.2), toon(accent, accent, 0.3));
-  lHand.position.y = -0.58; leftArm.add(lHand);
-  leftArm.position.set(-0.44, 0.28, 0);
+      {/* Mouth LED panel */}
+      <rect x="52" y="100" width="96" height="32" rx="8" fill="#0c1445" />
+      <motion.g animate={{ opacity: mouthOpen > 0.05 ? 1 : 0.22 }} transition={{ duration: 0.08 }}>
+        {bars.map((i) => {
+          const peak = Math.sin((i / 10) * Math.PI + 0.3);
+          const h = mouthOpen > 0.05 ? 4 + mouthOpen * (20 - 4) * peak : 4;
+          return (
+            <motion.rect
+              key={i}
+              x={56 + i * 9} rx="1.5" width="5"
+              fill="#00e5ff"
+              animate={{ height: h, y: 132 - h }}
+              transition={{ duration: 0.08, delay: i * 0.01 }}
+            />
+          );
+        })}
+      </motion.g>
 
-  const rightArm = new THREE.Group();
-  rightArm.add(new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.58, 0.18), toon(color)));
-  (rightArm.children[0] as THREE.Mesh).geometry.translate(0, -0.29, 0);
-  const rHand = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.14, 0.2), toon(accent, accent, 0.3));
-  rHand.position.y = -0.58; rightArm.add(rHand);
-  rightArm.position.set(0.44, 0.28, 0);
+      {/* Body */}
+      <rect x="36" y="152" width="128" height="82" rx="18" fill="url(#rb-b)" />
+      <rect x="56" y="163" width="88" height="52" rx="8" fill="#0c1445" />
+      {chestBars.map((i) => (
+        <motion.rect
+          key={i}
+          x={60 + i * 11} width="7" rx="2" fill="#00e5ff" opacity="0.82"
+          animate={{
+            height: active ? [4, 4 + bassLevel * 30, 4] : [4, 6 + i * 1.5, 4],
+            y: active ? [211, 211 - bassLevel * 30, 211] : [207 - i * 1.5, 205 - i * 1.5, 207 - i * 1.5],
+          }}
+          transition={{ duration: active ? 0.22 : 1.2, delay: i * 0.07, repeat: Infinity }}
+        />
+      ))}
 
-  // Legs + feet
-  for (const s of [-1, 1]) {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.5, 0.22), toon(color));
-    leg.position.set(s * 0.18, -0.61, 0);
-    const foot = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.1, 0.32), toon(0x0d3a7a));
-    foot.position.set(s * 0.18, -0.89, 0.04);
-    group.add(leg, foot);
-  }
+      {/* Arms + hands */}
+      <rect x="14" y="156" width="22" height="56" rx="11" fill="#3b82f6" />
+      <rect x="164" y="156" width="22" height="56" rx="11" fill="#3b82f6" />
+      <rect x="12" y="208" width="26" height="20" rx="10" fill="#60a5fa" />
+      <rect x="162" y="208" width="26" height="20" rx="10" fill="#60a5fa" />
 
-  group.add(head, leftArm, rightArm);
-  group.scale.setScalar(1.15); group.position.y = -0.1;
-
-  const outlineMeshes: THREE.Object3D[] = [];
-  group.traverse((o) => { if ((o as THREE.Mesh).isMesh && o !== screenMesh) outlineMeshes.push(o); });
-  return { group, head, body, leftArm, rightArm, outlineMeshes, robotScreen: { ctx: screenCtx, tex: screenTex }, extras: [antTip] };
+      {/* Legs */}
+      <rect x="56" y="230" width="30" height="14" rx="7" fill="#1d4ed8" />
+      <rect x="114" y="230" width="30" height="14" rx="7" fill="#1d4ed8" />
+    </motion.svg>
+  );
 }
 
-// ── Ghost ─────────────────────────────────────────────────────────────────────
-function buildGhost(_c: number, _a: number): CharacterParts {
-  const color = 0x7b1fa2, accent = 0xea80fc;
-  const group = new THREE.Group();
+// ─── Ghost ────────────────────────────────────────────────────────────────────
+function GhostSVG({ mouthOpen, eyesBlink, active, bassLevel }: CharSVGProps) {
+  return (
+    <motion.svg
+      viewBox="0 0 200 240"
+      className="w-full h-full"
+      animate={{
+        y: active ? -(bassLevel * 12) : [0, -9, 0],
+        rotate: active ? 0 : [0, 1.5, 0, -1.5, 0],
+      }}
+      transition={
+        active
+          ? { type: "spring", stiffness: 300, damping: 15 }
+          : { duration: 4, repeat: Infinity, ease: "easeInOut" }
+      }
+    >
+      <defs>
+        <radialGradient id="gh-b" cx="38%" cy="28%" r="72%">
+          <stop offset="0%" stopColor="#ede9fe" />
+          <stop offset="55%" stopColor="#c4b5fd" />
+          <stop offset="100%" stopColor="#7c3aed" />
+        </radialGradient>
+        <radialGradient id="gh-in" cx="50%" cy="38%" r="50%">
+          <stop offset="0%" stopColor="rgba(255,255,255,0.28)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+      </defs>
 
-  const ghostMat = toonT(new THREE.Color(color).lerp(new THREE.Color(0xddddff), 0.5).getHex(), 0.84);
-  const auraMat = new THREE.MeshToonMaterial({ color: accent, gradientMap: G(), transparent: true, opacity: 0.14, emissive: new THREE.Color(accent), emissiveIntensity: 0.5 });
+      {/* Outer aura */}
+      <ellipse cx="100" cy="115" rx="76" ry="88" fill="#7c3aed" opacity="0.07" />
 
-  // Outer aura
-  const aura = new THREE.Mesh(new THREE.SphereGeometry(0.68, 24, 24), auraMat);
-  aura.position.y = 0.1; group.add(aura);
+      {/* Wisps */}
+      <motion.ellipse cx="28" cy="96" rx="10" ry="17" fill="#c4b5fd" opacity="0.32"
+        animate={{ y: [-10, 9, -10], x: [-5, 5, -5] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.ellipse cx="172" cy="118" rx="8" ry="13" fill="#c4b5fd" opacity="0.26"
+        animate={{ y: [9, -10, 9], x: [5, -5, 5] }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
+      />
+      <motion.ellipse cx="162" cy="72" rx="6" ry="10" fill="#c4b5fd" opacity="0.2"
+        animate={{ y: [-6, 7, -6] }}
+        transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+      />
+      <motion.ellipse cx="38" cy="152" rx="7" ry="11" fill="#c4b5fd" opacity="0.18"
+        animate={{ y: [6, -8, 6] }}
+        transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
+      />
 
-  // Wavy body via LatheGeometry
-  const lp: THREE.Vector2[] = [];
-  for (let i = 0; i <= 20; i++) {
-    const t = i / 20;
-    const y = 0.58 - t * 1.18;
-    let r = 0.44 * Math.sin(t * Math.PI * 0.88);
-    if (t > 0.7) r += 0.08 * Math.abs(Math.sin(((t - 0.7) / 0.3) * Math.PI * 4));
-    lp.push(new THREE.Vector2(Math.max(0, r), y));
-  }
-  const body = new THREE.Mesh(new THREE.LatheGeometry(lp, 28), ghostMat.clone());
-  group.add(body);
+      {/* Body blob */}
+      <path
+        d="M 38 120 C 33 68 66 26 100 24 C 134 26 167 68 162 120
+           L 162 200 Q 149 188 136 200 Q 124 212 112 200
+           Q 100 188 88 200 Q 76 212 64 200 Q 51 188 38 200 Z"
+        fill="url(#gh-b)"
+      />
+      <path
+        d="M 38 120 C 33 68 66 26 100 24 C 134 26 167 68 162 120
+           L 162 200 Q 149 188 136 200 Q 124 212 112 200
+           Q 100 188 88 200 Q 76 212 64 200 Q 51 188 38 200 Z"
+        fill="url(#gh-in)"
+      />
 
-  const head = new THREE.Group();
-  head.add(new THREE.Mesh(new THREE.SphereGeometry(0.52, 32, 32), ghostMat.clone()));
-  head.position.y = 0.8;
+      {/* Left eye */}
+      <ellipse cx="76" cy="106" rx="22" ry="24" fill="white" opacity="0.92" />
+      <motion.ellipse
+        cx="76" cy="108" rx="15"
+        fill="#5b21b6"
+        animate={{ ry: eyesBlink ? 2 : 17 }}
+        transition={{ duration: 0.07 }}
+      />
+      <motion.circle
+        cx="76" cy="108" r="9"
+        fill="#1e0536"
+        animate={{ r: eyesBlink ? 1 : 9 }}
+        transition={{ duration: 0.07 }}
+      />
+      <circle cx="70" cy="102" r="5" fill="white" opacity="0.72" />
 
-  // Hollow glowing eyes
-  for (const s of [-1, 1]) {
-    const hole = new THREE.Mesh(new THREE.SphereGeometry(0.105, 14, 14),
-      new THREE.MeshToonMaterial({ color: 0x080010, gradientMap: G(), emissive: new THREE.Color(accent), emissiveIntensity: 0.7 }));
-    hole.scale.set(1, 1.25, 0.7); hole.position.set(s * 0.16, 0.04, 0.46);
-    const glow = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 10),
-      new THREE.MeshToonMaterial({ color: accent, gradientMap: G(), emissive: new THREE.Color(accent), emissiveIntensity: 1.4, transparent: true, opacity: 0.75 }));
-    glow.position.set(s * 0.16, 0.04, 0.48);
-    head.add(hole, glow);
-  }
+      {/* Right eye */}
+      <ellipse cx="124" cy="106" rx="22" ry="24" fill="white" opacity="0.92" />
+      <motion.ellipse
+        cx="124" cy="108" rx="15"
+        fill="#5b21b6"
+        animate={{ ry: eyesBlink ? 2 : 17 }}
+        transition={{ duration: 0.07 }}
+      />
+      <motion.circle
+        cx="124" cy="108" r="9"
+        fill="#1e0536"
+        animate={{ r: eyesBlink ? 1 : 9 }}
+        transition={{ duration: 0.07 }}
+      />
+      <circle cx="118" cy="102" r="5" fill="white" opacity="0.72" />
 
-  // Mouth O
-  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.078, 0.03, 8, 14),
-    new THREE.MeshToonMaterial({ color: 0x080010, gradientMap: G(), emissive: new THREE.Color(accent), emissiveIntensity: 0.45 }));
-  mouth.position.set(0, -0.12, 0.5); head.add(mouth);
+      {/* Mouth */}
+      <motion.ellipse
+        cx="100" cy="142" rx="13"
+        fill="#1e0536"
+        animate={{ ry: 2 + mouthOpen * 15, cy: 140 + mouthOpen * 3 }}
+        transition={{ duration: 0.07 }}
+      />
+      {mouthOpen > 0.3 && (
+        <>
+          <rect x="92" y="140" width="5" height="7" rx="1.5" fill="white" opacity="0.82" />
+          <rect x="100" y="140" width="5" height="7" rx="1.5" fill="white" opacity="0.82" />
+          <rect x="108" y="140" width="5" height="7" rx="1.5" fill="white" opacity="0.82" />
+        </>
+      )}
 
-  // Eyelid glows (pulse on blink)
-  const eyeLidL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8),
-    new THREE.MeshToonMaterial({ color: accent, gradientMap: G(), emissive: new THREE.Color(accent), emissiveIntensity: 1, transparent: true, opacity: 0.55 }));
-  eyeLidL.position.set(-0.16, 0.12, 0.49);
-  const eyeLidR = eyeLidL.clone(); eyeLidR.position.x = 0.16;
-  head.add(eyeLidL, eyeLidR);
-
-  // Wispy arms
-  const leftArm = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.03, 0.52, 8), ghostMat.clone());
-  leftArm.position.set(-0.46, 0.08, 0); leftArm.geometry.translate(0, -0.26, 0);
-  const rightArm = new THREE.Mesh(new THREE.CylinderGeometry(0.068, 0.03, 0.52, 8), ghostMat.clone());
-  rightArm.position.set(0.46, 0.08, 0); rightArm.geometry.translate(0, -0.26, 0);
-
-  // Floating particles
-  const ptPos: number[] = [];
-  for (let i = 0; i < 24; i++) {
-    const a = (i / 24) * Math.PI * 2, r = 0.55 + (i % 3) * 0.15;
-    ptPos.push(Math.cos(a) * r, -0.2 + (i % 5) * 0.28, Math.sin(a) * r);
-  }
-  const ptGeo = new THREE.BufferGeometry();
-  ptGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(ptPos), 3));
-  const particles = new THREE.Points(ptGeo, new THREE.PointsMaterial({ color: accent, size: 0.055, transparent: true, opacity: 0.75 }));
-  group.add(particles);
-
-  group.add(head, leftArm, rightArm);
-  group.scale.setScalar(1.15); group.position.y = -0.05;
-
-  const outlineMeshes: THREE.Object3D[] = [];
-  return { group, head, body, leftArm, rightArm, outlineMeshes, mouth, eyeLidL, eyeLidR, extras: [particles] };
+      {/* Sparkles */}
+      <motion.text x="34" y="68" fontSize="14" fill="#c4b5fd"
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+      >✦</motion.text>
+      <motion.text x="154" y="54" fontSize="11" fill="#c4b5fd"
+        animate={{ opacity: [1, 0.3, 1] }}
+        transition={{ duration: 1.8, repeat: Infinity, delay: 1 }}
+      >✦</motion.text>
+      <motion.text x="18" y="138" fontSize="9" fill="#c4b5fd"
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+      >✦</motion.text>
+      <motion.text x="170" y="156" fontSize="10" fill="#c4b5fd"
+        animate={{ opacity: [0.4, 0.9, 0.4] }}
+        transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
+      >✦</motion.text>
+    </motion.svg>
+  );
 }
 
-// ── Dispatcher ────────────────────────────────────────────────────────────────
-function buildCharacter(id: CharacterId, color: number, accent: number): CharacterParts {
-  if (id === "tomcat") return buildTomcat(color, accent);
-  if (id === "dog") return buildDog(color, accent);
-  if (id === "parrot") return buildParrot(color, accent);
-  if (id === "robot") return buildRobot(color, accent);
-  return buildGhost(color, accent);
-}
-
-// ─── ThreeCharacter component ─────────────────────────────────────────────────
-
-interface ThreeCharacterProps {
-  characterId: CharacterId;
-  analyserRef: React.MutableRefObject<AnalyserNode | null>;
-  isActiveRef: React.MutableRefObject<boolean>;
-  color: number;
-  accentColor: number;
-}
-
-function ThreeCharacter({ characterId, analyserRef, isActiveRef, color, accentColor }: ThreeCharacterProps) {
+// ─── Frequency visualizer ─────────────────────────────────────────────────────
+function FrequencyVisualizer({
+  analyserRef,
+  barColor,
+  active,
+}: {
+  analyserRef: React.RefObject<AnalyserNode | null>;
+  barColor: string;
+  active: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    const W = canvas.clientWidth || 288;
-    const H = canvas.clientHeight || 288;
+    const BAR_COUNT = 38;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-    renderer.setSize(W, H, false);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x0a0a0a, 1);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
+    function draw() {
+      const W = canvas!.width;
+      const H = canvas!.height;
+      ctx!.clearRect(0, 0, W, H);
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 20);
-    camera.position.set(0, 0.22, 2.5);
-    camera.lookAt(0, 0.15, 0);
+      const CX = W / 2;
+      const CY = H * 0.86;
+      const MIN_R = H * 0.4;
+      const MAX_R = H * 0.74;
 
-    // Toon shading needs directional light — low ambient so shadow steps show
-    scene.add(new THREE.AmbientLight(0xffffff, 0.28));
-    const key = new THREE.DirectionalLight(0xffffff, 2.8);
-    key.position.set(1.5, 4, 3.5); key.castShadow = true;
-    scene.add(key);
-    const fill = new THREE.DirectionalLight(new THREE.Color(color), 0.9);
-    fill.position.set(-2.5, 1, 1.5);
-    scene.add(fill);
+      const analyser = analyserRef.current;
+      const freqData = analyser ? new Uint8Array(analyser.frequencyBinCount) : null;
+      if (analyser && freqData) analyser.getByteFrequencyData(freqData);
 
-    // Build character
-    const parts = buildCharacter(characterId, color, accentColor);
-    scene.add(parts.group);
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const t = i / (BAR_COUNT - 1);
+        const angle = Math.PI + t * Math.PI;
 
-    // EffectComposer
-    const composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
+        let norm = 0;
+        if (freqData && active) {
+          const bin = Math.floor(t * freqData.length * 0.5);
+          norm = freqData[bin] / 255;
+        } else {
+          norm = 0.04 + Math.abs(Math.sin(Date.now() / 700 + i * 0.45)) * 0.05;
+        }
 
-    if (parts.outlineMeshes.length > 0) {
-      const outlinePass = new OutlinePass(new THREE.Vector2(W, H), scene, camera);
-      outlinePass.edgeStrength = 4.5;
-      outlinePass.edgeGlow = 0.6;
-      outlinePass.edgeThickness = 2.0;
-      outlinePass.visibleEdgeColor.set(0x000000);
-      outlinePass.hiddenEdgeColor.set(0x111111);
-      outlinePass.selectedObjects = parts.outlineMeshes;
-      composer.addPass(outlinePass);
+        const outerR = MIN_R + norm * (MAX_R - MIN_R);
+        const x1 = CX + Math.cos(angle) * MIN_R;
+        const y1 = CY + Math.sin(angle) * MIN_R;
+        const x2 = CX + Math.cos(angle) * outerR;
+        const y2 = CY + Math.sin(angle) * outerR;
+
+        ctx!.beginPath();
+        ctx!.moveTo(x1, y1);
+        ctx!.lineTo(x2, y2);
+        ctx!.strokeStyle = barColor;
+        ctx!.lineWidth = active ? 4.5 : 3;
+        ctx!.lineCap = "round";
+        ctx!.globalAlpha = active ? 0.12 + norm * 0.88 : 0.18;
+        ctx!.stroke();
+      }
+
+      rafRef.current = requestAnimationFrame(draw);
     }
 
-    composer.addPass(new OutputPass());
+    draw();
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [analyserRef, barColor, active]);
 
-    // Animation state (spring physics)
-    let bBounce = 0, bSwing = 0, bBob = 0;
-    const FREQ_BINS = 512;
-    const freqData = new Uint8Array(FREQ_BINS);
-    const clock = new THREE.Clock();
-    let frameId = 0;
-
-    const animate = () => {
-      frameId = requestAnimationFrame(animate);
-      const t = clock.getElapsedTime();
-      const analyser = analyserRef.current;
-      const isActive = isActiveRef.current;
-
-      let bass = 0, mid = 0, treble = 0;
-      if (analyser) {
-        analyser.getByteFrequencyData(freqData);
-        for (let i = 0; i < 5; i++) bass += freqData[i];
-        bass = bass / 5 / 255;
-        for (let i = 5; i < 45; i++) mid += freqData[i];
-        mid = mid / 40 / 255;
-        for (let i = 45; i < 110; i++) treble += freqData[i];
-        treble = treble / 65 / 255;
-      }
-
-      // Robot screen update
-      if (parts.robotScreen && analyser) {
-        const c = parts.robotScreen.ctx;
-        c.fillStyle = "#000d1a";
-        c.fillRect(0, 0, 160, 120);
-        c.fillStyle = "#00ff88";
-        for (let i = 0; i < 12; i++) {
-          const barH = (freqData[i * 4 + 2] / 255) * 88;
-          c.fillRect(i * 13 + 2, 120 - barH - 4, 11, barH);
-        }
-        const eyeSize = bass > 0.45 ? 10 : 14;
-        c.fillStyle = "#00e5ff";
-        c.beginPath(); c.arc(48, 22, eyeSize, 0, Math.PI * 2); c.fill();
-        c.beginPath(); c.arc(112, 22, eyeSize, 0, Math.PI * 2); c.fill();
-        parts.robotScreen.tex.needsUpdate = true;
-      } else if (parts.robotScreen && !analyser) {
-        const c = parts.robotScreen.ctx;
-        c.fillStyle = "#000d1a";
-        c.fillRect(0, 0, 160, 120);
-        c.fillStyle = "#004455";
-        c.beginPath(); c.arc(48, 30, 12, 0, Math.PI * 2); c.fill();
-        c.beginPath(); c.arc(112, 30, 12, 0, Math.PI * 2); c.fill();
-        c.fillStyle = "#002233";
-        for (let i = 0; i < 12; i++) {
-          c.fillRect(i * 13 + 2, 110, 11, 3);
-        }
-        parts.robotScreen.tex.needsUpdate = true;
-      }
-
-      // Spring targets
-      const idleBounce = Math.sin(t * 1.6) * 0.04;
-      const idleRock = Math.sin(t * 0.9) * 0.025;
-      const tBounce = bass * 0.38 + idleBounce;
-      const tSwing = mid * 1.15 + (isActive ? Math.sin(t * 2.8) * 0.08 : Math.sin(t * 1.8) * 0.07);
-      const tBob = treble * 0.55 + idleRock;
-
-      // Damped spring lerp
-      bBounce += (tBounce - bBounce) * 0.14;
-      bSwing += (tSwing - bSwing) * 0.11;
-      bBob += (tBob - bBob) * 0.17;
-
-      // Apply to parts
-      parts.group.position.y = -0.1 + bBounce * 0.18;
-      parts.body.position.y = bBounce * 0.22;
-      (parts.body as THREE.Mesh).scale && (parts.body as THREE.Mesh).scale.setY(1 + bass * 0.09);
-
-      parts.leftArm.rotation.z = bSwing + 0.12;
-      parts.rightArm.rotation.z = -(bSwing + 0.12);
-
-      (parts.head as THREE.Group | THREE.Mesh).rotation.y = bBob * 0.85;
-      (parts.head as THREE.Group | THREE.Mesh).rotation.z = (treble - 0.5) * 0.1;
-      (parts.head as THREE.Group | THREE.Mesh).scale.setScalar(1 + treble * 0.055);
-
-      const tRotY = isActive ? Math.sin(t * 2.2) * 0.07 + bass * 0.07 : 0;
-      parts.group.rotation.y += (tRotY - parts.group.rotation.y) * 0.045;
-
-      // Mouth open/close on bass + mid
-      if (parts.mouth) {
-        const mouthOpen = 1 + (bass * 0.9 + mid * 0.5);
-        parts.mouth.scale.y += (mouthOpen - parts.mouth.scale.y) * 0.22;
-      }
-
-      // Eyelid blink every ~3s
-      const blinkT = Math.sin(t * 1.05);
-      const blinkAmt = blinkT > 0.96 ? (blinkT - 0.96) / 0.04 : 0;
-      if (parts.eyeLidL) parts.eyeLidL.scale.y = 1 + blinkAmt * 5;
-      if (parts.eyeLidR) parts.eyeLidR.scale.y = 1 + blinkAmt * 5;
-
-      // Tail wag on bass
-      if (parts.tail) {
-        const wagTarget = bass * 1.1 + Math.sin(t * 5) * 0.18;
-        parts.tail.rotation.z += (wagTarget - parts.tail.rotation.z) * 0.13;
-      }
-
-      // Extras: robot antenna tip orbit, ghost particle spin
-      if (parts.extras?.[0]) {
-        if (characterId === "robot") {
-          parts.extras[0].position.x = Math.sin(t * 3) * 0.12;
-          parts.extras[0].position.z = Math.cos(t * 3) * 0.12;
-        } else if (characterId === "ghost") {
-          parts.extras[0].rotation.y = t * 0.6;
-          parts.extras[0].position.y = Math.sin(t * 0.8) * 0.08;
-        }
-      }
-
-      composer.render();
-    };
-    animate();
-
-    const onResize = () => {
-      const w = canvas.clientWidth, h = canvas.clientHeight;
-      if (!w || !h) return;
-      renderer.setSize(w, h, false);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      composer.setSize(w, h);
-    };
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(frameId);
-      renderer.dispose();
-      window.removeEventListener("resize", onResize);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [characterId, color, accentColor]);
-
-  return <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />;
+  return (
+    <canvas
+      ref={canvasRef}
+      width={400}
+      height={400}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
+  );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────────────
+// ─── Character map ─────────────────────────────────────────────────────────────
+const CHARACTER_COMPONENTS: Record<CharacterId, React.FC<CharSVGProps>> = {
+  tomcat: TomcatSVG,
+  dog: DogSVG,
+  parrot: ParrotSVG,
+  robot: RobotSVG,
+  ghost: GhostSVG,
+};
 
+// ─── Main page ─────────────────────────────────────────────────────────────────
 export default function TalkingCharactersPage() {
   const [selectedId, setSelectedId] = useState<CharacterId>("tomcat");
   const [started, setStarted] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [micPermission, setMicPermission] = useState<"unknown" | "granted" | "prompt" | "denied">("unknown");
 
-  // Refs read by Three.js animation loop every frame
+  // Audio-reactive animation state
+  const [mouthOpen, setMouthOpen] = useState(0);
+  const [bassLevel, setBassLevel] = useState(0);
+  const [eyesBlink, setEyesBlink] = useState(false);
+
+  // Audio refs
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const isActiveRef = useRef(false);
-
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
@@ -787,19 +839,66 @@ export default function TalkingCharactersPage() {
     comp: DynamicsCompressorNode;
     analyser: AnalyserNode;
   } | null>(null);
+  const animRafRef = useRef<number>(0);
 
   const selected = characters.find((c) => c.id === selectedId)!;
   selectedRef.current = selected;
 
+  // Audio analysis loop — drives mouthOpen and bassLevel
+  useEffect(() => {
+    const freqData = new Uint8Array(256);
+    let frame = 0;
+
+    const loop = () => {
+      animRafRef.current = requestAnimationFrame(loop);
+      frame++;
+      if (frame % 2 !== 0) return;
+
+      const analyser = analyserRef.current;
+      if (!analyser) {
+        setMouthOpen((p) => p * 0.82);
+        setBassLevel((p) => p * 0.82);
+        return;
+      }
+
+      analyser.getByteFrequencyData(freqData);
+      let bass = 0;
+      for (let i = 0; i < 5; i++) bass += freqData[i];
+      bass = (bass / 5) / 255;
+
+      const td = new Uint8Array(analyser.fftSize);
+      analyser.getByteTimeDomainData(td);
+      const rms = getRMS(td);
+
+      setBassLevel((p) => p * 0.55 + bass * 0.45);
+      setMouthOpen((p) => p * 0.45 + Math.min(rms * 7, 1) * 0.55);
+    };
+
+    animRafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animRafRef.current);
+  }, []);
+
+  // Periodic eye blink
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const doBlink = () => {
+      setEyesBlink(true);
+      t = setTimeout(() => {
+        setEyesBlink(false);
+        t = setTimeout(doBlink, 2200 + Math.random() * 2800);
+      }, 130);
+    };
+    t = setTimeout(doBlink, 1200 + Math.random() * 1200);
+    return () => clearTimeout(t);
+  }, []);
+
   const clearVAD = () => {
     if (vadIntervalRef.current) { clearInterval(vadIntervalRef.current); vadIntervalRef.current = null; }
   };
-
   const stopStream = () => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
   };
-
   const getOrCreateCtx = (): AudioContext => {
     if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
       audioCtxRef.current = new AudioContext();
@@ -808,13 +907,10 @@ export default function TalkingCharactersPage() {
     return audioCtxRef.current;
   };
 
-  // Called after each playback ends — loops back to listening
   const startListening = useCallback(async () => {
     if (!loopingRef.current) return;
-
     chunksRef.current = [];
     setPhase("listening");
-    isActiveRef.current = false;
 
     let stream = streamRef.current;
     if (!stream || stream.getTracks().some((t) => t.readyState === "ended")) {
@@ -832,7 +928,6 @@ export default function TalkingCharactersPage() {
       }
     }
 
-    // Disconnect previous mic chain to prevent node accumulation
     if (micNodesRef.current) {
       try {
         micNodesRef.current.source.disconnect();
@@ -858,7 +953,6 @@ export default function TalkingCharactersPage() {
 
     const recorder = new MediaRecorder(stream);
     recorderRef.current = recorder;
-
     recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
     recorder.onstop = () => {
       clearVAD();
@@ -867,22 +961,14 @@ export default function TalkingCharactersPage() {
       if (chunksRef.current.length > 0 && loopingRef.current) {
         playAudio(blob);
       } else if (loopingRef.current) {
-        // No speech captured (e.g. character switch mid-listen) — restart loop
         startListening();
       }
     };
 
-    // DO NOT start recorder here — defer until speech is detected
-
-    // VAD
     const VAD_SILENCE_MS = 700;
     const VAD_MAX_MS = 15000;
     const timeDomain = new Uint8Array(micAnalyser.fftSize);
-    let speechStart = 0;
-    let lastLoudTime = 0;
-    let speechSeen = false;
-
-    // Calibrate ambient noise floor in first 400ms
+    let speechStart = 0, lastLoudTime = 0, speechSeen = false;
     let ambientRMS = 0.02;
     const calibSamples: number[] = [];
     const calibEnd = Date.now() + 400;
@@ -894,23 +980,19 @@ export default function TalkingCharactersPage() {
 
       if (Date.now() < calibEnd) {
         calibSamples.push(rms);
-        if (calibSamples.length > 3) {
+        if (calibSamples.length > 3)
           ambientRMS = calibSamples.reduce((a, b) => a + b, 0) / calibSamples.length;
-        }
         return;
       }
 
       const threshold = Math.max(ambientRMS * 2.5, 0.025);
-
       if (rms > threshold) {
         if (!speechSeen) {
-          // Start recording only when speech is actually detected
           recorder.start();
           speechStart = Date.now();
           lastLoudTime = Date.now();
           speechSeen = true;
           setPhase("speech");
-          isActiveRef.current = true;
         } else {
           lastLoudTime = Date.now();
         }
@@ -918,7 +1000,6 @@ export default function TalkingCharactersPage() {
 
       const silenced = speechSeen && Date.now() - lastLoudTime > VAD_SILENCE_MS;
       const timedOut = speechSeen && Date.now() - speechStart > VAD_MAX_MS;
-
       if (silenced || timedOut) {
         if (recorderRef.current?.state === "recording") recorderRef.current.stop();
       }
@@ -929,12 +1010,10 @@ export default function TalkingCharactersPage() {
   const playAudio = useCallback(async (blob: Blob) => {
     if (!loopingRef.current) return;
     setPhase("processing");
-    isActiveRef.current = false;
     try {
       const arrayBuffer = await blob.arrayBuffer();
       const ctx = getOrCreateCtx();
       const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
-
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
       source.playbackRate.value = selectedRef.current.playbackRate;
@@ -945,7 +1024,6 @@ export default function TalkingCharactersPage() {
       const comp = ctx.createDynamicsCompressor();
       comp.threshold.value = -24; comp.ratio.value = 4;
       comp.attack.value = 0.003; comp.release.value = 0.25;
-
       const playAnalyser = ctx.createAnalyser();
       playAnalyser.fftSize = 512; playAnalyser.smoothingTimeConstant = 0.8;
       analyserRef.current = playAnalyser;
@@ -964,7 +1042,6 @@ export default function TalkingCharactersPage() {
         const dist = createDistortion(ctx);
         lastNode.connect(dist); lastNode = dist;
       }
-
       lastNode.connect(playAnalyser);
 
       if ("reverb" in sel && sel.reverb) {
@@ -979,18 +1056,15 @@ export default function TalkingCharactersPage() {
 
       source.start();
       setPhase("playing");
-      isActiveRef.current = true;
       let endedFired = false;
       const onEnded = () => {
         if (endedFired) return;
         endedFired = true;
         analyserRef.current = null;
-        isActiveRef.current = false;
         if (loopingRef.current) startListening();
         else setPhase("idle");
       };
       source.onended = onEnded;
-      // Fallback: if onended never fires (very short/silent audio), force-advance
       const fallbackMs = (audioBuffer.duration * 1000 + 500) / source.playbackRate.value;
       setTimeout(onEnded, Math.max(fallbackMs, 900));
     } catch (e) {
@@ -1003,6 +1077,28 @@ export default function TalkingCharactersPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startListening]);
 
+  useEffect(() => {
+    navigator.permissions
+      .query({ name: "microphone" as PermissionName })
+      .then((result) => {
+        setMicPermission(result.state as "granted" | "prompt" | "denied");
+        result.onchange = () => setMicPermission(result.state as "granted" | "prompt" | "denied");
+      })
+      .catch(() => setMicPermission("prompt"));
+  }, []);
+
+  const requestMic = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((t) => t.stop());
+      setMicPermission("granted");
+      setErrorMsg("");
+    } catch {
+      setMicPermission("denied");
+      setErrorMsg("Microphone access denied.");
+    }
+  };
+
   const handleStart = async () => {
     setErrorMsg("");
     try {
@@ -1012,9 +1108,9 @@ export default function TalkingCharactersPage() {
       streamRef.current = stream;
       loopingRef.current = true;
       setStarted(true);
-      // startListening will reuse the stream
       await startListening();
     } catch {
+      setMicPermission("denied");
       setErrorMsg("Microphone access denied. Please allow mic permissions.");
       setPhase("error");
     }
@@ -1032,11 +1128,10 @@ export default function TalkingCharactersPage() {
       } catch { /* ignore */ }
       micNodesRef.current = null;
     }
-    recorderRef.current?.state === "recording" && recorderRef.current.stop();
-    sourceRef.current?.stop();
+    if (recorderRef.current?.state === "recording") recorderRef.current.stop();
+    try { sourceRef.current?.stop(); } catch { /* ignore */ }
     sourceRef.current = null;
     analyserRef.current = null;
-    isActiveRef.current = false;
     stopStream();
     audioCtxRef.current?.close().catch(() => {});
     audioCtxRef.current = null;
@@ -1048,198 +1143,291 @@ export default function TalkingCharactersPage() {
   const switchCharacter = (id: CharacterId) => {
     setSelectedId(id);
     if (!loopingRef.current) return;
-    // Stop current activity cleanly and restart listening as the new character
     clearVAD();
     if (recorderRef.current?.state === "recording") recorderRef.current.stop();
     try { sourceRef.current?.stop(); } catch { /* ignore */ }
     sourceRef.current = null;
     analyserRef.current = null;
-    isActiveRef.current = false;
     chunksRef.current = [];
-    // Small delay lets React flush the new selectedId so selectedRef updates before recording starts
     setTimeout(() => { if (loopingRef.current) startListening(); }, 150);
   };
 
-  useEffect(() => () => { loopingRef.current = false; clearVAD(); stopStream(); }, []);
+  useEffect(
+    () => () => {
+      loopingRef.current = false;
+      clearVAD();
+      stopStream();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const isActive = phase === "speech" || phase === "playing";
+  const CharComponent = CHARACTER_COMPONENTS[selectedId];
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden">
-      {/* Background glow */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-[160px] opacity-10 bg-gradient-to-br ${selected.gradient} transition-all duration-700`} />
+    <main className="h-screen bg-[#050508] text-white overflow-hidden flex flex-col">
+      {/* Ambient background glow */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <motion.div
+          className={`absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[640px] h-[640px] rounded-full blur-[180px] bg-gradient-to-br ${selected.gradient}`}
+          animate={{ opacity: isActive ? 0.14 : 0.06 }}
+          transition={{ duration: 1.2 }}
+        />
       </div>
 
-      <div className="relative max-w-2xl mx-auto px-6 pt-24 pb-20 flex flex-col items-center">
-        {/* Back + Close row */}
-        <div className="self-stretch flex items-center justify-between mb-12">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+      <div className="relative flex flex-col items-center max-w-lg mx-auto w-full px-4 pt-4 pb-4 h-full">
+        {/* Header */}
+        <div className="self-stretch flex items-center justify-between mb-3">
+          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}>
             <Link
               href="/projects/fun-stuff"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+              className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors group"
             >
-              <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
-              Back
+              <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-0.5 transition-transform" />
+              Fun Stuff
             </Link>
           </motion.div>
 
-          <AnimatePresence>
-            {started && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                onClick={handleClose}
-                className="flex items-center justify-center w-9 h-9 rounded-full border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors"
-                aria-label="Stop and close"
-              >
-                <X className="w-4 h-4" />
-              </motion.button>
-            )}
-          </AnimatePresence>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-xs font-semibold text-white/35 tracking-[0.18em] uppercase"
+          >
+            Talking Characters
+          </motion.p>
+
+          <div className="w-14 flex justify-end">
+            <AnimatePresence>
+              {started && (
+                <motion.button
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  onClick={handleClose}
+                  className="flex items-center justify-center w-8 h-8 rounded-full border border-white/15 text-white/40 hover:text-white/70 hover:border-white/30 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="text-center mb-10"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter mb-2">
-            Talking <span className="text-muted-foreground">Characters</span>
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Speak — they dance and echo back in their style.
-          </p>
-        </motion.div>
-
-        {/* Character selector */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex gap-3 mb-10 flex-wrap justify-center"
-        >
-          {characters.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => switchCharacter(c.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-300 ${
-                selectedId === c.id
-                  ? `bg-gradient-to-r ${c.gradient} border-transparent text-white shadow-lg ${c.glow}`
-                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/20"
-              }`}
+        {/* Character stage */}
+        <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={selectedId}
+              initial={{ opacity: 0, scale: 0.88, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: -8 }}
+              transition={{ type: "spring", stiffness: 280, damping: 24 }}
+              className="relative flex items-center justify-center"
+              style={{ width: "min(270px, 56vw)", height: "min(270px, 56vw)" }}
             >
-              <span className="text-base">{c.emoji}</span>
-              {c.name}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* 3D Character */}
-        <motion.div
-          key={selected.id}
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 260, damping: 22 }}
-          className="relative flex flex-col items-center mb-10"
-        >
-          <div className="relative w-64 h-64 md:w-72 md:h-72">
-            <div className="w-full h-full rounded-2xl overflow-hidden">
-              <ThreeCharacter
-                characterId={selectedId}
+              {/* Frequency visualizer canvas */}
+              <FrequencyVisualizer
                 analyserRef={analyserRef}
-                isActiveRef={isActiveRef}
-                color={selected.color}
-                accentColor={selected.accentColor}
+                barColor={selected.barColor}
+                active={isActive}
               />
-            </div>
 
-            {/* Ripple rings while playing */}
-            <AnimatePresence>
-              {phase === "playing" && [0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${selected.gradient} opacity-15 pointer-events-none`}
-                  initial={{ scale: 0.85, opacity: 0.25 }}
-                  animate={{ scale: 1.5 + i * 0.25, opacity: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 1.4, delay: i * 0.35, repeat: Infinity }}
+              {/* SVG character */}
+              <div className="absolute inset-0 flex items-center justify-center p-3">
+                <CharComponent
+                  mouthOpen={mouthOpen}
+                  eyesBlink={eyesBlink}
+                  active={isActive}
+                  bassLevel={bassLevel}
                 />
-              ))}
-            </AnimatePresence>
+              </div>
 
-            {/* Listening pulse */}
-            <AnimatePresence>
+              {/* Ripple rings when playing */}
+              <AnimatePresence>
+                {phase === "playing" &&
+                  [0, 1, 2].map((i) => (
+                    <motion.div
+                      key={i}
+                      className={`absolute inset-0 rounded-full bg-gradient-to-br ${selected.gradient} pointer-events-none`}
+                      initial={{ scale: 0.5, opacity: 0.28 }}
+                      animate={{ scale: 1.9 + i * 0.32, opacity: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 1.7, delay: i * 0.42, repeat: Infinity }}
+                    />
+                  ))}
+              </AnimatePresence>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Character name + status */}
+          <div className="flex flex-col items-center mt-3 gap-1.5">
+            <motion.p
+              key={selectedId + "-name"}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xl font-bold tracking-tight"
+            >
+              {selected.name}
+            </motion.p>
+            <p className="text-[10px] text-white/35 uppercase tracking-[0.2em]">
+              {selected.label} voice
+            </p>
+
+            {/* Phase badges */}
+            <AnimatePresence mode="wait">
               {phase === "listening" && (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  key="listening"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/6 border border-white/10 rounded-full"
                 >
                   {[0, 1, 2].map((i) => (
                     <motion.div
                       key={i}
-                      className="w-1 rounded-full bg-muted-foreground"
-                      animate={{ height: ["6px", "14px", "6px"] }}
+                      className="w-1 rounded-full bg-white/45"
+                      animate={{ height: ["3px", "12px", "3px"] }}
                       transition={{ repeat: Infinity, duration: 0.9, delay: i * 0.15 }}
                     />
                   ))}
-                  <span className="text-xs text-muted-foreground font-medium ml-1">Listening</span>
+                  <span className="text-xs text-white/45 ml-0.5">Listening…</span>
                 </motion.div>
               )}
               {phase === "speech" && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  key="speech"
+                  initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1 bg-red-500/20 border border-red-500/40 rounded-full"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/14 border border-red-500/28 rounded-full"
                 >
                   <motion.div
                     className="w-2 h-2 rounded-full bg-red-500"
-                    animate={{ opacity: [1, 0.3, 1] }}
-                    transition={{ repeat: Infinity, duration: 0.8 }}
+                    animate={{ opacity: [1, 0.25, 1] }}
+                    transition={{ repeat: Infinity, duration: 0.72 }}
                   />
-                  <span className="text-xs text-red-400 font-medium">Capturing…</span>
+                  <span className="text-xs text-red-400">Capturing…</span>
+                </motion.div>
+              )}
+              {phase === "playing" && (
+                <motion.div
+                  key="playing"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex items-center gap-1.5 text-xs font-medium"
+                  style={{ color: selected.accentColor }}
+                >
+                  <Volume2 className="w-3.5 h-3.5" />
+                  Playing back…
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+        </div>
 
-          <p className="text-lg font-bold mt-7">{selected.name}</p>
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mt-1">{selected.label} voice</p>
+        {/* Character selector */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="flex gap-2 mt-3 mb-3"
+        >
+          {characters.map((c, idx) => (
+            <motion.button
+              key={c.id}
+              onClick={() => switchCharacter(c.id)}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.04 + idx * 0.05 }}
+              className={`relative flex flex-col items-center gap-1 px-2.5 py-2.5 rounded-2xl border transition-all duration-300 ${
+                selectedId === c.id
+                  ? `bg-gradient-to-b ${c.gradient} border-transparent shadow-lg`
+                  : "border-white/10 bg-white/5 hover:border-white/18 hover:bg-white/8"
+              }`}
+              style={{ minWidth: 50 }}
+            >
+              <span className="text-[22px] leading-none">{c.emoji}</span>
+              <span
+                className={`text-[8px] font-bold uppercase tracking-wide ${
+                  selectedId === c.id ? "text-white" : "text-white/35"
+                }`}
+              >
+                {c.name}
+              </span>
+              {selectedId === c.id && (
+                <motion.div
+                  layoutId="sel-dot"
+                  className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-1 rounded-full bg-white/55"
+                />
+              )}
+            </motion.button>
+          ))}
         </motion.div>
 
-        {/* CTA / status */}
+        {/* Mic / CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-col items-center gap-5 w-full"
+          transition={{ delay: 0.12 }}
+          className="flex flex-col items-center gap-2.5 w-full"
         >
           <AnimatePresence mode="wait">
             {!started ? (
-              <motion.button
-                key="start"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                onClick={handleStart}
-                className={`relative flex items-center justify-center gap-3 px-12 py-4 rounded-full font-bold text-base bg-gradient-to-r ${selected.gradient} text-white shadow-xl ${selected.glow} hover:scale-105 active:scale-95 transition-transform duration-200`}
-              >
-                <Mic className="w-5 h-5" />
-                Click to Play
-              </motion.button>
+              micPermission === "denied" ? (
+                <motion.div
+                  key="denied"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center gap-2 px-5 py-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-center max-w-xs"
+                >
+                  <MicOff className="w-6 h-6 text-red-400" />
+                  <p className="text-sm text-red-300 leading-relaxed">
+                    Microphone blocked. Allow it in your browser settings, then refresh.
+                  </p>
+                  <button
+                    onClick={requestMic}
+                    className="text-xs text-white/40 hover:text-white/70 underline transition-colors"
+                  >
+                    Try again
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.button
+                  key="start"
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={micPermission === "granted" ? handleStart : requestMic}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className={`relative flex items-center gap-2.5 px-10 py-3.5 rounded-full font-bold text-base bg-gradient-to-r ${selected.gradient} text-white shadow-2xl overflow-hidden`}
+                >
+                  <Mic className="w-5 h-5 relative z-10" />
+                  <span className="relative z-10">
+                    {micPermission === "granted" ? "Start Talking" : "Enable Microphone"}
+                  </span>
+                  {/* Shimmer */}
+                  <motion.span
+                    className="absolute inset-0 bg-white/20"
+                    animate={{ x: ["-100%", "200%"] }}
+                    transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+                    style={{ clipPath: "polygon(0 0, 30% 0, 50% 100%, 20% 100%)" }}
+                  />
+                </motion.button>
+              )
             ) : (
               <motion.div
-                key="status"
+                key="active-state"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center gap-2"
+                className="flex flex-col items-center gap-1.5"
               >
                 <AnimatePresence mode="wait">
                   {phase === "processing" && (
@@ -1248,26 +1436,14 @@ export default function TalkingCharactersPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
+                      className="flex items-center gap-2 text-sm text-white/45"
                     >
                       <motion.div
-                        className="w-4 h-4 rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground"
+                        className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white/55"
                         animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 0.7, ease: "linear" }}
+                        transition={{ repeat: Infinity, duration: 0.75, ease: "linear" }}
                       />
                       Applying {selected.name} voice…
-                    </motion.div>
-                  )}
-                  {phase === "playing" && (
-                    <motion.div
-                      key="play"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className={`flex items-center gap-2 text-sm font-medium bg-gradient-to-r ${selected.gradient} bg-clip-text text-transparent`}
-                    >
-                      <Volume2 className="w-4 h-4 text-current" style={{ color: "white", opacity: 0.7 }} />
-                      Playing as {selected.name}…
                     </motion.div>
                   )}
                   {phase === "error" && (
@@ -1276,27 +1452,24 @@ export default function TalkingCharactersPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm"
                     >
                       <AlertCircle className="w-4 h-4 flex-shrink-0" />
                       {errorMsg || "Something went wrong"}
                     </motion.div>
                   )}
+                  {(phase === "listening" || phase === "idle") && (
+                    <p className="text-xs text-white/28 text-center">
+                      Speak now — plays back in {selected.name}'s voice
+                    </p>
+                  )}
                 </AnimatePresence>
-
-                {(phase === "listening" || phase === "speech") && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    {phase === "listening" ? "Waiting for you to speak…" : "Speak! Stops automatically when silent."}
-                  </p>
-                )}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <p className="text-xs text-muted-foreground/50 text-center max-w-xs">
-            {started
-              ? "Noise cancellation on · Max 15 s · Loops automatically · Use × to stop"
-              : "Noise cancellation on · Your voice never leaves this device"}
+          <p className="text-[10px] text-white/18 text-center">
+            Your voice never leaves this device · Noise cancellation on · Max 15s
           </p>
         </motion.div>
       </div>
