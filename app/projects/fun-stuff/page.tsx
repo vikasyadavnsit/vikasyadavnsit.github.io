@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Baby, Sword } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby, Sword, Heart } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -24,6 +24,13 @@ const funProjects = [
     link: "/projects/fun-stuff/fruit-ninja",
     icon: Sword,
     color: "from-red-500 to-orange-500"
+  },
+  {
+    title: "Eternal Journey",
+    description: "A beautiful, interactive, multi-page proposal theme. Travel through a digital timeline of memories, reasons to love, and the big question. 100% personal.",
+    link: "/projects/fun-stuff/eternal-journey",
+    icon: Heart,
+    color: "from-rose-500 to-purple-600"
   }
 ];
 

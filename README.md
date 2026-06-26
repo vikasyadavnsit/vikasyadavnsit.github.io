@@ -28,6 +28,7 @@ Experimental toys that push the boundaries of browser-based interaction.
 - **Fruit Ninja AR:** Real-time **MediaPipe Hand Tracking** maps your finger to a virtual blade. Includes dynamic **Web Audio API** synthesis for SFX.
 - **AI Baby Monitor:** On-device **TensorFlow.js** (COCO-SSD) for person detection and cry analysis via the `AnalyserNode`. 100% private.
 - **Talking Characters:** Interactive 3D avatars processed through **Three.js** that echo voice inputs with custom audio filters.
+- **Eternal Journey:** A modular, multi-page proposal theme with interactive timelines, flip cards, and dynamic story-driven logic.
 
 ### 🎨 Creative Stuff: Productivity Engines
 Complex platforms for automation and visual expression.
