@@ -101,6 +101,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/algorithm-arena",
     icon: Code2,
     color: "from-indigo-600 to-violet-600"
+  },
+  {
+    title: "Notable Notes",
+    description: "A Markdown-based note-taking app with real-time preview, local storage, and export options (PDF/ZIP). Organize your thoughts with ease.",
+    link: "/projects/creative-stuff/notable-notes",
+    icon: Pencil,
+    color: "from-blue-600 to-indigo-600"
   }
 ];
 
