@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Room document — readable by anyone (to check existence), writable only on create
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['createdAt', 'updatedAt', 'hostId', 'participantCount', 'status'])
+                    && request.resource.data.status == 'waiting'
+                    && request.resource.data.participantCount == 1;
+      allow update: if request.resource.data.keys().hasOnly(['createdAt', 'updatedAt', 'hostId', 'participantCount', 'status']);
+      allow delete: if true;
+    }
+
+    // Signaling offer document
+    match /rooms/{roomId}/signals/offer {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['sdp', 'offerId', 'timestamp'])
+                    && request.resource.data.sdp is string
+                    && request.resource.data.sdp.size() < 65536;
+      allow delete: if true;
+    }
+
+    // Signaling answer document
+    match /rooms/{roomId}/signals/answer {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['sdp', 'answerId', 'timestamp'])
+                    && request.resource.data.sdp is string
+                    && request.resource.data.sdp.size() < 65536;
+      allow delete: if true;
+    }
+
+    // ICE candidates from offer side
+    match /rooms/{roomId}/signals/iceCandidates/offer/{candidateId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['candidate', 'sdpMid', 'sdpMLineIndex', 'side', 'timestamp'])
+                     && request.resource.data.side == 'offer';
+      allow delete: if true;
+    }
+
+    // ICE candidates from answer side
+    match /rooms/{roomId}/signals/iceCandidates/answer/{candidateId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['candidate', 'sdpMid', 'sdpMLineIndex', 'side', 'timestamp'])
+                     && request.resource.data.side == 'answer';
+      allow delete: if true;
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

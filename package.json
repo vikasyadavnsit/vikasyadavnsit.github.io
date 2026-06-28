@@ -34,6 +34,8 @@
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-webcam": "^7.2.0",
+    "react-zoom-pan-pinch": "^4.0.3",
     "recharts": "^3.8.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",

@@ -36,6 +36,10 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "app/projects/fun-stuff/webcam-pan-zoom/src",
+    "app/projects/fun-stuff/webcam-pan-zoom/dist",
+    "app/projects/fun-stuff/open-meet/src",
+    "app/projects/fun-stuff/open-meet/dist"
   ]
 }

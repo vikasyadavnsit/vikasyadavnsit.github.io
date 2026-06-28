@@ -5,6 +5,10 @@ const config: Config = {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "!./app/projects/fun-stuff/open-meet/node_modules/**",
+    "!./app/projects/fun-stuff/open-meet/dist/**",
+    "!./app/projects/fun-stuff/webcam-pan-zoom/node_modules/**",
+    "!./app/projects/fun-stuff/webcam-pan-zoom/dist/**",
   ],
   theme: {
     extend: {

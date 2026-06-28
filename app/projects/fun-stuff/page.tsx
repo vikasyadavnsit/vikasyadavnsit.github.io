@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Baby, Sword, Heart, Users } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby, Sword, Heart, Users, Camera, Video } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -38,6 +38,20 @@ const funProjects = [
     link: "/projects/fun-stuff/family-tree",
     icon: Users,
     color: "from-green-500 to-teal-500"
+  },
+  {
+    title: "Webcam Pan & Zoom",
+    description: "A modern webcam viewer with smooth pan and zoom. Mouse wheel to zoom, drag to pan, pinch on touch. Mirror toggle, fullscreen mode, and a floating control panel. 100% offline.",
+    link: "/projects/fun-stuff/webcam-pan-zoom",
+    icon: Camera,
+    color: "from-violet-500 to-fuchsia-500"
+  },
+  {
+    title: "OpenMeet",
+    description: "Open-source Google Meet–style video calling built with WebRTC. No backend, no auth, no cloud functions. Firebase is used only for signaling — once peers connect, it goes silent. Chat, reactions, and presence flow over RTCDataChannel.",
+    link: "/projects/fun-stuff/open-meet",
+    icon: Video,
+    color: "from-blue-500 to-sky-400"
   }
 ];
 
