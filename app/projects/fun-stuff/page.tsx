@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Baby, Sword, Heart } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby, Sword, Heart, Users } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -31,6 +31,13 @@ const funProjects = [
     link: "/projects/fun-stuff/eternal-journey",
     icon: Heart,
     color: "from-rose-500 to-purple-600"
+  },
+  {
+    title: "Family Tree",
+    description: "Build interactive family trees with photos, birth dates, and relationship maps. Create multiple trees, share via URL, and export as PNG. 100% offline — stored in your browser.",
+    link: "/projects/fun-stuff/family-tree",
+    icon: Users,
+    color: "from-green-500 to-teal-500"
   }
 ];
 
