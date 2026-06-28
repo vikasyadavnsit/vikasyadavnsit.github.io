@@ -33,6 +33,11 @@ export async function roomExists(roomId: string): Promise<boolean> {
   return snap.exists()
 }
 
+export async function getRoom(roomId: string): Promise<RoomDoc | null> {
+  const snap = await getDoc(doc(db, 'rooms', roomId))
+  return snap.exists() ? (snap.data() as RoomDoc) : null
+}
+
 export async function deleteRoom(roomId: string): Promise<void> {
   await deleteSignaling(roomId)
   await deleteDoc(doc(db, 'rooms', roomId))

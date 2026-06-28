@@ -59,12 +59,13 @@ export class ConnectionManager {
     return new PeerManager(peerCallbacks)
   }
 
-  async join(localStream: MediaStream): Promise<void> {
+  async join(localStream: MediaStream, forceAsHost = false): Promise<void> {
     this.localStream = localStream
     this.peer = this.buildPeer()
     this.peer.addLocalStream(localStream)
 
-    const existingOffer = await getOffer(this.roomId)
+    // forceAsHost: skip offer check and re-offer even if a stale one exists
+    const existingOffer = forceAsHost ? null : await getOffer(this.roomId)
     this.wasHost = !existingOffer
 
     if (existingOffer) {

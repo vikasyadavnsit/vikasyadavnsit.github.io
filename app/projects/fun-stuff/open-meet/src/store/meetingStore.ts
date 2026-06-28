@@ -15,12 +15,23 @@ interface MeetingStore {
   reset: () => void
 }
 
-const generateId = (): string =>
-  Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
+// Persist the participant ID across browser refreshes so we can reclaim our
+// host role after reloading (the room doc's hostId is matched against this).
+const getOrCreateParticipantId = (): string => {
+  try {
+    const stored = sessionStorage.getItem('om_participant_id')
+    if (stored) return stored
+    const id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
+    sessionStorage.setItem('om_participant_id', id)
+    return id
+  } catch {
+    return Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
+  }
+}
 
 export const useMeetingStore = create<MeetingStore>((set) => ({
   roomId: null,
-  localParticipantId: generateId(),
+  localParticipantId: getOrCreateParticipantId(),
   localName: `Guest-${Math.floor(Math.random() * 9000 + 1000)}`,
   isHost: false,
   status: 'idle',

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ConnectionManager } from '@/rtc/ConnectionManager'
-import { createRoom, deleteRoom, roomExists } from '@/firebase/firestore'
+import { createRoom, deleteRoom, getRoom } from '@/firebase/firestore'
 import { useMeetingStore } from '@/store/meetingStore'
 import { useParticipantsStore } from '@/store/participantsStore'
 import { useUIStore } from '@/store/uiStore'
@@ -8,7 +8,7 @@ import { useDataChannel } from './useDataChannel'
 import type { ConnectionStatus, DataChannelMessage, Participant } from '@/types'
 
 export function useRTC(roomId: string, localStream: MediaStream | null) {
-  const { localParticipantId, localName, isHost, setIsHost, setStatus } = useMeetingStore()
+  const { localParticipantId, localName, setIsHost, setStatus } = useMeetingStore()
   const { add: addParticipant, remove: removeParticipant, clear: clearParticipants } = useParticipantsStore()
   const addToast = useUIStore((s) => s.addToast)
 
@@ -41,11 +41,16 @@ export function useRTC(roomId: string, localStream: MediaStream | null) {
     async (stream: MediaStream) => {
       setStatus('joining')
 
-      const exists = await roomExists(roomId)
-      if (!exists) {
+      // Determine whether this client is the host, even after a browser refresh.
+      // localParticipantId is persisted in sessionStorage, so it matches the
+      // hostId stored in the room document from the original session.
+      const roomDoc = await getRoom(roomId)
+      const shouldBeHost = !roomDoc || roomDoc.hostId === localParticipantId
+
+      if (!roomDoc) {
         await createRoom(roomId, localParticipantId)
-        setIsHost(true)
       }
+      setIsHost(shouldBeHost)
 
       const manager = new ConnectionManager(roomId, localParticipantId, {
         onConnectionStateChange: (status) => {
@@ -97,7 +102,7 @@ export function useRTC(roomId: string, localStream: MediaStream | null) {
       sendMessageRef.current = (msg) => manager.sendMessage(msg)
       connectionManagerRef.current = manager
 
-      await manager.join(stream)
+      await manager.join(stream, shouldBeHost)
       setStatus('waiting')
     },
     // roomId and localParticipantId are stable for the lifetime of a meeting
@@ -130,7 +135,8 @@ export function useRTC(roomId: string, localStream: MediaStream | null) {
 
     try {
       manager?.close(false)
-      if (isHost) {
+      // Read isHost at call time to avoid stale closure
+      if (useMeetingStore.getState().isHost) {
         await deleteRoom(roomId)
       }
     } catch {
