@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, MessageCircle, Baby, Sword, Heart, Users, Camera, Video } from "lucide-react";
+import { ArrowRight, MessageCircle, Baby, Sword, Heart, Users, Camera, Video, Globe } from "lucide-react";
 import Link from "next/link";
 
 const funProjects = [
@@ -52,6 +52,13 @@ const funProjects = [
     link: "/projects/fun-stuff/open-meet",
     icon: Video,
     color: "from-blue-500 to-sky-400"
+  },
+  {
+    title: "3D Earth",
+    description: "Interactive globe with selectable countries, city markers, rivers, and mountains. Zoom from space to street level. Procedurally generated terrain — 100% offline.",
+    link: "/projects/fun-stuff/earth-3d",
+    icon: Globe,
+    color: "from-blue-500 to-cyan-400"
   }
 ];
 
