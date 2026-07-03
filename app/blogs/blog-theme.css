@@ -1,0 +1,43 @@
+[data-blog-theme] {
+  --blog-bg: 0 0% 100%;
+  --blog-fg: 222 20% 15%;
+  --blog-card: 210 20% 98%;
+  --blog-border: 220 13% 91%;
+  --blog-muted: 220 9% 46%;
+  --blog-accent: 221 83% 53%;
+
+  background: hsl(var(--blog-bg));
+  color: hsl(var(--blog-fg));
+  min-height: 100vh;
+}
+
+[data-blog-theme].blog-dark {
+  --blog-bg: 222 20% 8%;
+  --blog-fg: 210 20% 96%;
+  --blog-card: 222 18% 12%;
+  --blog-border: 217 15% 22%;
+  --blog-muted: 215 12% 65%;
+  --blog-accent: 217 91% 65%;
+}
+
+/* Tiptap's drag-to-resize sets an inline `style="width:...px"` while dragging, which
+   beats any external stylesheet rule that isn't !important — without this, a resized
+   image can overflow the editor card or the published post's content column. */
+[data-blog-theme] .prose img,
+[data-blog-theme] .ProseMirror img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+[data-blog-theme] .blog-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--blog-border));
+  background: hsl(var(--blog-card));
+  color: hsl(var(--blog-accent));
+  text-decoration: none;
+  font-size: 0.875rem;
+}
