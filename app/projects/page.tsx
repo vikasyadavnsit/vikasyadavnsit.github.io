@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, ArrowLeft, Sparkles, Code2, Cpu } from "lucide-react";
+import { ArrowRight, ArrowLeft, Sparkles, Code2, Cpu, Brain } from "lucide-react";
 import Link from "next/link";
 
 const categories = [
@@ -24,6 +24,13 @@ const categories = [
     link: "/projects/iot",
     icon: Cpu,
     color: "from-blue-500 to-cyan-500"
+  },
+  {
+    title: "AI",
+    description: "Machine learning models and intelligent systems exploring data-driven decision making.",
+    link: "/projects/ai",
+    icon: Brain,
+    color: "from-purple-500 to-violet-500"
   }
 ];
 
