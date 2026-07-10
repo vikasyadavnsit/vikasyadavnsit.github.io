@@ -63,7 +63,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2.5 rounded-xl border border-[hsl(var(--blog-border))] bg-[hsl(var(--blog-card))] text-[hsl(var(--blog-fg))] outline-none focus:border-[hsl(var(--blog-accent))]"
+            className="px-4 py-2.5 rounded-xl border border-[hsl(var(--blog-border))] bg-[hsl(var(--blog-card))] text-[hsl(var(--blog-fg))] outline-none focus:border-[hsl(var(--blog-accent))] focus:ring-2 focus:ring-[hsl(var(--blog-accent)/0.15)] transition-colors"
           />
           <input
             type="password"
@@ -71,9 +71,9 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="px-4 py-2.5 rounded-xl border border-[hsl(var(--blog-border))] bg-[hsl(var(--blog-card))] text-[hsl(var(--blog-fg))] outline-none focus:border-[hsl(var(--blog-accent))]"
+            className="px-4 py-2.5 rounded-xl border border-[hsl(var(--blog-border))] bg-[hsl(var(--blog-card))] text-[hsl(var(--blog-fg))] outline-none focus:border-[hsl(var(--blog-accent))] focus:ring-2 focus:ring-[hsl(var(--blog-accent)/0.15)] transition-colors"
           />
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-sm text-[hsl(var(--blog-danger))]">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
