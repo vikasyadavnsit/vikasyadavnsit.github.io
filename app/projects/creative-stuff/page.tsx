@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft, Workflow, Code2 } from "lucide-react";
+import { ArrowRight, Pencil, MousePointer2, LogIn, Wifi, Scissors, ShieldCheck, LayoutDashboard, Gauge, LockKeyhole, KeyRound, FlaskConical, ToggleLeft, Workflow, Code2, Radio } from "lucide-react";
 import Link from "next/link";
 
 const creativeProjects = [
@@ -108,6 +108,13 @@ const creativeProjects = [
     link: "/projects/creative-stuff/notable-notes",
     icon: Pencil,
     color: "from-blue-600 to-indigo-600"
+  },
+  {
+    title: "File Transfer",
+    description: "Move a file between two devices with no server — split into QR codes read by a camera, or transmitted as audio tones with a handshake. Fully local, browser-only.",
+    link: "/projects/creative-stuff/file-transfer",
+    icon: Radio,
+    color: "from-teal-400 to-cyan-600"
   }
 ];
 
