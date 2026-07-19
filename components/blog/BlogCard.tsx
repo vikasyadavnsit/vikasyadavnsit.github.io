@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, FileText } from "lucide-react";
 import type { BlogPost } from "@/lib/blog/types";
 import TagPills from "./TagPills";
 import ViewCounterBadge from "./ViewCounterBadge";
@@ -14,17 +14,26 @@ export default function BlogCard({ post }: { post: BlogPost }) {
   return (
     <Link
       href={`/blogs/post?slug=${encodeURIComponent(post.slug)}`}
-      className="group flex flex-col h-full rounded-2xl border border-[hsl(var(--blog-border))] bg-[hsl(var(--blog-card))] overflow-hidden hover:border-[hsl(var(--blog-accent))] transition-colors"
+      className="group flex flex-col h-full rounded-[var(--blog-radius-lg)] blog-glass-card overflow-hidden transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:border-[hsl(var(--blog-accent)/0.3)]"
     >
-      {post.coverImageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.coverImageUrl}
-          alt={post.title}
-          className="w-full h-40 object-cover"
-        />
-      )}
-      <div className="flex flex-col flex-1 p-6 gap-3">
+      <div className="relative h-44 overflow-hidden shrink-0">
+        {post.coverImageUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.coverImageUrl}
+              alt={post.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--blog-card))]/60 to-transparent" />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[hsl(var(--blog-accent)/0.15)] to-[hsl(var(--blog-accent)/0.05)]">
+            <FileText className="w-10 h-10 text-[hsl(var(--blog-accent)/0.4)]" />
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col flex-1 p-6 gap-3.5">
         <span className="text-xs text-[hsl(var(--blog-muted))]">{date}</span>
         <h3 className="text-lg font-bold text-[hsl(var(--blog-fg))] group-hover:text-[hsl(var(--blog-accent))] transition-colors">
           {post.title}
