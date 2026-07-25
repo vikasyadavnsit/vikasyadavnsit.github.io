@@ -1,0 +1,54 @@
+.iot-theme-dark {
+    --iot-background: 240 10% 3.9%;
+    --iot-foreground: 0 0% 98%;
+    --iot-card: 240 10% 3.9%;
+    --iot-card-foreground: 0 0% 98%;
+    --iot-popover: 240 10% 3.9%;
+    --iot-popover-foreground: 0 0% 98%;
+    --iot-primary: 217.2 91.2% 59.8%;
+    --iot-primary-foreground: 222.2 47.4% 11.2%;
+    --iot-secondary: 240 3.7% 15.9%;
+    --iot-secondary-foreground: 0 0% 98%;
+    --iot-muted: 240 3.7% 15.9%;
+    --iot-muted-foreground: 240 5% 64.9%;
+    --iot-accent: 217.2 91.2% 59.8%;
+    --iot-accent-foreground: 0 0% 98%;
+    --iot-destructive: 0 62.8% 30.6%;
+    --iot-destructive-foreground: 0 0% 98%;
+    --iot-border: 240 3.7% 15.9%;
+    --iot-input: 240 3.7% 15.9%;
+    --iot-ring: 224.3 76.3% 48%;
+}
+
+.iot-theme-light {
+    --iot-background: 0 0% 100%;
+    --iot-foreground: 240 10% 3.9%;
+    --iot-card: 0 0% 100%;
+    --iot-card-foreground: 240 10% 3.9%;
+    --iot-popover: 0 0% 100%;
+    --iot-popover-foreground: 240 10% 3.9%;
+    --iot-primary: 221.2 83.2% 53.3%;
+    --iot-primary-foreground: 210 40% 98%;
+    --iot-secondary: 240 4.8% 95.9%;
+    --iot-secondary-foreground: 240 5.9% 10%;
+    --iot-muted: 240 4.8% 95.9%;
+    --iot-muted-foreground: 240 3.8% 46.1%;
+    --iot-accent: 240 4.8% 95.9%;
+    --iot-accent-foreground: 240 5.9% 10%;
+    --iot-destructive: 0 84.2% 60.2%;
+    --iot-destructive-foreground: 210 40% 98%;
+    --iot-border: 240 5.9% 90%;
+    --iot-input: 240 5.9% 90%;
+    --iot-ring: 221.2 83.2% 53.3%;
+}
+
+.iot-glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dark .iot-glass-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}

@@ -1,0 +1,238 @@
+[data-blog-theme] {
+  --blog-bg: 0 0% 100%;
+  --blog-fg: 222 20% 15%;
+  --blog-card: 210 20% 98%;
+  --blog-border: 220 13% 91%;
+  --blog-muted: 220 9% 46%;
+  --blog-accent: 221 83% 53%;
+
+  --blog-code-bg: 220 20% 96%;
+  --blog-code-fg: 222 20% 20%;
+
+  --blog-radius-lg: 2.5rem;
+  --blog-radius-md: 1.5rem;
+  --blog-radius-sm: 1rem;
+
+  --blog-success: 142 71% 45%;
+  --blog-warning: 38 92% 50%;
+  --blog-danger: 0 72% 51%;
+
+  background: hsl(var(--blog-bg));
+  color: hsl(var(--blog-fg));
+  min-height: 100vh;
+}
+
+[data-blog-theme].blog-dark {
+  --blog-bg: 222 20% 8%;
+  --blog-fg: 210 20% 96%;
+  --blog-card: 222 18% 12%;
+  --blog-border: 217 15% 22%;
+  --blog-muted: 215 12% 65%;
+  --blog-accent: 217 91% 65%;
+
+  --blog-code-bg: 222 18% 13%;
+  --blog-code-fg: 210 20% 90%;
+
+  --blog-success: 142 65% 55%;
+  --blog-warning: 38 92% 58%;
+  --blog-danger: 0 72% 62%;
+}
+
+/* Blog-scoped glass card, mirrors the site's .glass-card but built from --blog-* tokens
+   so it never touches the main site's glass-card or leaks outside [data-blog-theme]. */
+[data-blog-theme] .blog-glass-card {
+  background-color: hsla(var(--blog-card), 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid hsla(var(--blog-border), 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+[data-blog-theme].blog-dark .blog-glass-card {
+  background-color: hsla(var(--blog-card), 0.4);
+  border: 1px solid hsla(var(--blog-border), 0.5);
+  box-shadow: none;
+}
+
+/* Tiptap's drag-to-resize sets an inline `style="width:...px"` while dragging, which
+   beats any external stylesheet rule that isn't !important — without this, a resized
+   image can overflow the editor card or the published post's content column. */
+[data-blog-theme] .prose img,
+[data-blog-theme] .ProseMirror img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.75rem;
+}
+
+/* --- Image alignment + captions --- */
+[data-blog-theme] .blog-img-align-center,
+[data-blog-theme] figure.blog-img-align-center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+[data-blog-theme] .blog-img-align-left,
+[data-blog-theme] figure.blog-img-align-left {
+  float: left;
+  margin: 0.25rem 1.5rem 1rem 0;
+  max-width: 50%;
+}
+[data-blog-theme] .blog-img-align-right,
+[data-blog-theme] figure.blog-img-align-right {
+  float: right;
+  margin: 0.25rem 0 1rem 1.5rem;
+  max-width: 50%;
+}
+[data-blog-theme] .blog-img-align-full,
+[data-blog-theme] figure.blog-img-align-full {
+  width: 100%;
+  display: block;
+}
+[data-blog-theme] .blog-img-align-full img { width: 100%; }
+[data-blog-theme] .blog-figure { margin: 1.75rem 0; }
+[data-blog-theme] .blog-figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: hsl(var(--blog-muted));
+  font-style: italic;
+}
+
+/* Reader images are zoomable */
+[data-blog-theme] .blog-content img { cursor: zoom-in; }
+
+/* --- Reader typography (scoped so other prose on the site is untouched) --- */
+[data-blog-theme] .blog-content { color: hsl(var(--blog-fg)); }
+[data-blog-theme] .blog-content :where(h1, h2, h3, h4, h5, h6) {
+  color: hsl(var(--blog-fg));
+  letter-spacing: -0.02em;
+  scroll-margin-top: 6rem;
+}
+[data-blog-theme] .blog-content :where(p, li) { color: hsl(var(--blog-fg)); }
+[data-blog-theme] .blog-content a {
+  color: hsl(var(--blog-accent));
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+[data-blog-theme] .blog-content strong { color: hsl(var(--blog-fg)); }
+[data-blog-theme] .blog-content blockquote {
+  border-left: 3px solid hsl(var(--blog-accent));
+  color: hsl(var(--blog-muted));
+  font-style: italic;
+}
+[data-blog-theme] .blog-content hr { border-color: hsl(var(--blog-border)); }
+
+/* --- Tables --- */
+[data-blog-theme] .prose table,
+[data-blog-theme] .ProseMirror table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  display: block;
+  overflow-x: auto;
+}
+[data-blog-theme] .prose th,
+[data-blog-theme] .prose td,
+[data-blog-theme] .ProseMirror th,
+[data-blog-theme] .ProseMirror td {
+  border: 1px solid hsl(var(--blog-border));
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+[data-blog-theme] .prose th,
+[data-blog-theme] .ProseMirror th {
+  background: hsl(var(--blog-card));
+  font-weight: 600;
+}
+
+/* --- Video embeds (responsive 16:9) --- */
+[data-blog-theme] .prose iframe,
+[data-blog-theme] .ProseMirror iframe,
+[data-blog-theme] div[data-youtube-video] iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+  border-radius: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+/* --- Code blocks --- */
+[data-blog-theme] .prose pre,
+[data-blog-theme] .ProseMirror pre {
+  position: relative;
+  background: hsl(var(--blog-code-bg));
+  color: hsl(var(--blog-code-fg));
+  border: 1px solid hsl(var(--blog-border));
+  border-radius: 0.75rem;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+[data-blog-theme] .prose :not(pre) > code {
+  background: hsl(var(--blog-code-bg));
+  color: hsl(var(--blog-accent));
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.375rem;
+  font-size: 0.85em;
+}
+[data-blog-theme] .blog-copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.7rem;
+  border-radius: 0.4rem;
+  border: 1px solid hsl(var(--blog-border));
+  background: hsl(var(--blog-bg));
+  color: hsl(var(--blog-muted));
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+[data-blog-theme] .prose pre:hover .blog-copy-btn { opacity: 1; }
+[data-blog-theme] .blog-copy-btn:hover { color: hsl(var(--blog-fg)); }
+
+/* --- highlight.js tokens (scoped, theme-aware) --- */
+[data-blog-theme] .hljs-comment,
+[data-blog-theme] .hljs-quote { color: hsl(var(--blog-muted)); font-style: italic; }
+[data-blog-theme] .hljs-keyword,
+[data-blog-theme] .hljs-selector-tag,
+[data-blog-theme] .hljs-built_in,
+[data-blog-theme] .hljs-name,
+[data-blog-theme] .hljs-tag { color: #c678dd; }
+[data-blog-theme] .hljs-string,
+[data-blog-theme] .hljs-title,
+[data-blog-theme] .hljs-section,
+[data-blog-theme] .hljs-attribute,
+[data-blog-theme] .hljs-literal,
+[data-blog-theme] .hljs-template-tag,
+[data-blog-theme] .hljs-template-variable,
+[data-blog-theme] .hljs-type,
+[data-blog-theme] .hljs-addition { color: #98c379; }
+[data-blog-theme] .hljs-number,
+[data-blog-theme] .hljs-symbol,
+[data-blog-theme] .hljs-bullet,
+[data-blog-theme] .hljs-meta,
+[data-blog-theme] .hljs-link { color: #d19a66; }
+[data-blog-theme] .hljs-variable,
+[data-blog-theme] .hljs-attr,
+[data-blog-theme] .hljs-selector-attr { color: #e06c75; }
+[data-blog-theme] .hljs-function,
+[data-blog-theme] .hljs-title.function_ { color: #61afef; }
+[data-blog-theme] .hljs-emphasis { font-style: italic; }
+[data-blog-theme] .hljs-strong { font-weight: 700; }
+
+[data-blog-theme] .blog-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--blog-border));
+  background: hsl(var(--blog-card));
+  color: hsl(var(--blog-accent));
+  text-decoration: none;
+  font-size: 0.875rem;
+}

@@ -1,0 +1,13 @@
+/* File Encryptor page-specific theme */
+
+.fe-theme-light {
+  --fe-accent: #0d9488;
+  --fe-accent-glow: rgba(13, 148, 136, 0.10);
+  --fe-accent-ring: rgba(13, 148, 136, 0.25);
+}
+
+.fe-theme-dark {
+  --fe-accent: #2dd4bf;
+  --fe-accent-glow: rgba(45, 212, 191, 0.15);
+  --fe-accent-ring: rgba(45, 212, 191, 0.30);
+}
