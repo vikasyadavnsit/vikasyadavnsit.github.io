@@ -43,7 +43,7 @@
     "lucide-react": "^0.473.0",
     "marked": "^18.0.5",
     "mermaid": "^11.15.0",
-    "next": "^16.2.9",
+    "next": "^16.2.11",
     "otpauth": "^9.5.1",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
